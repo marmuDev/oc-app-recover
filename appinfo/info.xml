@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<info>
+    <id>mynewapp</id>
+    <name>My New App</name>
+    <description>My second app</description>
+    <licence>AGPL</licence>
+    <author>Marcus Mundt</author>
+    <version>0.0.1</version>
+    <requiremin>7</requiremin>
+</info>
