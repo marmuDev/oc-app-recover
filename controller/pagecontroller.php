@@ -38,16 +38,27 @@ class PageController extends Controller {
      */
     public function index() {
         $params = array('user' => $this->userId);
-        return new TemplateResponse('mynewapp', 'main', $params);  // templates/main.php
+        return new TemplateResponse($this->appName, 'main', $params);  // templates/main.php
     }
 
 
     /**
-     * Simply method that posts back the payload of the request
+     * Simple method that posts back the payload of the request
      * @NoAdminRequired
      */
     public function doEcho($echo) {
         return array('echo' => $echo);
+    }
+    
+    /**
+     * Simple method that renders notify settings
+     * @NoAdminRequired
+     */
+    public function showNotifySettings() {
+        // templates/notifysettings.php
+        return new TemplateResponse($this->appName, 'notifysettings');  
+        
+        
     }
 
 

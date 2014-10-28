@@ -5,9 +5,8 @@
         <group>
             <file>file:/var/www/core/apps/mynewapp/controller/pagecontroller.php</file>
             <file>file:/var/www/core/apps/mynewapp/appinfo/application.php</file>
-            <file>file:/var/www/core/apps/mynewapp/js/script.js</file>
-            <file>file:/var/www/core/apps/mynewapp/appinfo/info.xml</file>
-            <file>file:/var/www/core/apps/mynewapp/templates/main.php</file>
+            <file>file:/var/www/core/apps/mynewapp/templates/notifysettings.php</file>
+            <file>file:/var/www/core/apps/mynewapp/templates/part.navigation.php</file>
             <file>file:/var/www/core/apps/mynewapp/appinfo/routes.php</file>
             <file>file:/var/www/core/apps/mynewapp/appinfo/app.php</file>
         </group>

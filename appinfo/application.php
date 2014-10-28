@@ -43,8 +43,25 @@ class Application extends App {
 		 */
 		$container->registerService('UserId', function(IContainer $c) {
 			return \OCP\User::getUser();
-		});		
-		
+		});	
+                
+                /**
+                 * Services
+                 * Notifier
+                 
+                $container->registerService('SendNotifications', function(IContainer $c) {
+                    return new \extClasses\Mailer\SendNotifications(
+                            $c->query('pdo'),
+                            $c->query('mailer')
+                    );
+                });
+                 * 
+                 */
+                 $container->registerService('SendNotifications', function(IContainer $c) {
+                    return new \extClasses\Mailer\SendNotifications();
+                    
+                });
+            
 	}
 
 

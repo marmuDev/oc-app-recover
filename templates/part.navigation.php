@@ -7,4 +7,5 @@
 			<li><a href="#">Second level entry</a></li>
 		</ul>
 	</li>
+        <li><a href="./notifysettings">Edit Notify Settings</a></li>
 </ul>

@@ -19,9 +19,19 @@ namespace OCA\MyNewApp\AppInfo;
  * The controller class has to be registered in the application.php file since
  * it's instantiated in there
  */
+
+// application is used in documentation for app dev with API
+// but I inherit it from AppFramework\App
 $application = new Application();
 
-$application->registerRoutes($this, array('routes' => array(
-	array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
-    array('name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'),
-)));
+$application->registerRoutes($this, ['routes' => [
+    ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+    ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
+    [
+        'name' => 'page#show_notify_settings',
+        'url' => '/notifysettings',
+        'verb' => 'GET'
+    ],
+]]);
+
+
