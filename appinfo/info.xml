@@ -7,4 +7,8 @@
     <author>Marcus Mundt</author>
     <version>0.0.1</version>
     <requiremin>7</requiremin>
+    <types>
+        <type>filesystem</type>
+    </types>
+    <shipped>true</shipped>
 </info>

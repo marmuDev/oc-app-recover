@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ownCloud - mynewapp
  *
@@ -11,7 +12,6 @@
 
 namespace OCA\MyNewApp\Controller;
 
-
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
@@ -20,11 +20,11 @@ class PageController extends Controller {
 
     private $userId;
 
-    public function __construct($appName, IRequest $request, $userId){
+    public function __construct($appName, IRequest $request, $userId) {
         parent::__construct($appName, $request);
         $this->userId = $userId;
+        $this->request = $request;
     }
-
 
     /**
      * CAUTION: the @Stuff turn off security checks, for this page no admin is
@@ -37,10 +37,13 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function index() {
-        $params = array('user' => $this->userId);
+        $params = [
+                    'user' => $this->userId,
+                    'appname' => $this->appName,
+                    'request' => $this->request
+        ];
         return new TemplateResponse($this->appName, 'main', $params);  // templates/main.php
     }
-
 
     /**
      * Simple method that posts back the payload of the request
@@ -49,17 +52,14 @@ class PageController extends Controller {
     public function doEcho($echo) {
         return array('echo' => $echo);
     }
-    
+
     /**
      * Simple method that renders notify settings
      * @NoAdminRequired
      */
     public function showNotifySettings() {
         // templates/notifysettings.php
-        return new TemplateResponse($this->appName, 'notifysettings');  
-        
-        
+        return new TemplateResponse($this->appName, 'notifysettings');
     }
-
 
 }

@@ -33,11 +33,12 @@ namespace OCA\MyNewApp\AppInfo;
 
     // the icon that will be shown in the navigation
     // this file needs to exist in img/
-    'icon' => \OCP\Util::imagePath('mynewapp', 'app.svg'),
+    //'icon' => \OCP\Util::imagePath('mynewapp', 'app.svg'),
+    'icon' => \OCP\Util::imagePath('mynewapp', 'recover_logo_white_32.svg'),
 
     // the title of your application. This will be used in the
     // navigation or on the settings page of your app
-    'name' => \OC_L10N::get('mynewapp')->t('My New App')
+    'name' => \OC_L10N::get('mynewapp')->t('Recover')
 ));
     /**
 } else {

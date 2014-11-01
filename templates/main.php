@@ -1,9 +1,14 @@
 <?php
-\OCP\Util::addScript('mynewapp', 'script');
-\OCP\Util::addStyle('mynewapp', 'style');
+//\OCP\Util::addScript('mynewapp', 'script');
+//\OCP\Util::addScript('mynewapp', 'angular.min');
+//\OCP\Util::addStyle('mynewapp', 'style');
+
+script('mynewapp', array('angular.min', 'script'));
+style('mynewapp', 'style');
 ?>
 
 <div id="app">
+    <div ng-app="mynewapp"> 
 	<div id="app-navigation">
 		<?php print_unescaped($this->inc('part.navigation')); ?>
 		<?php print_unescaped($this->inc('part.settings')); ?>
@@ -14,4 +19,5 @@
 			<?php print_unescaped($this->inc('part.content')); ?>
 		</div>
 	</div>
+    </div>
 </div>
