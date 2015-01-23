@@ -4,8 +4,91 @@
  <create>true</create>
  <overwrite>false</overwrite>
  <charset>utf8</charset>
+ 
+ <!-- app is using the oc trash bin as recovery source -->
+  <table>
+    <name>*dbprefix*files_trash</name>
+    <declaration>
+        <field>
+            <name>auto_id</name>
+            <type>integer</type>
+            <default></default>
+            <notnull>true</notnull>
+            <autoincrement>1</autoincrement>
+            <primary>true</primary>
+            <length>11</length>
+        </field>
+        <field>
+            <name>id</name>
+            <type>text</type>
+            <default></default>
+            <notnull>true</notnull>
+            <length>250</length>
+        </field>
+        <field>
+            <name>user</name>
+            <type>text</type>
+            <default></default>
+            <notnull>true</notnull>
+            <length>64</length>
+        </field>
+        <field>
+            <name>timestamp</name>
+            <type>text</type>
+            <default></default>
+            <notnull>true</notnull>
+            <length>12</length>
+        </field>
+        <field>
+            <name>location</name>
+            <type>text</type>
+            <default></default>
+            <notnull>true</notnull>
+            <length>512</length>
+        </field>
+        <field>
+            <name>type</name>
+            <type>text</type>
+            <default></default>
+            <notnull>false</notnull>
+            <length>4</length>
+        </field>
+        <field>
+            <name>mime</name>
+            <type>text</type>
+            <default></default>
+            <notnull>false</notnull>
+            <length>255</length>
+        </field>
+        
+        <!-- why and how are indexes used? -->
+        <index>
+            <name>id_index</name>
+            <field>
+            <name>id</name>
+            <sorting>ascending</sorting>
+            </field>
+        </index>
+        <index>
+            <name>timestamp_index</name>
+            <field>
+                <name>timestamp</name>
+                <sorting>ascending</sorting>
+            </field>
+        </index>
+        <index>
+            <name>user_index</name>
+            <field>
+                <name>user</name>
+                <sorting>ascending</sorting>
+            </field>
+        </index>
+    </declaration>
+</table>
+
+ <!--for app specific tables -->
  <table>
-  <name>*dbprefix*yourapp_items</name>
+  <name>*dbprefix*mynewapp_items</name>
   <declaration>
     <field>
       <name>id</name>

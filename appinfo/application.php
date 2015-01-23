@@ -13,9 +13,11 @@ namespace OCA\MyNewApp\AppInfo;
 
 
 use \OCP\AppFramework\App;
+use \OCP\AppFramework\IAppContainer;
 use \OCP\IContainer;
 
 use \OCA\MyNewApp\Controller\PageController;
+use \OCA\MyNewApp\Db\TrashBinMapper;
 
 
 class Application extends App {
@@ -31,12 +33,24 @@ class Application extends App {
 		 */
 		$container->registerService('PageController', function(IContainer $c) {
 			return new PageController(
-				$c->query('AppName'), 
+				// Look up a service for a given name
+                                // in the container.
+                                $c->query('AppName'), 
 				$c->query('Request'),
-				$c->query('UserId')
+				$c->query('UserId'),
+                                $c->query('TrashBinMapper')
 			);
 		});
-
+                /**
+                 * When to use IContainer and when IAppContainer?
+                 
+                $container->registerService('ItemController', function(IAppContainer $c) {
+                   return new ItemController(
+                        $c->query('AppName'), 
+			$c->query('Request'),
+                        $c->query('UserId')
+                    );
+                });*/
 
 		/**
 		 * Core
@@ -44,6 +58,16 @@ class Application extends App {
 		$container->registerService('UserId', function(IContainer $c) {
 			return \OCP\User::getUser();
 		});	
+                
+                /**
+                 * Database Layer
+                 * nutze ich aber bisher anscheinend noch nicht als service
+                 * wie in part.recent.php nutzen?
+                 */
+                $container->registerService('TrashBinMapper', function($c) {
+                    return new TrashBinMapper($c->query('ServerContainer')->getDb());
+                    //return new ItemMapper($c->query('Db'));
+                });
                 
                 /**
                  * Services
@@ -61,7 +85,17 @@ class Application extends App {
                     return new \extClasses\Mailer\SendNotifications();
                     
                 });
-            
+                
+                /**
+                 * ggf macht das später sinn...
+                 * The config allows the app to set global, app and
+                 * user settings can be injected from the ServerContainer.
+                 * All values are saved as strings and must be casted 
+                 * to the correct value.
+                 */
+                $container->registerService('ConfigService', function($c) {
+                    return $c->query('ServerContainer')->getConfig();
+                });
 	}
 
 

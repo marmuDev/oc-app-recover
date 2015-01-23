@@ -25,8 +25,16 @@ namespace OCA\MyNewApp\AppInfo;
 $application = new Application();
 
 $application->registerRoutes($this, ['routes' => [
+    // index equals recently deleted for now
     ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+    [
+        'name' => 'page#get_recently_deleted', 
+        'url' => '/recently', 
+        'verb' => 'GET'
+    ],
     ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
+    ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
+   // ['name' => 'page#find_recent', 'url' => '/recent', 'verb' => 'GET'],
     [
         'name' => 'page#show_notify_settings',
         'url' => '/notifysettings',
