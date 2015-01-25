@@ -135,8 +135,10 @@
         ["$http", "$rootScope", "BASE_URL", "$q",
         function($http, $rootScope, BASE_URL, $q){
             this.text = "init";
-            var recent = this;
-            recent.items = [];
+            //var recent = this;
+            var self = this;
+            //recent.items = [];
+            self.items = [];
             //var deferred = $q.defer();
             $http.get(BASE_URL + '/recently', {cache: 'true'} ).
                 success(function(data) {
@@ -160,9 +162,11 @@
                     //deferred.resolve(JSON && JSON.parse(data) || $.parseJSON(data));
                     // recent.item should automatically be updated, 
                     // when data is available, but this does not seem to work
-                    recent.items = JSON && JSON.parse(data) || $.parseJSON(data);
-                    // daten da...
-                    //alert(recent.items);
+                    //recent.items = JSON && JSON.parse(data) || $.parseJSON(data);
+                    // JSON.parse nicht notwendig
+                    self.items = data;
+                    // daten da... so wieder mit "\"
+                    //alert(self.items);
 
                 }).
                 error(function() {
@@ -170,7 +174,7 @@
 
                 });
             // hier noch leer!
-            //alert(recent.items);
+           //alert(self.items);
         /** 
          * siehe    app.factory('Resource'...       und
          *          app.factory('ItemResource'...   in:
