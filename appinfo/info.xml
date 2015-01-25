@@ -3,12 +3,12 @@
     <id>mynewapp</id>
     <name>My New App</name>
     <description>My second app</description>
+    <namespace>MyNewApp</namespace>
     <licence>AGPL</licence>
     <author>Marcus Mundt</author>
     <version>0.0.1</version>
-    <requiremin>7</requiremin>
+    <requiremin>7.6</requiremin>
     <types>
         <type>filesystem</type>
     </types>
-    <shipped>true</shipped>
 </info>

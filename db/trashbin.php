@@ -39,20 +39,16 @@ class TrashBin extends Entity implements IAPI, \JsonSerializable {
     protected $filename;
     protected $user;
     protected $timestamp;
-    protected $location; 
+    protected $location;
     protected $type;
-    // not part of oc_files_trash! 
-    //protected $source; 
+    // not part of oc_files_trash!
+    //protected $source;
     protected $mime;
 
     public function __construct(){
-        // cast timestamp to an int when fromRow is being called
-        // the second parameter is the argument that is passed to
-        // the php function settype()
-        // scheint überflüssig...
-        //$this->addType('timestamp', 'string');
+        $this->addType('timestamp', 'string');
     }
-    
+
     // map attribute filename to the database column id
     // in addition one could map autoId to id and the other way round
     public function columnToProperty($column) {
@@ -70,7 +66,7 @@ class TrashBin extends Entity implements IAPI, \JsonSerializable {
             return parent::propertyToColumn($property);
         }
     }
-    
+
      /**
     * Turns entitie attributes into an array
     */
@@ -98,20 +94,6 @@ class TrashBin extends Entity implements IAPI, \JsonSerializable {
             'mime' => $this->getMime()
         ];
     }
-    
-//    public function toArray() {
-//        return [
-//            'id' => $this->getAutoId(),
-//            'filename' => $this->getFilename(),
-//            'user' => $this->getUser(),
-//            'timestamp' => $this->getTimestamp(),
-//            'location' => $this->getLocation(),
-//            'type' => $this->getType(),
-//            //'source' => $this->getSource(),
-//            'mime' => $this->getMime()
-//            
-//        ];
-//    }
 
     // transform username to lower case
     public function userToLowerCase($name){

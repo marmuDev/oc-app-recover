@@ -12,20 +12,21 @@
 
 namespace OCA\MyNewApp\Service;
 
-use \OCP\IConfig;
+use OCP\IConfig;
 
 /**
  * Description of configservice
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  */
-class configservice {
+class ConfigService {
+
     private $config;
     private $appName;
 
-    public function __construct(IConfig $config, $appName){
+    public function __construct(IConfig $config, $AppName){
         $this->config = $config;
-        $this->appName = $appName;
+        $this->appName = $AppName;
     }
 
     public function getUserValue($key, $userId) {
@@ -35,4 +36,5 @@ class configservice {
     public function setUserValue($key, $userId, $value) {
         $this->config->setUserValue($userId, $this->appName, $key, $value);
     }
+
 }
