@@ -11,16 +11,10 @@
 
 namespace OCA\MyNewApp\AppInfo;
 
-/** dont break owncloud when the appframework is not enabled
- *  framework not enabled since it is for obsolete oc 6, 
- * oc 7 got framework built in
- * hence mynewapp can't be enabled...
- */ 
-//if(\OCP\App::isEnabled('appframework')){
+use OCP\App;
 
-    $api = new \OCP\App('myapp');
-
-    $api->addNavigationEntry(array(
+$app = new App('myapp');
+$app->addNavigationEntry(array(
     // the string under which your app will be referenced in owncloud
     'id' => 'mynewapp',
 
@@ -40,10 +34,3 @@ namespace OCA\MyNewApp\AppInfo;
     // navigation or on the settings page of your app
     'name' => \OC_L10N::get('mynewapp')->t('Recover')
 ));
-    /**
-} else {
-  $msg = 'Can not enable the MyApp app because the App Framework App is disabled';
-  \OCP\Util::writeLog('myapp', $msg, \OCP\Util::ERROR);
-}
-     * */
-     
