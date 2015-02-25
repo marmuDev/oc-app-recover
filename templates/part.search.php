@@ -11,35 +11,34 @@
         noch weitere tests, prüfung auf "number" und "date" automatisch
     -->
     <form name="searchForm" 
-          ng-submit="searchForm.$valid && 
-                      searchCtrl.addSearch(searchCtrl.search.filename)"
-          novalidate>
+        ng-submit="searchForm.$valid && searchCtrl.addSearch(searchCtrl.search.filename)"
+        novalidate>
         <h1>Suche</h1><br>
         <!-- am besten suchfeld, dass direkt dynamisch Ergebnisse anzeigt -->
         <input type="text" 
-               ng-model="searchCtrl.search.filename"
-               placeholder="<?php p($l->t('File name')); ?>"
-               title="<?php p($l->t('File name')); ?>"
-               name="folderName">
+            ng-model="searchCtrl.search.filename"
+            placeholder="<?php p($l->t('File name')); ?>"
+            title="<?php p($l->t('File name')); ?>"
+            name="folderName">
         <br>
         <!--    ggf mit schiebereger -->
         <input type="number" 
-               ng-model="searchCtrl.search.filesizemin"
-               placeholder="<?php p($l->t('Min File Size in MB')); ?>"
-               title="<?php p($l->t('Min File Size in MB')); ?>"
-               name="Min File Size">
+            ng-model="searchCtrl.search.filesizemin"
+            placeholder="<?php p($l->t('Min File Size in MB')); ?>"
+            title="<?php p($l->t('Min File Size in MB')); ?>"
+            name="Min File Size">
         <br>
         <input type="number" 
-               ng-model="searchCtrl.search.filesizemax"
-               ng-model="searchCtrl.search.filesizemin"
-               placeholder="<?php p($l->t('Max File Size in MB')); ?>"
-               title="<?php p($l->t('Max File Size in MB')); ?>"
-               name="Max File Size">
+            ng-model="searchCtrl.search.filesizemax"
+            placeholder="<?php p($l->t('Max File Size in MB')); ?>"
+            title="<?php p($l->t('Max File Size in MB')); ?>"
+            name="Max File Size">
         <br>
         <input type="date" 
-               ng-model="searchCtrl.search.datestart"
-               name="Start date"
-               placeholder="yyyy-MM-dd">
+            ng-model="searchCtrl.search.datestart"
+            name="Start date"
+            placeholder="yyyy-MM-dd"
+            title="<?php p($l->t('Start Date')); ?>">
     <!--       ISO-8601 date format (yyyy-MM-dd)
                minimal value perhaps 1 year or 6 months in past?  
                 max value should be today 
@@ -51,7 +50,8 @@
         <input type="date" 
             ng-model="searchCtrl.search.dateend"
             name="End date"
-            placeholder="yyyy-MM-dd">
+            placeholder="yyyy-MM-dd"
+            title="<?php p($l->t('End Date')); ?>">
     <!--        min must be greater than min in Start Date
                 max value should be today 
                min="2014-11-11"
@@ -75,6 +75,6 @@
         <br>
         test angular data binding<br>
         Filename: {{searchCtrl.search.filename}}<br>
-            Source: {{searchCtrl.search.filesources}}
+        Source: {{searchCtrl.search.filesources}}
     </form>
 </div>

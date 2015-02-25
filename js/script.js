@@ -18,17 +18,18 @@
         $provide.constant('BASE_URL', OC.generateUrl('/apps/mynewapp'));
     })
 
-    .run(function($rootScope, $http, BASE_URL, GetRecDelTrash){
+    //.run(function($rootScope, $http, BASE_URL, GetRecDelTrash){
+    .run(function($rootScope, $http, BASE_URL){
         $rootScope.linkNum = 1;
-        console.log(BASE_URL + '/recently');
     })
 
+/** zunächst überflüssig...
     .service('GetRecDelTrash', function($http, BASE_URL) {
         this.getData = function() {
             return $http.get(BASE_URL + '/recently', {cache: 'true'});
         };
     })
-
+*/
     .controller('ContentController',  function($rootScope){
     })
 
@@ -43,18 +44,29 @@
          };
     })
 
+    // wird momentan nicht ausgeführt! -> myfilelist.js?
     .controller('RecentController', function($http, $rootScope, BASE_URL){
         this.text = "init";
         this.items = [];
 
+        alert("in recent controler before ajax to list trash");
+
         var self = this;
-        $http.get(BASE_URL + '/recently', {cache: 'true'} )
+        $http.get(BASE_URL + '/listtrash', {cache: 'true'} )
         .success(function(data) {
-            self.items = data;
+            // war für einfache auflistung der DB inhalte, wie nun mit trashbin data verfahren?
+                //self.items = data;
+                // versuche timestamp in user lesbares format zu wandeln
+                //self.items[0].timestamp = Math.floor(self.items[0].timestamp / 1000);
+                //self.items[0].timestamp = parseInt(self.items[0].timestamp, 10);
+            alert("data nach list trash = " + data);    
+            
         })
         .error(function() {
-            alert("error during http get in app.run get /recently");
+            alert("error during http get in RecentController get /listtrash");
         });
+        
+
     })
 
     .controller('SearchController', function() {
@@ -64,7 +76,6 @@
                 fileName: 'FileName',
                 fileSizeMin: 'min size',
                 fileSizeMax: 'max size',
-                // calendar GUIwould be great or graph to mark period via mouse
                 dateStart: 'date',
                 dateEnd: 'date',
                 fileSources: [

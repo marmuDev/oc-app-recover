@@ -6,7 +6,7 @@
 	</div>
 	<div id="app-settings-content">
 		<!-- Your settings in here -->
-                settings wären ggf zu viel für den begrnezten platz <br>
+                settings wären ggf zu viel für den begrenzten platz <br>
                 -> in hauptnavi <br>
 	</div>
 </div>

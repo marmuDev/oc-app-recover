@@ -1,59 +1,96 @@
-<div ng-controller="RecentController as recentCtrl">
-<!--    <h1>User: {{recentCtrl.user.name}}</h1><br>
-
-    fester Zeitraum von einem Monat, Quellen wählbar
-    - Dateien aus trashbin anhand user name
-    - ng.repeat hilft
--->
-
-<!-- OC trashbin list.php gut für setzen eines templates 
-und erzeugen von liste -->
-
-
-<!-- OC trashbin templates/index.php -->
-    
 <?php 
-    p("user: ".$_['user']." - ");
-//    Request could not be converted to string
-//    p("request: ".$_['request']." - ");
-    p("appname: ".$_['appname']." - ");
-
-    // wie gefundene ausgeben?
-    // mit JS var problem, da script schon lief, bevor Var bereitsteht
-    // -> route + ajax
-    //p("recDel: ".$_['recentlyDeleted']);
-
 //    To use routes in OC_Template, use:
 //    print_unescaped(\OCP\Util::linkToRoute(
         //'mynewapp.page.get_recently_deleted', array('key' => 1)
   //          'mynewapp.page.get_recently_deleted'
     //));
+//    p("user: ".$_['user']." - ");
+//    Request could not be converted to string
+//    p("request: ".$_['request']." - ");
+//    p("appname: ".$_['appname']." - ");
+
+// OC trashbin list.php (in template + ajax) 
+//   gut für setzen eines templates und erzeugen von liste 
+// fileList CSS-stuff eigentlich aus core, nur minimale anpassungen in trash.css
+// filestable -> 
 
 ?>
-<br>
-<input type="text" ng-model="search"> {{search}} <br>
-<input type="text" ng-model="recentCtrl.text"> {{recentCtrl.text}}<br>
-
-<table>
-<!--    array of objects -> use ng-repeat twice 
-    was ist data-ng-repeat
--->
-<!--    <tr ng-repeat="item in recentCtrl.items | filter:search">-->
-    <tr ng-repeat="item in recentCtrl.items">
-        <td>{{item.filename}}</td>
-<!--        <td>{{recentCtrl.item.timestamp}}</td>
-        <td>{{recentCtrl.item.location}}</td>-->
-    </tr>
-</table>
-
-<br>
 <!--
-    Dateiname: {{recentCtrl.item.filename}}<br>
-    Datum: {{recentCtrl.item.timestamp}}<br>
-    Quelle: {{recentCtrl.item.location}}<br> 
--->
+ nachfolgendes eher hier richtig (Template) 
+ -> adapted from /apps/files_trashbin/templates/index.php
+ fester Zeitraum von einem Monat, Quellen wählbar
+    - Dateien aus trashbin anhand user name
+    - ng.repeat hilft
+
+<div ng-controller="RecentController as recentCtrl">    
+Quick Filter: <input type="text" ng-model="search"> {{search}} <br>
 </div>
 
+-->
+<!--    array of objects -> use ng-repeat twice 
+    was ist data-ng-repeat
+
+    <tr ng-repeat="item in recentCtrl.items | filter:search">
+            <td>{{item.filename}}</td>
+            <td>{{item.timestamp}}</td>
+            <td>{{item.location}}</td>
+    </tr>
+-->
 
 
-            
+<!-- /apps/files_trashbin/templates/index.php -->
+<div id="controls">
+    <div id="file_action_panel"></div>
+</div>
+<div id='notification'></div>
+
+<div id="emptycontent" class="hidden">
+    <div class="icon-delete"></div>
+    <h2><?php p($l->t('No deleted files')); ?></h2>
+    <p><?php p($l->t('You will be able to recover deleted files from here')); ?></p>
+</div>
+
+<input type="hidden" name="dir" value="" id="dir">
+
+<div class="nofilterresults hidden">
+    <div class="icon-search"></div>
+    <h2><?php p($l->t('No entries found in this folder')); ?></h2>
+    <p></p>
+</div>
+
+<table id="filestable">
+    <thead>
+        <tr>
+            <th id='headerName' class="hidden column-name">
+                <div id="headerName-container">
+                    <input type="checkbox" id="select_all_trash" class="select-all"/>
+                    <label for="select_all_trash">
+                        <span class="hidden-visually"><?php p($l->t('Select all'))?></span>
+                    </label>
+                    <a class="name sort columntitle" data-sort="name"><span><?php p($l->t( 'Name' )); ?></span><span class="sort-indicator"></span></a>
+                    <span id="selectedActionsList" class='selectedActions'>
+                        <a href="" class="undelete">
+                            <img class="svg" alt=""
+                                 src="<?php print_unescaped(OCP\image_path("core", "actions/history.svg")); ?>" />
+                            <?php p($l->t('Restore'))?>
+                        </a>
+                    </span>
+                </div>
+            </th>
+            <th id="headerDate" class="hidden column-mtime">
+                <a id="modified" class="columntitle" data-sort="mtime"><span><?php p($l->t( 'Deleted' )); ?></span><span class="sort-indicator"></span></a>
+                <span class="selectedActions">
+                    <a href="" class="delete-selected">
+                        <?php p($l->t('Delete'))?>
+                        <img class="svg" alt=""
+                            src="<?php print_unescaped(OCP\image_path("core", "actions/delete.svg")); ?>" />
+                    </a>
+                </span>
+            </th>
+        </tr>
+    </thead>
+    <tbody id="fileList">
+    </tbody>
+    <tfoot>
+    </tfoot>
+</table>

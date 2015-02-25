@@ -10,10 +10,9 @@
  */
 
 return ['routes' => [
-
-['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-['name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET']
-
+	['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+	['name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET'],
+	['name' => 'page#list_trash_bin', 'url' => '/listtrash', 'verb' => 'GET']
 ]];
 
 

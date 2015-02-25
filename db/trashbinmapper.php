@@ -17,7 +17,8 @@ use \OCP\AppFramework\Db\Mapper;
 
 /**
  * Description of TrashBinMapper
- * For querying data defined in trashbinitem.php
+ * For querying data defined in trashbin.php (was trashbinitem.php before)
+ * trashbin.php obsolete since Items defined in OC core
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  */
