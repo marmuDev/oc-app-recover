@@ -50,7 +50,7 @@
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
-
+			console.log('in init from OCA.Recover.FileList');
 			this.setSort('mtime', 'desc');
 			/**
 			 * Override crumb making to add "Deleted Files" entry
@@ -119,7 +119,7 @@
 				q = '?' + OC.buildQueryString(params);
 			}
 			//return OC.filePath('mynewapp', 'ajax', action + '.php') + q;
-			console.log('in get ajax in myfilelist');
+			console.log('in get ajax in myfilelist'); // -> not run
 			//alert(OC.filePath('mynewapp', action) + q);
 			return OC.filePath('mynewapp', action) + q;
 		},
@@ -154,13 +154,14 @@
 		reloadCallback: function(result) {
 			delete this._reloadCall;
 			this.hideMask();
-
+			console.log('in reloadCallback at the beginning');
 			if (!result || result.status === 'error') {
 				// if the error is not related to folder we're trying to load, reload the page to handle logout etc
 				if (result.data.error === 'authentication_error' ||
 					result.data.error === 'token_expired' ||
 					result.data.error === 'application_not_enabled'
 				) {
+					console.log('in reloadCallback redirect to files app');
 					OC.redirect(OC.generateUrl('apps/files'));
 				}
 				OC.Notification.show(result.data.message);
@@ -169,6 +170,7 @@
 
 			if (result.status === 404) {
 				// go back home
+				console.log('in reloadCallback status 404 -> go back home');
 				this.changeDirectory('/');
 				return false;
 			}

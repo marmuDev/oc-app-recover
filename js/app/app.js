@@ -37,6 +37,7 @@ OCA.Recover.App = {
 		if (this._initialized) {
 			return;
 		}
+		console.log('in init from OCA.Recover.App');
 		this._initialized = true;
 		this.fileList = new OCA.Recover.FileList(
 			$('#app-content-trashbin'), {
