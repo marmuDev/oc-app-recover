@@ -1,19 +1,24 @@
 <?php
+/**
+ * ownCloud - mynewapp
+ *
+ * This file is licensed under the Affero General Public License version 3 or
+ * later. See the COPYING file.
+ *
+ * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
+ * @copyright Marcus Mundt 2015
+ */
 // this is for using ownCloud Templates
 //\OCP\Util::addScript('mynewapp', 'script');
-//\OCP\Util::addScript('mynewapp', 'angular.min');
 //\OCP\Util::addStyle('mynewapp', 'style');
 
 // this is how to do it using Twig Templates
 //{{ script('public/app', 'appframework') }}
 
 // my scripts first, now more with OCP\UTIL to change orders more comfortable
-script('mynewapp', array('vendor/angular.min', 'app/app', 'script'));
-
-
+script('mynewapp', array('vendor/angular.min', 'app/app'));
 // scripts for files lists and trashbin stuff
 // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
-OCP\Util::addStyle('files', 'files');
 /**
 OCP\Util::addStyle('files', 'upload');
 OCP\Util::addStyle('files', 'mobile');
@@ -32,8 +37,11 @@ OCP\Util::addscript('files', 'breadcrumb');
 // at least actions will have to be adapted for the recovery of files from different sources
 OCP\Util::addscript('files', 'fileactions');
 OCP\Util::addscript('files', 'filelist');
-OCP\Util::addscript('mynewapp', 'myfilelist');
 OCP\Util::addscript('files', 'navigation');
+OCP\Util::addscript('mynewapp', 'myfilelist');
+OCP\Util::addscript('mynewapp', 'script');
+
+OCP\Util::addStyle('files', 'files');
 OCP\Util::addStyle('files_trashbin', 'trash');
 /**
 OCP\Util::addscript('files', 'search');

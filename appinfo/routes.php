@@ -6,7 +6,7 @@
  * later. See the COPYING file.
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
- * @copyright Marcus Mundt 2014
+ * @copyright Marcus Mundt 2015
  */
 
 return ['routes' => [

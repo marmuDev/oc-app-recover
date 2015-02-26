@@ -1,20 +1,16 @@
 /**
- * ownCloud - mynewapp - Recover - adapted from
- *	https://github.com/owncloud/core/blob/master/apps/mynewapp/js/app.js
- *  ggf überflüssig oder nur gewisse teile notwendig!!!
- *  -> NULL PEILUNG!!!
- *
+ * ownCloud - mynewapp - Recover - adapted from trashbin among others
+ *	
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
- * @copyright Marcus Mundt 2014
+ * @copyright Marcus Mundt 2015
 
 	script.js in app.js, config.js, run.js und 
 	weitere bestandteile wie controller etc. unterteilen
 
  */
-
 if (!OCA.Files) {
 		/**
 		 * Namespace for the files app

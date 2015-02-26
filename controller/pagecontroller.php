@@ -7,7 +7,7 @@
  * later. See the COPYING file.
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
- * @copyright Marcus Mundt 2014
+ * @copyright Marcus Mundt 2015
  */
 
 namespace OCA\MyNewApp\Controller;
@@ -55,12 +55,12 @@ class PageController extends Controller {
 
     // wenn ich route manuell aufrufe, redirect zu files app!
     public function listTrashBin() {
-        printf("IN LISTTRASHBIN.PHP"); //-> isn't redirection properly
+        printf("IN LISTTRASHBIN.PHP"); //-> isn't redirecting properly
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
         // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
         $dir = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
-        printf($dir);
+        //printf($dir);
         $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
         $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $data = array();
@@ -84,6 +84,7 @@ class PageController extends Controller {
 
         return new DataResponse($data);
         //return true;
+    
     }
 
 }

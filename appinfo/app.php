@@ -6,7 +6,7 @@
  * later. See the COPYING file.
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
- * @copyright Marcus Mundt 2014
+ * @copyright Marcus Mundt 2015
  */
 
 namespace OCA\MyNewApp\AppInfo;
@@ -25,9 +25,8 @@ $app->addNavigationEntry(array(
     // the string under which your app will be referenced in owncloud
     'id' => 'mynewapp',
 
-
-    // taken from files_trashbin (app)
     "appname" => 'recover', 
+    // taken from files_trashbin (app) -> list.php in root creates template from /templates/index.php
     //"script" => 'list.php',
 
     // sorting weight for the navigation. The higher the number, the higher

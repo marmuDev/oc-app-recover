@@ -7,7 +7,6 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-
 (function() {
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 
@@ -46,6 +45,7 @@
 
 		/**
 		 * @private
+		 * is run...
 		 */
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
@@ -73,6 +73,7 @@
 		 * Override to only return read permissions
 		 */
 		getDirectoryPermissions: function() {
+			console.log('in get dir permissions in myfilelist'); // -> not run!
 			return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
 		},
 
@@ -86,6 +87,7 @@
 		},
 
 		_createRow: function() {
+			console.log('in createRow in myfilelist'); // -> not run!
 			// FIXME: MEGAHACK until we find a better solution
 			var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
 			tr.find('td.filesize').remove();
@@ -107,18 +109,86 @@
 			return OCA.Files.FileList.prototype._renderRow.call(this, fileData, options);
 		},
 
-		// attention! list.php doesn't exist in my app!
-		// -> alter call of getAjaxUrl or find other solution
-		// list.php erstellt -> weiterhin redirect zu App->files
-
+		// called by reload in /apps/files/js/filelist.js,
+		// "list" is hardcoded as action! 
+		// keep it that way, have list.php in ajax folder and solve route problem
+		// => override with own reload and reloadCallback methods
 		getAjaxUrl: function(action, params) {
 			var q = '';
 			if (params) {
 				q = '?' + OC.buildQueryString(params);
 			}
-			return OC.filePath('mynewapp', 'ajax', action + '.php') + q;
+			//return OC.filePath('mynewapp', 'ajax', action + '.php') + q;
+			console.log('in get ajax in myfilelist');
+			//alert(OC.filePath('mynewapp', action) + q);
+			return OC.filePath('mynewapp', action) + q;
 		},
 
+		/**
+		 * Reloads the file list using ajax call
+		 *
+		 * @return ajax call object
+		 */
+		
+		reload: function() {
+			console.log('in reload in myfilelist'); // -> not run!
+			this._selectedFiles = {};
+			this._selectionSummary.clear();
+			this.$el.find('.select-all').prop('checked', false);
+			this.showMask();
+			if (this._reloadCall) {
+				this._reloadCall.abort();
+			}
+			this._reloadCall = $.ajax({
+				// url: this.getAjaxUrl('list'), -> now "listtrash"
+				url: this.getAjaxUrl('listtrash'),
+				data: {
+					dir : this.getCurrentDirectory(),
+					sort: this._sort,
+					sortdirection: this._sortDirection
+				}
+			});
+			var callBack = this.reloadCallback.bind(this);
+			return this._reloadCall.then(callBack, callBack);
+		},
+		reloadCallback: function(result) {
+			delete this._reloadCall;
+			this.hideMask();
+
+			if (!result || result.status === 'error') {
+				// if the error is not related to folder we're trying to load, reload the page to handle logout etc
+				if (result.data.error === 'authentication_error' ||
+					result.data.error === 'token_expired' ||
+					result.data.error === 'application_not_enabled'
+				) {
+					OC.redirect(OC.generateUrl('apps/files'));
+				}
+				OC.Notification.show(result.data.message);
+				return false;
+			}
+
+			if (result.status === 404) {
+				// go back home
+				this.changeDirectory('/');
+				return false;
+			}
+			// aborted ?
+			if (result.status === 0){
+				return true;
+			}
+
+			// TODO: should rather return upload file size through
+			// the files list ajax call
+			this.updateStorageStatistics(true);
+
+			if (result.data.permissions) {
+				this.setDirectoryPermissions(result.data.permissions);
+			}
+
+			this.setFiles(result.data.files);
+			return true;
+		},
+		
 		setupUploadEvents: function() {
 			// override and do nothing
 		},
