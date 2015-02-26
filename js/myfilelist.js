@@ -1,5 +1,5 @@
 /**
- * ownCloud - mynewapp - adapted from OC Core Recover filelist.js
+ * ownCloud - recover - adapted from OC Core Recover filelist.js
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -40,7 +40,7 @@
 	};
 	FileList.prototype = _.extend({}, OCA.Files.FileList.prototype,
 		/** @lends OCA.Recover.FileList.prototype */ {
-		id: 'mynewapp',
+		id: 'recover',
 		appName: 'Recover',
 
 		/**
@@ -50,7 +50,7 @@
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
-			console.log('in init from OCA.Recover.FileList');
+			//console.log('in init of OCA.Recover.FileList');
 			this.setSort('mtime', 'desc');
 			/**
 			 * Override crumb making to add "Deleted Files" entry
@@ -118,10 +118,11 @@
 			if (params) {
 				q = '?' + OC.buildQueryString(params);
 			}
-			//return OC.filePath('mynewapp', 'ajax', action + '.php') + q;
-			console.log('in get ajax in myfilelist'); // -> not run
-			//alert(OC.filePath('mynewapp', action) + q);
-			return OC.filePath('mynewapp', action) + q;
+			console.log('in get ajax in myfilelist'); 
+			return OC.filePath('recover', 'ajax', action + '.php') + q;
+			
+			//alert(OC.filePath('recover', action) + q);
+			//return OC.filePath('recover', action) + q;
 		},
 
 		/**
@@ -141,7 +142,7 @@
 			}
 			this._reloadCall = $.ajax({
 				// url: this.getAjaxUrl('list'), -> now "listtrash"
-				url: this.getAjaxUrl('listtrash'),
+				url: this.getAjaxUrl('list'),
 				data: {
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
@@ -182,7 +183,7 @@
 			// TODO: should rather return upload file size through
 			// the files list ajax call
 			this.updateStorageStatistics(true);
-
+			console.log("result: ", result);
 			if (result.data.permissions) {
 				this.setDirectoryPermissions(result.data.permissions);
 			}
@@ -207,7 +208,7 @@
 
 		_removeCallback: function(result) {
 			if (result.status !== 'success') {
-				OC.dialogs.alert(result.data.message, t('mynewapp', 'Error'));
+				OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 			}
 
 			var files = result.data.success;
@@ -247,12 +248,12 @@
 				};
 			}
 
-			$.post(OC.filePath('mynewapp', 'ajax', 'undelete.php'),
+			$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
 				params,
 				function(result) {
 					if (allFiles) {
 						if (result.status !== 'success') {
-							OC.dialogs.alert(result.data.message, t('mynewapp', 'Error'));
+							OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 						}
 						self.hideMask();
 						// simply remove all files
@@ -297,12 +298,12 @@
 				}
 			}
 
-			$.post(OC.filePath('mynewapp', 'ajax', 'delete.php'),
+			$.post(OC.filePath('recover', 'ajax', 'delete.php'),
 					params,
 					function(result) {
 						if (allFiles) {
 							if (result.status !== 'success') {
-								OC.dialogs.alert(result.data.message, t('mynewapp', 'Error'));
+								OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 							}
 							self.hideMask();
 							// simply remove all files
@@ -325,7 +326,7 @@
 		},
 
 		generatePreviewUrl: function(urlSpec) {
-			return OC.generateUrl('/apps/mynewapp/ajax/preview.php?') + $.param(urlSpec);
+			return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);
 		},
 
 		getDownloadUrl: function() {

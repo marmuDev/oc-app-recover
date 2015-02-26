@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - mynewapp
+ * ownCloud - recover
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -11,8 +11,9 @@
 
 return ['routes' => [
 	['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-	['name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET'],
-	['name' => 'page#list_trash_bin', 'url' => '/listtrash', 'verb' => 'GET']
+	['name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET']
+	// first ajax, then routes
+	//['name' => 'page#list_trash_bin', 'url' => '/listtrash', 'verb' => 'GET']
 ]];
 
 

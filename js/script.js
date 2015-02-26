@@ -1,5 +1,5 @@
 /**
- * ownCloud - mynewapp
+ * ownCloud - recover
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -12,10 +12,10 @@
 (function(window, document, angular, $, OC, csrfToken, undefined){
     'use strict';
 
-    angular.module('mynewapp', [])
+    angular.module('recover', [])
     .config(function($httpProvider, $provide) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
-        $provide.constant('BASE_URL', OC.generateUrl('/apps/mynewapp'));
+        $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
     })
 
     //.run(function($rootScope, $http, BASE_URL, GetRecDelTrash){

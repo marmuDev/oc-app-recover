@@ -1,5 +1,5 @@
 /**
- * ownCloud - mynewapp - Recover - adapted from trashbin among others
+ * ownCloud - recover - Recover - adapted from trashbin among others
  *	
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -45,6 +45,9 @@ OCA.Recover.App = {
 				fileActions: this._createFileActions()
 			}
 		);
+		//console.log('in init of OCA.Recover.App before manual reload');
+		// hack to force loading of list -> myfilelist reload -> getAjaxUrl
+		this.fileList.reload();
 	},
 
 	// adapt according to file source and coresponding functions etc.
@@ -69,13 +72,13 @@ OCA.Recover.App = {
 			// AJAX path for PHP!!!
 			// AJAX path for PHP!!!
 			// AJAX path for PHP!!!
-			$.post(OC.filePath('mynewapp', 'ajax', 'recover.php'), {
+			$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
 					files: JSON.stringify([filename]),
 					dir: fileList.getCurrentDirectory()
 				},
 				_.bind(fileList._removeCallback, fileList)
 			);
-		}, t('mynewapp', 'Recover'));
+		}, t('recover', 'Recover'));
 
 		fileActions.registerAction({
 			name: 'Delete',
@@ -87,8 +90,8 @@ OCA.Recover.App = {
 			},
 			render: function(actionSpec, isDefault, context) {
 				var $actionLink = fileActions._makeActionLink(actionSpec, context);
-				$actionLink.attr('original-title', t('mynewapp', 'Delete permanently'));
-				$actionLink.children('img').attr('alt', t('mynewapp', 'Delete permanently'));
+				$actionLink.attr('original-title', t('recover', 'Delete permanently'));
+				$actionLink.children('img').attr('alt', t('recover', 'Delete permanently'));
 				context.$file.find('td:last').append($actionLink);
 				return $actionLink;
 			},
@@ -99,7 +102,7 @@ OCA.Recover.App = {
 				var deleteAction = tr.children("td.date").children(".action.delete");
 				deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
 				fileList.disableActions();
-				$.post(OC.filePath('mynewapp', 'ajax', 'delete.php'), {
+				$.post(OC.filePath('recover', 'ajax', 'delete.php'), {
 						files: JSON.stringify([filename]),
 						dir: fileList.getCurrentDirectory()
 					},

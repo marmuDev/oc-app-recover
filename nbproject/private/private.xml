@@ -3,17 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/var/www/core/apps/mynewapp/controller/pagecontroller.php</file>
-            <file>file:/var/www/core/apps/mynewapp/templates/part.search.php</file>
-            <file>file:/var/www/core/apps/mynewapp/appinfo/application.php</file>
-            <file>file:/var/www/core/apps/mynewapp/js/script.js</file>
-            <file>file:/var/www/core/apps/mynewapp/appinfo/info.xml</file>
-            <file>file:/var/www/core/apps/mynewapp/appinfo/database.xml</file>
-            <file>file:/var/www/core/apps/mynewapp/templates/part.recent.php</file>
-            <file>file:/var/www/core/apps/mynewapp/templates/main.php</file>
-            <file>file:/var/www/core/apps/mynewapp/appinfo/routes.php</file>
-            <file>file:/var/www/core/apps/mynewapp/appinfo/app.php</file>
-            <file>file:/var/www/core/apps/mynewapp/controller/itemcontroller.php</file>
+            <file>file:/var/www/core/apps/recover/controller/pagecontroller.php</file>
+            <file>file:/var/www/core/apps/recover/templates/part.search.php</file>
+            <file>file:/var/www/core/apps/recover/appinfo/application.php</file>
+            <file>file:/var/www/core/apps/recover/js/script.js</file>
+            <file>file:/var/www/core/apps/recover/appinfo/info.xml</file>
+            <file>file:/var/www/core/apps/recover/appinfo/database.xml</file>
+            <file>file:/var/www/core/apps/recover/templates/part.recent.php</file>
+            <file>file:/var/www/core/apps/recover/templates/main.php</file>
+            <file>file:/var/www/core/apps/recover/appinfo/routes.php</file>
+            <file>file:/var/www/core/apps/recover/appinfo/app.php</file>
+            <file>file:/var/www/core/apps/recover/controller/itemcontroller.php</file>
         </group>
     </open-files>
 </project-private>

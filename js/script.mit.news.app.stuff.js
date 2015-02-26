@@ -1,5 +1,5 @@
 /**
- * ownCloud - mynewapp
+ * ownCloud - recover
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -18,7 +18,7 @@
         EMPTY: 4
     };
     
-    var app = angular.module('mynewapp', []);
+    var app = angular.module('recover', []);
     app.config(["$routeProvider", "$provide", "$httpProvider", function($routeProvider, $provide, $httpProvider) {
         'use strict';
         
@@ -184,7 +184,7 @@
 //        });
 //
 //        $('#echo').click(function () {
-//                var url = OC.generateUrl('/apps/mynewapp/echo');
+//                var url = OC.generateUrl('/apps/recover/echo');
 //                var data = {
 //                        echo: $('#echo-content').val()
 //                };
@@ -195,7 +195,7 @@
 //
 //        });
 ////        $('#notifysettings').click(function () {
-////                var url = OC.generateUrl('/apps/mynewapp/notifysettings');
+////                var url = OC.generateUrl('/apps/recover/notifysettings');
 ////                $.post(url);
 ////
 ////        });

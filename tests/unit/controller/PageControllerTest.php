@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - mynewapp
+ * ownCloud - Recover
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -9,14 +9,14 @@
  * @copyright Marcus Mundt 2014
  */
 
-namespace OCA\MyNewApp\Controller;
+namespace OCA\Recover\Controller;
 
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Http\JSONResponse;
 
-use \OCA\MyNewApp\AppInfo\Application;
+use \OCA\Recover\AppInfo\Application;
 
 
 class PageControllerTest extends \PHPUnit_Framework_TestCase {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ownCloud - Recover
+ * ownCloud - recover
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -17,12 +17,14 @@ use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
 
 // for own DB entries, tables etc. - for standard trashbin stuff obsolete
-//use \OCA\Recover\Db\Item; -> gibts nicht mehr ggf aus backup holen
+//use \OCA\MyNewApp\Db\Item;
 // for trashbin use (standard?) mapper
-use \OCA\Recover\Db\TrashBinMapper;
+use \OCA\MyNewApp\Db\TrashBinMapper;
 
 class PageController extends Controller {
+
     private $userId;
+
     public function __construct($AppName, IRequest $request, $UserId,
                                 TrashBinMapper $trashBinMapper) {
         parent::__construct($AppName, $request);
@@ -30,6 +32,7 @@ class PageController extends Controller {
         $this->request = $request;
         $this->trashBinMapper = $trashBinMapper;
     }
+
     /**
      * @NoAdminRequired
      * @NoCSRFRequired

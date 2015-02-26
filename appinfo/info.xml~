@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <info>
     <id>recover</id>
-    <name>Recover</name>
-    <description>Recover files from different sources</description>
-    <namespace>Recover</namespace>
+    <name>My New App</name>
+    <description>My second app</description>
+    <namespace>MyNewApp</namespace>
     <licence>AGPL</licence>
     <author>Marcus Mundt</author>
-    <version>0.0.2</version>
+    <version>0.0.1</version>
     <requiremin>7.6</requiremin>
     <types>
         <type>filesystem</type>

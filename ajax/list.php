@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ownCloud - mynewapp - adapted from /apps/files_trashbin/ajax/list.php
+ * ownCloud - recover - adapted from /apps/files_trashbin/ajax/list.php
  * obsolete since now using list function in pagecontroller.php
  *
  * This file is licensed under the Affero General Public License version 3 or

@@ -1,2 +1,2 @@
-owncloud-mynewapp (0.0.1)
+owncloud-recover (0.0.1)
 * First release

@@ -1,6 +1,6 @@
 <?php 
 /**
- * ownCloud - mynewapp
+ * ownCloud - recover
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -10,8 +10,8 @@
  */
 //    To use routes in OC_Template, use:
 //    print_unescaped(\OCP\Util::linkToRoute(
-        //'mynewapp.page.get_recently_deleted', array('key' => 1)
-  //          'mynewapp.page.get_recently_deleted'
+        //'recover.page.get_recently_deleted', array('key' => 1)
+  //          'recover.page.get_recently_deleted'
     //));
 //    p("user: ".$_['user']." - ");
 //    Request could not be converted to string
@@ -48,7 +48,8 @@ Quick Filter: <input type="text" ng-model="search"> {{search}} <br>
 
 
 <!-- /apps/files_trashbin/templates/index.php -->
-<div id="controls">
+<div id="app-content-trashbin" class="hidden viewcontainer">
+    <div id="controls"></div>
     <div id="file_action_panel"></div>
 </div>
 <div id='notification'></div>

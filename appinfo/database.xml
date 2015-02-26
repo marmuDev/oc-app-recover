@@ -5,7 +5,7 @@
  <overwrite>false</overwrite>
  <charset>utf8</charset>
     <table>
-      <name>*dbprefix*mynewapp_items</name>
+      <name>*dbprefix*recover_items</name>
       <declaration>
         <field>
           <name>id</name>

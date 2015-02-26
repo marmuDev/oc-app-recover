@@ -10,7 +10,7 @@
  * @copyright Marcus Mundt 2014
  */
 
-namespace OCA\Recover\Db;
+namespace OCA\MyNewApp\Db;
 
 use \OCP\AppFramework\Db\Entity;
 

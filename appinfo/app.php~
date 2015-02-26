@@ -9,7 +9,7 @@
  * @copyright Marcus Mundt 2015
  */
 
-namespace OCA\Recover\AppInfo;
+namespace OCA\MyNewApp\AppInfo;
 
 use OCP\App;
 

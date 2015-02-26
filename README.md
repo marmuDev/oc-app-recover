@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# My New App
+# Recover
 Place this app in **owncloud/apps/**
 
 
