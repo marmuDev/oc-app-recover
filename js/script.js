@@ -48,11 +48,9 @@
     .controller('RecentController', function($http, $rootScope, BASE_URL){
         this.text = "init";
         this.items = [];
-
-        alert("in recent controller before ajax to list trash");
-
+        alert("in recent controller before triggering route to create trash list");
         var self = this;
-        /**
+        
         $http.get(BASE_URL + '/listtrash', {cache: 'true'} )
         .success(function(data) {
             // war für einfache auflistung der DB inhalte, wie nun mit trashbin data verfahren?
@@ -66,7 +64,7 @@
         .error(function() {
             alert("error during http get in RecentController get /listtrash");
         });
-        */
+        
 
     })
 

@@ -47,7 +47,9 @@ OCA.Recover.App = {
 		);
 		//console.log('in init of OCA.Recover.App before manual reload');
 		// hack to force loading of list -> myfilelist reload -> getAjaxUrl
-		this.fileList.reload();
+		// trying to solve it via http.get in recentcontroller
+		// -> ajax obsolete, therefore reload/reloadCallback and getAjaxUrl obsolete(?)s
+		//this.fileList.reload();
 	},
 
 	// adapt according to file source and coresponding functions etc.

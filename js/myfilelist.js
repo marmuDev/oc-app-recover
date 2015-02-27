@@ -111,7 +111,7 @@
 
 		// called by reload in /apps/files/js/filelist.js,
 		// "list" is hardcoded as action! 
-		// keep it that way, have list.php in ajax folder and solve route problem
+		// obsolete, since triggering route in reload
 		// => override with own reload and reloadCallback methods
 		getAjaxUrl: function(action, params) {
 			var q = '';
@@ -132,7 +132,7 @@
 		 */
 		
 		reload: function() {
-			console.log('in reload in myfilelist'); // -> not run!
+			console.log('in reload in myfilelist'); 
 			this._selectedFiles = {};
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
