@@ -11,10 +11,11 @@
  */
 (function(window, document, angular, $, OC, csrfToken, undefined){
     'use strict';
-
+    console.log('in script.js oben');
     angular.module('recover', [])
     .config(function($httpProvider, $provide) {
         $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+        // wie wo so definieren, dass alle darauf zugriff haben -> config-service?
         $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
     })
 
@@ -44,21 +45,23 @@
          };
     })
 
-    // wird momentan nicht ausgeführt! -> myfilelist.js? -> sollte nun eh wie in files/trashbin ablaufen
+    // wird nur ausgeführt, 
+    // wenn <div ng-controller="RecentController as recentCtrl"> in template!
     .controller('RecentController', function($http, $rootScope, BASE_URL){
         this.text = "init";
         this.items = [];
-        alert("in recent controller before triggering route to create trash list");
+        console.log('script.js: in recent controller BASE_URL = ' + BASE_URL);
         var self = this;
         
-        $http.get(BASE_URL + '/listtrash', {cache: 'true'} )
+        $http.get(BASE_URL + '/listtrash')
         .success(function(data) {
             // war für einfache auflistung der DB inhalte, wie nun mit trashbin data verfahren?
                 //self.items = data;
                 // versuche timestamp in user lesbares format zu wandeln
                 //self.items[0].timestamp = Math.floor(self.items[0].timestamp / 1000);
                 //self.items[0].timestamp = parseInt(self.items[0].timestamp, 10);
-            alert("data nach list trash = " + data);    
+            console.log("data nach list trash = \n" + data.files.toSource());    
+            //OCA.Recover.FileList.setFiles(data.files);
             
         })
         .error(function() {

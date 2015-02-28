@@ -9,7 +9,8 @@
  */
 (function() {
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
-
+	// how to define? in script.js (angular) ok, here -> "$provide is undefined"
+	// $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
 	/**
 	 * Convert a file name in the format filename.d12345 to the real file name.
 	 * This will use basename.
@@ -50,7 +51,7 @@
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
-			//console.log('in init of OCA.Recover.FileList');
+			console.log('in init of OCA.Recover.FileList');
 			this.setSort('mtime', 'desc');
 			/**
 			 * Override crumb making to add "Deleted Files" entry
@@ -113,6 +114,7 @@
 		// "list" is hardcoded as action! 
 		// obsolete, since triggering route in reload
 		// => override with own reload and reloadCallback methods
+		/*
 		getAjaxUrl: function(action, params) {
 			var q = '';
 			if (params) {
@@ -124,6 +126,7 @@
 			//alert(OC.filePath('recover', action) + q);
 			//return OC.filePath('recover', action) + q;
 		},
+		*/
 
 		/**
 		 * Reloads the file list using ajax call
@@ -132,7 +135,7 @@
 		 */
 		
 		reload: function() {
-			console.log('in reload in myfilelist'); 
+			console.log('in reload in myfilelist URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
 			this._selectedFiles = {};
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
@@ -140,15 +143,18 @@
 			if (this._reloadCall) {
 				this._reloadCall.abort();
 			}
+			
 			this._reloadCall = $.ajax({
 				// url: this.getAjaxUrl('list'), -> now "listtrash"
-				url: this.getAjaxUrl('list'),
+				//url: BASE_URL + '/listtrash',
+				url: OC.generateUrl('/apps/recover/trashlist'),
 				data: {
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
 					sortdirection: this._sortDirection
 				}
 			});
+			
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
 		},
@@ -187,8 +193,16 @@
 			if (result.data.permissions) {
 				this.setDirectoryPermissions(result.data.permissions);
 			}
-
 			this.setFiles(result.data.files);
+
+			//$http.get(BASE_URL + '/listtrash')
+        	//.success(function(data) {
+            	//console.log("data nach list trash = \n" + data.files.toSource());    
+            //  	this.setFiles(data.files);
+            //})
+        	//.error(function() {
+	        //   	alert("error during http get in reloadCallback in myfilelist.js");
+        	//});
 			return true;
 		},
 		

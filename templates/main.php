@@ -15,23 +15,19 @@
 // this is how to do it using Twig Templates
 //{{ script('public/app', 'appframework') }}
 
-// my scripts first, now more with OCP\UTIL to change orders more comfortable
+// angular and app first, now more with OCP\UTIL to change orders more comfortable
 script('recover', array('vendor/angular.min', 'app/app'));
 // scripts for files lists and trashbin stuff
 // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
 /**
-OCP\Util::addStyle('files', 'upload');
-OCP\Util::addStyle('files', 'mobile');
-*/
-// gotta use own app.js!!!
-//OCP\Util::addscript('files', 'app');
-/**
-OCP\Util::addscript('files', 'file-upload');
-OCP\Util::addscript('files', 'jquery.iframe-transport');
-OCP\Util::addscript('files', 'jquery.fileupload');
-OCP\Util::addscript('files', 'jquery-visibility');
-
-*/
+* OCP\Util::addStyle('files', 'upload');
+* OCP\Util::addStyle('files', 'mobile');
+* OCP\Util::addscript('files', 'file-upload');
+* OCP\Util::addscript('files', 'jquery.iframe-transport');
+* OCP\Util::addscript('files', 'jquery.fileupload');
+* OCP\Util::addscript('files', 'jquery-visibility');
+*
+**/
 OCP\Util::addscript('files', 'filesummary');
 OCP\Util::addscript('files', 'breadcrumb');
 // at least actions will have to be adapted for the recovery of files from different sources
@@ -44,10 +40,10 @@ OCP\Util::addscript('recover', 'script');
 OCP\Util::addStyle('files', 'files');
 OCP\Util::addStyle('files_trashbin', 'trash');
 /**
-OCP\Util::addscript('files', 'search');
-\OCP\Util::addScript('files', 'favoritesfilelist');
-\OCP\Util::addScript('files', 'tagsplugin');
-\OCP\Util::addScript('files', 'favoritesplugin');
+ * OCP\Util::addscript('files', 'search');
+ * OCP\Util::addScript('files', 'favoritesfilelist');
+ * OCP\Util::addScript('files', 'tagsplugin');
+ * OCP\Util::addScript('files', 'favoritesplugin');
 */
 
 //include appframework which helps to interact with the OC-server?

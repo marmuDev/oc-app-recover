@@ -1,15 +1,12 @@
 <?php
 namespace OCA\Recover\AppInfo;
-
 use \OCP\AppFramework\App;
-
 use \OCA\Recover\Controller\PageController;
 
-
-class Application extends App {
+class Recover extends App {
 
     public function __construct(array $urlParams=array()){
-        parent::__construct('Recover', $urlParams);
+        parent::__construct('recover', $urlParams);
 
         $container = $this->getContainer();
 
@@ -19,7 +16,7 @@ class Application extends App {
         $container->registerService('PageController', function($c) {
             return new PageController(
                 $c->query('AppName'),
-                $c->query('Request'),
+                $c->query('Request')
 
                 /**
                  * Sometimes its useful to turn a route into a URL 
@@ -33,5 +30,4 @@ class Application extends App {
             );
         });
     }
-
 }

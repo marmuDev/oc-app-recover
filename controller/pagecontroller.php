@@ -12,9 +12,10 @@
 
 namespace OCA\Recover\Controller;
 
-use \OCP\IRequest;
-use \OCP\AppFramework\Http\TemplateResponse;
-use \OCP\AppFramework\Controller;
+use OCP\IRequest;
+use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Controller;
 
 // for own DB entries, tables etc. - for standard trashbin stuff obsolete
 //use \OCA\Recover\Db\Item; -> gibts nicht mehr ggf aus backup holen
@@ -51,9 +52,8 @@ class PageController extends Controller {
     }
 
     // wenn ich route manuell aufrufe, redirect zu files app!
-    // first ajax then routes and controllers
     public function listTrashBin() {
-        printf("IN LISTTRASHBIN.PHP"); //-> isn't redirecting properly
+       
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
         // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
@@ -82,6 +82,6 @@ class PageController extends Controller {
 
         return new DataResponse($data);
         //return true;
-    
+      
     }
 }

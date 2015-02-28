@@ -19,7 +19,7 @@ return ['routes' => [
 
 namespace OCA\Recover\AppInfo;
 
-$application = new Application();
+$application = new Recover();
 $application->registerRoutes($this, array(
     'routes' => array(
         array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),

@@ -25,12 +25,6 @@
 
 ?>
 <!--
- nachfolgendes eher hier richtig (Template) 
- -> adapted from /apps/files_trashbin/templates/index.php
- fester Zeitraum von einem Monat, Quellen wählbar
-    - Dateien aus trashbin anhand user name
-    - ng.repeat hilft
-
 <div ng-controller="RecentController as recentCtrl">    
 Quick Filter: <input type="text" ng-model="search"> {{search}} <br>
 </div>
@@ -45,6 +39,9 @@ Quick Filter: <input type="text" ng-model="search"> {{search}} <br>
             <td>{{item.location}}</td>
     </tr>
 -->
+<!-- for now just to load recent Controller in script.js 
+to get filelist data -->
+<div ng-controller="RecentController as recentCtrl">    
 
 
 <!-- /apps/files_trashbin/templates/index.php -->
@@ -104,3 +101,4 @@ Quick Filter: <input type="text" ng-model="search"> {{search}} <br>
     <tfoot>
     </tfoot>
 </table>
+</div>
