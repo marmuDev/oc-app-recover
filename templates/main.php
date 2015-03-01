@@ -16,7 +16,7 @@
 //{{ script('public/app', 'appframework') }}
 
 // angular and app first, now more with OCP\UTIL to change orders more comfortable
-script('recover', array('vendor/angular.min', 'app/app'));
+script('recover', array('vendor/angular.min', 'app/app', 'app/run', 'app/config', 'app/services/services'));
 // scripts for files lists and trashbin stuff
 // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
 /**
@@ -35,7 +35,7 @@ OCP\Util::addscript('files', 'fileactions');
 OCP\Util::addscript('files', 'filelist');
 OCP\Util::addscript('files', 'navigation');
 OCP\Util::addscript('recover', 'myfilelist');
-OCP\Util::addscript('recover', 'script');
+OCP\Util::addscript('recover', 'app/controllers/mainctrl');
 
 OCP\Util::addStyle('files', 'files');
 OCP\Util::addStyle('files_trashbin', 'trash');

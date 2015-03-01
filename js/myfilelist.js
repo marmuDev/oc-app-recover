@@ -10,7 +10,8 @@
 (function() {
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 	// how to define? in script.js (angular) ok, here -> "$provide is undefined"
-	// $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
+	// hab ich bereits in angular module config, nix doppelt machen!!!
+	//$provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
 	/**
 	 * Convert a file name in the format filename.d12345 to the real file name.
 	 * This will use basename.
@@ -46,7 +47,6 @@
 
 		/**
 		 * @private
-		 * is run...
 		 */
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
@@ -129,9 +129,9 @@
 		*/
 
 		/**
-		 * Reloads the file list using ajax call
+		 * Reloads the file list
 		 *
-		 * @return ajax call object
+		 * @return ?
 		 */
 		
 		reload: function() {
@@ -140,6 +140,26 @@
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
 			this.showMask();
+			var trashData = 'init';
+			// -> params ok, aber http get kackt ab,
+			// mit angular $http.get (recentController) gehts, so nicht!
+			// auch nicht mit adresse in browser eingeben -> redirect!!
+			console.log("this dir = " + this.getCurrentDirectory());    
+			console.log("this sort = " + this._sort);
+			console.log("this sort direction = " + this._sortDirection);
+			$.getJSON('http://localhost/core/index.php/apps/recover/trashlist', 
+				{
+					dir : this.getCurrentDirectory(),
+					sort: this._sort,
+					sortdirection: this._sortDirection
+				}, function(data) {
+            		trashData = data;
+            		console.log("trashData in reload = \n" + trashData.files.toSource());    
+            	}
+            );
+			this.setFiles(trashData.files);
+		},
+			/**
 			if (this._reloadCall) {
 				this._reloadCall.abort();
 			}
@@ -205,7 +225,7 @@
         	//});
 			return true;
 		},
-		
+		**/
 		setupUploadEvents: function() {
 			// override and do nothing
 		},

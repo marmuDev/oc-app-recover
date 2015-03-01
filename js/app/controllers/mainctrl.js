@@ -5,24 +5,27 @@
  * later. See the COPYING file.
  *
  * jQuery resides in /core/core/js
- *
+ *  
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
 (function(window, document, angular, $, OC, csrfToken, undefined){
-    'use strict';
+    
+    
+    /** trashbin filelist (later this could become a service "TrashResource")
+     *  adapted from trashbin filelist.js / myfilelist.js
+     
+    //var TrashList = function($el, options)
+    var TrashList =  function ($el, options) {
+        OCA.Recover.FileList.prototype.initialize.apply(this, arguments);
+        //this.initialize($el, options);
+    };
+    //TrashList.prototype = Object.create(Resource.prototype);
+    TrashList.prototype = Object.create(FileList.prototype);
+    **/
     console.log('in script.js oben');
-    angular.module('recover', [])
-    .config(function($httpProvider, $provide) {
-        $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
-        // wie wo so definieren, dass alle darauf zugriff haben -> config-service?
-        $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
-    })
-
-    //.run(function($rootScope, $http, BASE_URL, GetRecDelTrash){
-    .run(function($rootScope, $http, BASE_URL){
-        $rootScope.linkNum = 1;
-    })
+        
+    
 
 /** zunächst überflüssig...
     .service('GetRecDelTrash', function($http, BASE_URL) {
@@ -31,10 +34,10 @@
         };
     })
 */
-    .controller('ContentController',  function($rootScope){
+    app.controller('ContentController', function($rootScope){
     })
 
-    .controller('NaviController', function($rootScope){
+    app.controller('NaviController', function($rootScope){
          this.link = 1;
          this.selectLink = function(linkNum) {
             this.link = linkNum;
@@ -47,12 +50,14 @@
 
     // wird nur ausgeführt, 
     // wenn <div ng-controller="RecentController as recentCtrl"> in template!
-    .controller('RecentController', function($http, $rootScope, BASE_URL){
+    
+    app.controller('RecentController', function($http, $rootScope, BASE_URL){
         this.text = "init";
         this.items = [];
         console.log('script.js: in recent controller BASE_URL = ' + BASE_URL);
         var self = this;
-        
+
+        /** get this into myfilelist.js
         $http.get(BASE_URL + '/listtrash')
         .success(function(data) {
             // war für einfache auflistung der DB inhalte, wie nun mit trashbin data verfahren?
@@ -61,17 +66,16 @@
                 //self.items[0].timestamp = Math.floor(self.items[0].timestamp / 1000);
                 //self.items[0].timestamp = parseInt(self.items[0].timestamp, 10);
             console.log("data nach list trash = \n" + data.files.toSource());    
-            //OCA.Recover.FileList.setFiles(data.files);
-            
+            return data.files.toSource();
         })
         .error(function() {
             alert("error during http get in RecentController get /listtrash");
         });
-        
-
+        **/
     })
 
-    .controller('SearchController', function() {
+
+    app.controller('SearchController', function() {
         //var searchAttribute = {
         this.search = [
             {
