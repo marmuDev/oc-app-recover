@@ -88,7 +88,7 @@
 		},
 
 		_createRow: function() {
-			console.log('in createRow in myfilelist'); // -> not run!
+			console.log('in createRow in myfilelist'); 
 			// FIXME: MEGAHACK until we find a better solution
 			var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
 			tr.find('td.filesize').remove();
@@ -131,7 +131,7 @@
 		/**
 		 * Reloads the file list
 		 *
-		 * @return ajax object
+		 * @return ajax object (still?)
 		 */
 		
 		reload: function() {
@@ -140,10 +140,9 @@
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
 			this.showMask();
-			var trashData = 'init';
+			//var trashData = 'init';
 			// -> params ok, aber http get kackt ab,
-			// mit angular $http.get (recentController) gehts, so nicht!
-			// auch nicht mit adresse in browser eingeben -> redirect!!
+			// route didn't match "/trashlist?dir=...."
 			console.log("this dir = " + this.getCurrentDirectory());    
 			console.log("this sort = " + this._sort);
 			console.log("this sort direction = " + this._sortDirection);
@@ -159,30 +158,18 @@
 					sortdirection: this._sortDirection
 				}
             });
-			//this.setFiles(trashData.files);
+			
 
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
 		},
-			/**
-			if (this._reloadCall) {
-				this._reloadCall.abort();
-			}
 			
-			this._reloadCall = $.ajax({
-				// url: this.getAjaxUrl('list'), -> now "listtrash"
-				//url: BASE_URL + '/listtrash',
-				url: OC.generateUrl('/apps/recover/trashlist'),
-				data: {
-					dir : this.getCurrentDirectory(),
-					sort: this._sort,
-					sortdirection: this._sortDirection
-				}
-			});
-			
-			var callBack = this.reloadCallback.bind(this);
-			return this._reloadCall.then(callBack, callBack);
-		},**/
+		/**
+		 *  NOW THERE IS ONLY 	result.permissions
+								result.directory
+								result.files
+			BEFORE: result.data.*
+		 **/
 		reloadCallback: function(result) {
 			delete this._reloadCall;
 			this.hideMask();
@@ -212,20 +199,12 @@
 			// TODO: should rather return upload file size through
 			// the files list ajax call
 			this.updateStorageStatistics(true);
-			console.log("result in myfielist reloadCallback: ", result);
-			if (result.data.permissions) {
-				this.setDirectoryPermissions(result.data.permissions);
+			console.log("result in myfileist reloadCallback: ", result);
+			if (result.permissions) {
+				this.setDirectoryPermissions(result.permissions);
 			}
-			this.setFiles(result.data.files);
-
-			//$http.get(BASE_URL + '/listtrash')
-        	//.success(function(data) {
-            	//console.log("data nach list trash = \n" + data.files.toSource());    
-            //  	this.setFiles(data.files);
-            //})
-        	//.error(function() {
-	        //   	alert("error during http get in reloadCallback in myfilelist.js");
-        	//});
+			//this.setFiles(result.data.files);
+			this.setFiles(result.files);
 			return true;
 		},
 		
