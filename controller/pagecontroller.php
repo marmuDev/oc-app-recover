@@ -52,17 +52,22 @@ class PageController extends Controller {
     }
 
     // wenn ich route manuell aufrufe, redirect zu files app!
+    //public function listTrashBin($dir, $sort, $sortdirection) {
     public function listTrashBin() {
-       
+        // original trashbin/ajax/list.php
+        \OCP\JSON::checkLoggedIn();
+        \OC::$server->getSession()->close();
+
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
         // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
         $dir = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
+        throw new \Exception( "\$dir = $dir" );
         //printf($dir);
         $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
         $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $data = array();
-
+        
         // make filelist
         try {
             $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
@@ -71,16 +76,20 @@ class PageController extends Controller {
             exit();
         }
         //printf($files);
-
+        throw new \Exception( "nach make filelist" );
+        // encodeDir crashes!!!
         $encodedDir = \OCP\Util::encodePath($dir);
-
+        
         $data['permissions'] = 0;
         $data['directory'] = $dir;
+        throw new \Exception( "PAGECONTROLLER vor data files" );
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
-        
+        throw new \Exception( "PAGECONTROLLER after data files" );
         //printf($data);
-
-        return new DataResponse($data);
+        throw new \Exception( "\$data.files = $data.files" );
+        //return new DataResponse($data['files']);
+        // original trashbin/ajax/list.php
+        \OCP\JSON::success(array('data' => $data));
         //return true;
       
     }

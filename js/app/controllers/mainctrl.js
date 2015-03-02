@@ -57,7 +57,7 @@
         console.log('script.js: in recent controller BASE_URL = ' + BASE_URL);
         var self = this;
 
-        /** get this into myfilelist.js
+        /**
         $http.get(BASE_URL + '/listtrash')
         .success(function(data) {
             // war für einfache auflistung der DB inhalte, wie nun mit trashbin data verfahren?
@@ -73,7 +73,6 @@
         });
         **/
     })
-
 
     app.controller('SearchController', function() {
         //var searchAttribute = {

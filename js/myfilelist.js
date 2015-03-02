@@ -131,7 +131,7 @@
 		/**
 		 * Reloads the file list
 		 *
-		 * @return ?
+		 * @return ajax object
 		 */
 		
 		reload: function() {
@@ -147,17 +147,22 @@
 			console.log("this dir = " + this.getCurrentDirectory());    
 			console.log("this sort = " + this._sort);
 			console.log("this sort direction = " + this._sortDirection);
-			$.getJSON('http://localhost/core/index.php/apps/recover/trashlist', 
-				{
+			if (this._reloadCall) {
+				this._reloadCall.abort();
+			}
+			this._reloadCall = $.ajax({
+				//url: 'http://localhost/core/index.php/apps/recover/trashlist', 
+				url : OC.generateUrl('/apps/recover/trashlist'),
+				data : {
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
 					sortdirection: this._sortDirection
-				}, function(data) {
-            		trashData = data;
-            		console.log("trashData in reload = \n" + trashData.files.toSource());    
-            	}
-            );
-			this.setFiles(trashData.files);
+				}
+            });
+			//this.setFiles(trashData.files);
+
+			var callBack = this.reloadCallback.bind(this);
+			return this._reloadCall.then(callBack, callBack);
 		},
 			/**
 			if (this._reloadCall) {
@@ -177,11 +182,10 @@
 			
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
-		},
+		},**/
 		reloadCallback: function(result) {
 			delete this._reloadCall;
 			this.hideMask();
-			console.log('in reloadCallback at the beginning');
 			if (!result || result.status === 'error') {
 				// if the error is not related to folder we're trying to load, reload the page to handle logout etc
 				if (result.data.error === 'authentication_error' ||
@@ -197,7 +201,6 @@
 
 			if (result.status === 404) {
 				// go back home
-				console.log('in reloadCallback status 404 -> go back home');
 				this.changeDirectory('/');
 				return false;
 			}
@@ -209,7 +212,7 @@
 			// TODO: should rather return upload file size through
 			// the files list ajax call
 			this.updateStorageStatistics(true);
-			console.log("result: ", result);
+			console.log("result in myfielist reloadCallback: ", result);
 			if (result.data.permissions) {
 				this.setDirectoryPermissions(result.data.permissions);
 			}
@@ -225,7 +228,7 @@
         	//});
 			return true;
 		},
-		**/
+		
 		setupUploadEvents: function() {
 			// override and do nothing
 		},
