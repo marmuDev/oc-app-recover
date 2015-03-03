@@ -46,9 +46,8 @@ now without angular!
 <div ng-controller="RecentController as recentCtrl">    
 -->
 
-<!-- /apps/files_trashbin/templates/index.php 
-app-content-trashbin not in original!!!
-<div id="app-content-trashbin" class="hidden viewcontainer"> -->
+<!-- /apps/files_trashbin/templates/index.php -->
+<div id="app-content-trashbin" class="hidden viewcontainer"> 
 <?php /** @var $l OC_L10N */ ?>
 <div id="controls">
     <div id="file_action_panel"></div>
@@ -109,4 +108,6 @@ app-content-trashbin not in original!!!
     <tfoot>
     </tfoot>
 </table>
-<!-- </div>  now without angular-->
+</div> <!-- app-content-trashbin
+  now without angular
+</div> -->

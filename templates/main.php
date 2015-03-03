@@ -14,73 +14,54 @@
 
 // this is how to do it using Twig Templates
 //{{ script('public/app', 'appframework') }}
-
-// angular and app first, now more with OCP\UTIL to change orders more comfortable
-//script('recover', array('vendor/angular.min', 'app/app', 'app/run', 'app/config', 'app/services/services'));
-OCP\Util::addScript('recover', 'app/app');
-// scripts for files lists and trashbin stuff
-// https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
-/**
-* OCP\Util::addscript('files', 'file-upload');
-*/
-OCP\Util::addscript('files', 'jquery.iframe-transport');
-OCP\Util::addscript('files', 'jquery.fileupload');
-OCP\Util::addscript('files', 'jquery-visibility');
-
-OCP\Util::addscript('files', 'filesummary');
-OCP\Util::addscript('files', 'breadcrumb');
-
-// at least actions will have to be adapted for the recovery of files from different sources
-OCP\Util::addscript('files', 'fileactions');
-OCP\Util::addscript('files', 'filelist');
-OCP\Util::addscript('files', 'navigation');
-OCP\Util::addscript('files', 'search');
-
-OCP\Util::addscript('recover', 'myfilelist');
-// now trying with no angular at all!
-//OCP\Util::addscript('recover', 'app/controllers/mainctrl');
-
 OCP\Util::addStyle('files', 'files');
 OCP\Util::addStyle('files', 'upload');
 OCP\Util::addStyle('files', 'mobile');
 OCP\Util::addStyle('files_trashbin', 'trash');
-/**
- * 
- * OCP\Util::addScript('files', 'favoritesfilelist');
- * OCP\Util::addScript('files', 'tagsplugin');
- * OCP\Util::addScript('files', 'favoritesplugin');
-*/
+// angular and app first, now more with OCP\UTIL to change orders more comfortable
+//script('recover', array('vendor/angular.min', 'app/app', 'app/run', 'app/config', 'app/services/services'));
+
+// scripts for files lists and trashbin stuff
+// https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
+// added further scripts found while comparing trashbin DOM with recover DOM
+OCP\Util::addScript('files', 'app');
+OCP\Util::addScript('files', 'file-upload');
+OCP\Util::addScript('files', 'jquery.iframe-transport');
+OCP\Util::addScript('files', 'jquery.fileupload');
+OCP\Util::addScript('files', 'jquery-visibility');
+OCP\Util::addScript('files', 'filesummary');
+OCP\Util::addScript('files', 'breadcrumb');
+OCP\Util::addScript('files', 'filelist');
+OCP\Util::addScript('files', 'search');
+OCP\Util::addScript('files', 'favoritesfilelist');
+OCP\Util::addScript('files', 'tagsplugin');
+OCP\Util::addScript('files', 'favoritesplugin');
+
+OCP\Util::addScript('recover', 'app/app');
+OCP\Util::addScript('recover', 'myfilelist');
+// among others actions will have to be adapted for the recovery of files from different sources
+OCP\Util::addScript('files', 'fileactions');
+
+OCP\Util::addScript('files', 'files');
+OCP\Util::addScript('files', 'navigation');
+OCP\Util::addScript('files', 'keyboardshortcuts');
+// now trying with no angular at all!
+//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
 ?>
-
+<!-- seems like angular stuff messes with DOM
 <div id="app">
-            <!-- seems like angular menu stuff messes with DOM expected by trashbin
+             seems like angular menu stuff messes with DOM expected by trashbin
     <div ng-app="recover"> -->
-    	<div id="app-navigation"> 
-                <?php print_unescaped($this->inc('part.navigation')); ?>
-                
-                <!-- einfach rausnehmen, wenn settings unten stören, da ohne funktion -->
-                <?php print_unescaped($this->inc('part.settings')); ?>
-    	</div>
+<div id="app-navigation"> 
+        <?php print_unescaped($this->inc('part.navigation')); ?>
+        
+        <!-- einfach rausnehmen, wenn settings unten stören, da ohne funktion -->
+        <?php print_unescaped($this->inc('part.settings')); ?>
+</div>
 
-    	<div id="app-content">
-    		
-            <!-- seems like angular menu stuff messes with DOM expected by trashbin
-            <div id="app-content-wrapper"
-                        ng-controller="ContentController as contentCtrl"> 
-                        ng-model="selectedLink">-->
-                        <!-- when $rootScope.linkNum === 1 is truthy (element is visible) -->
-            <!--
-                <div ng-show="linkNum === 1">
-                        <div ng-show="{{selectedLink.number}} === 1">-->
-    			    <?php print_unescaped($this->inc('part.recent')); ?>
-    <!--                
-                    <br>
-                </div>
-                
-    		</div> -->
-    	</div>
-    <!-- </div> -->
+<div id="app-content">
+		    <?php print_unescaped($this->inc('part.recent')); ?>
 </div>
