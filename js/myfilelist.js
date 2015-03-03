@@ -74,7 +74,7 @@
 		 * Override to only return read permissions
 		 */
 		getDirectoryPermissions: function() {
-			console.log('in get dir permissions in myfilelist'); // -> not run!
+			console.log('in get dir permissions'); // -> not run!
 			return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
 		},
 
@@ -86,15 +86,15 @@
 				this.setPageTitle(getDeletedFileName(baseDir));
 			}
 		},
-
+		// all files still exist / ok here
 		_createRow: function() {
-			console.log('in createRow in myfilelist'); 
 			// FIXME: MEGAHACK until we find a better solution
 			var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
 			tr.find('td.filesize').remove();
+			//console.log('in createRow  this.files[0].displayName = ' + this.files[0].displayName); 
 			return tr;
 		},
-
+		// must be the problems source
 		_renderRow: function(fileData, options) {
 			options = options || {};
 			var dir = this.getCurrentDirectory();
@@ -107,6 +107,8 @@
 				fileData.displayName = fileData.name;
 				fileData.name = fileData.name + '.d' + Math.floor(fileData.mtime / 1000);
 			}
+			//console.log('in renderRow  fileData[0].displayName = ' + fileData[0].displayName); 
+			console.log('in renderRow fileData.displayName = ' + fileData.displayName); 
 			return OCA.Files.FileList.prototype._renderRow.call(this, fileData, options);
 		},
 
@@ -120,7 +122,7 @@
 			if (params) {
 				q = '?' + OC.buildQueryString(params);
 			}
-			console.log('in get ajax in myfilelist'); 
+			console.log('in get ajax '); 
 			return OC.filePath('recover', 'ajax', action + '.php') + q;
 			
 			//alert(OC.filePath('recover', action) + q);
@@ -135,7 +137,7 @@
 		 */
 		
 		reload: function() {
-			console.log('in reload in myfilelist URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
+			//console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
 			this._selectedFiles = {};
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
@@ -143,7 +145,7 @@
 			//var trashData = 'init';
 			// -> params ok, aber http get kackt ab,
 			// route didn't match "/trashlist?dir=...."
-			console.log("this dir = " + this.getCurrentDirectory());    
+			console.log("in reload this dir = " + this.getCurrentDirectory());    
 			console.log("this sort = " + this._sort);
 			console.log("this sort direction = " + this._sortDirection);
 			if (this._reloadCall) {
@@ -164,7 +166,7 @@
 			return this._reloadCall.then(callBack, callBack);
 		},
 			
-		/**
+		/** from files/js/filelist
 		 *  NOW THERE IS ONLY 	result.permissions
 								result.directory
 								result.files
@@ -199,35 +201,52 @@
 			// TODO: should rather return upload file size through
 			// the files list ajax call
 			this.updateStorageStatistics(true);
-			console.log("result in myfileist reloadCallback: ", result);
+			// result.data is undefined!!!
+			console.log("in reloadCallback result.data.files: ", result.data.files);
 			if (result.permissions) {
-				this.setDirectoryPermissions(result.permissions);
+				this.setDirectoryPermissions(result.data.permissions);
 			}
-			//this.setFiles(result.data.files);
-			this.setFiles(result.files);
+			// original -> sends files-array to files/js/filelist.js
+			// set files seems ok
+			this.setFiles(result.data.files);
+			// adaptation (adaptation is always without ".data.")
+			//this.setFiles(result.files);
 			return true;
 		},
 		
 		setupUploadEvents: function() {
 			// override and do nothing
 		},
-
+		// ??? to be adapted?
 		linkTo: function(dir){
 			return OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
 		},
 
+		/**
+		 * this.fileList = List of rows (table tbody) = <tbody id="fileList">
+		 * rows are added with files/js/filelist.js: add: function(fileData, options)
+		 * 		@param {OCA.Files.FileInfo} fileData map of file attributes
+		 * 		@param {Object} [options] map of attributes
+		 *		...
+		 * called by at least self.add( 
+		 * 	
+		 **/
 		updateEmptyContent: function(){
 			var exists = this.$fileList.find('tr:first').exists();
+			// exists leer, fehler vorher in createRow, tr nicht vorhanden!
+			//console.log('updateEmptyContent exists = ' + $exists);
 			this.$el.find('#emptycontent').toggleClass('hidden', exists);
 			this.$el.find('#filestable th').toggleClass('hidden', !exists);
 		},
 
+		/**  is only used when deleting entries from the list **/
 		_removeCallback: function(result) {
 			if (result.status !== 'success') {
 				OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 			}
 
 			var files = result.data.success;
+			console.log('files = result.data.success = ' + files);
 			var $el;
 			for (var i = 0; i < files.length; i++) {
 				$el = this.remove(OC.basename(files[i].filename), {updateSummary: false});
@@ -340,8 +359,9 @@
 			}
 			return OCA.Files.FileList.prototype._onClickFile.apply(this, arguments);
 		},
-
+		// what for ? -> must be adapted to use framework (route + controller)
 		generatePreviewUrl: function(urlSpec) {
+			console.log('in generatePreviewUrl');
 			return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);
 		},
 
@@ -351,6 +371,7 @@
 		},
 
 		enableActions: function() {
+			console.log('in enableActions');
 			this.$el.find('.action').css('display', 'inline');
 			this.$el.find(':input:checkbox').css('display', 'inline');
 		},

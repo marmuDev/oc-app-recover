@@ -98,7 +98,10 @@ class PageController extends Controller {
         //throw new \Exception( "PAGECONTROLLER after data files" );
         //printf($data);
         //throw new \Exception( "\$data.files = $data.files" );
-        return new DataResponse($data);
+        //return new DataResponse($data); this was missing one layer 
+        // gotta be result.data.files in myfilelist.js!!!
+        return new DataResponse(array('data' => $data));
+        
         // original trashbin/ajax/list.php
         // OCP\JSON::success(array('data' => $data));
         //return true;

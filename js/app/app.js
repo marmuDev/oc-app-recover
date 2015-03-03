@@ -11,7 +11,7 @@
 	weitere bestandteile wie controller etc. unterteilen
 
  */
-var app = angular.module('recover', []);
+//var app = angular.module('recover', []);
 if (!OCA.Files) {
 		/**
 		 * Namespace for the files app
@@ -56,6 +56,7 @@ OCA.Recover.App = {
 	// adapt according to file source and coresponding functions etc.
 	_createFileActions: function() {
 		var fileActions = new OCA.Files.FileActions();
+		console.log('_createFileAction fileActions = ' +fileActions.actions);
 		fileActions.register('dir', 'Open', OC.PERMISSION_READ, '', function (filename, context) {
 			var dir = context.fileList.getCurrentDirectory();
 			if (dir !== '/') {
@@ -65,9 +66,10 @@ OCA.Recover.App = {
 		});
 
 		fileActions.setDefault('dir', 'Open');
-
+		// register wird nicht ausgführt!!
 		fileActions.register('all', 'Recover', OC.PERMISSION_READ, OC.imagePath('core', 'actions/history'), function(filename, context) {
 			var fileList = context.fileList;
+			console.log('_createFileAction fileList = ' +fileList);
 			var tr = fileList.findFileEl(filename);
 			var deleteAction = tr.children("td.date").children(".action.delete");
 			deleteAction.removeClass('icon-delete').addClass('icon-loading-small');

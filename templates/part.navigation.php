@@ -5,7 +5,7 @@ the with-icon class can be added to the base ul
 <ul class="with-icon">
 -->
 <ul>
-    <div ng-controller="NaviController as naviCtrl" ng-module="selectedLink">
+    <!-- <div ng-controller="NaviController as naviCtrl" ng-module="selectedLink"> 
         <li ng-class="{ active:naviCtrl.isSelected(1) }">
             <a href ng-click="naviCtrl.selectLink(1)">Zuletzt geändert</a>
         </li>
@@ -18,5 +18,18 @@ the with-icon class can be added to the base ul
         <li ng-class="{ active:naviCtrl.isSelected(4) }">
             <a href ng-click="naviCtrl.selectLink(4)">Einstellungen</a>
         </li>
-    </div>
+    </div> -->
+        <li>
+            <a>Zuletzt geändert</a>
+        </li>
+        <li>
+            <a>Suche</a>
+        </li>
+        <li>
+            <a>Hilfe</a>
+        </li>
+        <li>
+            <a>Einstellungen</a>
+        </li>
 </ul>
+-->

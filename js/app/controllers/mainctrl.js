@@ -36,7 +36,7 @@
 */
     app.controller('ContentController', function($rootScope){
     })
-
+    /** do not hide any content for now!
     app.controller('NaviController', function($rootScope){
          this.link = 1;
          this.selectLink = function(linkNum) {
@@ -47,7 +47,7 @@
             return this.link === checkLink;
          };
     })
-
+    
     // wird nur ausgeführt, 
     // wenn <div ng-controller="RecentController as recentCtrl"> in template!
     
@@ -71,9 +71,9 @@
         .error(function() {
             alert("error during http get in RecentController get /listtrash");
         });
-        **/
+        
     })
-
+**/
     app.controller('SearchController', function() {
         //var searchAttribute = {
         this.search = [
