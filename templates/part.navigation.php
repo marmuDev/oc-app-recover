@@ -20,7 +20,7 @@ the with-icon class can be added to the base ul
         </li>
     </div> -->
         <li>
-            <a>Zuletzt geändert</a>
+            <a>Zuletzt gelöscht</a>
         </li>
         <li>
             <a>Suche</a>

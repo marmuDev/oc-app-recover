@@ -47,7 +47,12 @@ now without angular!
 -->
 
 <!-- /apps/files_trashbin/templates/index.php -->
+<!-- hidden viewcontainer raus! nur bei files app notwendig,
+    weil je nach navi-auswahl entsprechende inhalte gezeigt werden
+    -> standard files, trashbin, sharing etc.
 <div id="app-content-trashbin" class="hidden viewcontainer"> 
+-->
+<div id="app-content-trashbin">
 <?php /** @var $l OC_L10N */ ?>
 <div id="controls">
     <div id="file_action_panel"></div>
