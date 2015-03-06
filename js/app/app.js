@@ -56,7 +56,7 @@ OCA.Recover.App = {
 	// adapt according to file source and coresponding functions etc.
 	_createFileActions: function() {
 		var fileActions = new OCA.Files.FileActions();
-		console.log('_createFileAction fileActions = ' +fileActions.actions);
+		//console.log('_createFileAction fileActions = ' +fileActions.actions);
 		fileActions.register('dir', 'Open', OC.PERMISSION_READ, '', function (filename, context) {
 			var dir = context.fileList.getCurrentDirectory();
 			if (dir !== '/') {
@@ -74,10 +74,9 @@ OCA.Recover.App = {
 			var deleteAction = tr.children("td.date").children(".action.delete");
 			deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
 			fileList.disableActions();
-			// AJAX path for PHP!!!
-			// AJAX path for PHP!!!
-			// AJAX path for PHP!!!
-			$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
+			// AJAX path for PHP!!! => now trigger route + controller
+			//$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
+			$.post(OC.generateUrl('/apps/recover/recover'), {
 					files: JSON.stringify([filename]),
 					dir: fileList.getCurrentDirectory()
 				},
@@ -107,6 +106,8 @@ OCA.Recover.App = {
 				var deleteAction = tr.children("td.date").children(".action.delete");
 				deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
 				fileList.disableActions();
+				// adapt to route + controller
+				// maybe further adapted for other file sources than OC
 				$.post(OC.filePath('recover', 'ajax', 'delete.php'), {
 						files: JSON.stringify([filename]),
 						dir: fileList.getCurrentDirectory()

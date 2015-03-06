@@ -37,8 +37,11 @@ OCP\Util::addScript('files', 'favoritesfilelist');
 OCP\Util::addScript('files', 'tagsplugin');
 OCP\Util::addScript('files', 'favoritesplugin');
 
+//\OC_Util::addVendorScript('core', 'handlebars/handlebars');
+
 OCP\Util::addScript('recover', 'app/app');
 OCP\Util::addScript('recover', 'myfilelist');
+OCP\Util::addScript('recover', 'mysearch');
 // among others actions will have to be adapted for the recovery of files from different sources
 OCP\Util::addScript('files', 'fileactions');
 

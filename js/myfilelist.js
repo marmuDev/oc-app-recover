@@ -1,5 +1,5 @@
 /**
- * ownCloud - recover - adapted from OC Core Recover filelist.js
+ * ownCloud - recover - adapted from OC Core Files Trashbin filelist.js
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -51,7 +51,7 @@
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
-			console.log('in init of OCA.Recover.FileList');
+			//console.log('in init of OCA.Recover.FileList');
 			this.setSort('mtime', 'desc');
 			/**
 			 * Override crumb making to add "Deleted Files" entry
@@ -74,7 +74,7 @@
 		 * Override to only return read permissions
 		 */
 		getDirectoryPermissions: function() {
-			console.log('in get dir permissions'); // -> not run!
+			//console.log('in get dir permissions'); // -> not run!
 			return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
 		},
 
@@ -107,8 +107,7 @@
 				fileData.displayName = fileData.name;
 				fileData.name = fileData.name + '.d' + Math.floor(fileData.mtime / 1000);
 			}
-			//console.log('in renderRow  fileData[0].displayName = ' + fileData[0].displayName); 
-			console.log('in renderRow fileData.displayName = ' + fileData.displayName); 
+			//console.log('in renderRow fileData.displayName = ' + fileData.displayName); 
 			return OCA.Files.FileList.prototype._renderRow.call(this, fileData, options);
 		},
 
@@ -142,12 +141,8 @@
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
 			this.showMask();
-			//var trashData = 'init';
 			// -> params ok, aber http get kackt ab,
 			// route didn't match "/trashlist?dir=...."
-			console.log("in reload this dir = " + this.getCurrentDirectory());    
-			console.log("this sort = " + this._sort);
-			console.log("this sort direction = " + this._sortDirection);
 			if (this._reloadCall) {
 				this._reloadCall.abort();
 			}
@@ -202,7 +197,6 @@
 			// the files list ajax call
 			this.updateStorageStatistics(true);
 			// result.data is undefined!!!
-			console.log("in reloadCallback result.data.files: ", result.data.files);
 			if (result.permissions) {
 				this.setDirectoryPermissions(result.data.permissions);
 			}
@@ -233,8 +227,6 @@
 		 **/
 		updateEmptyContent: function(){
 			var exists = this.$fileList.find('tr:first').exists();
-			// exists leer, fehler vorher in createRow, tr nicht vorhanden!
-			//console.log('updateEmptyContent exists = ' + $exists);
 			this.$el.find('#emptycontent').toggleClass('hidden', exists);
 			this.$el.find('#filestable th').toggleClass('hidden', !exists);
 		},
@@ -246,7 +238,7 @@
 			}
 
 			var files = result.data.success;
-			console.log('files = result.data.success = ' + files);
+			console.log(' _removeCallback files = result.data.success = ' + files);
 			var $el;
 			for (var i = 0; i < files.length; i++) {
 				$el = this.remove(OC.basename(files[i].filename), {updateSummary: false});
