@@ -234,6 +234,7 @@
 		/**  is only used when deleting entries from the list **/
 		_removeCallback: function(result) {
 			if (result.status !== 'success') {
+				console.log('Error in RECOVER myfilelist _removeCallback result.status = ' + result.status);
 				OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 			}
 
@@ -275,11 +276,13 @@
 				};
 			}
 
-			$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
+			//$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
+			$.post(OC.generateUrl('/apps/recover/recover'), 
 				params,
 				function(result) {
 					if (allFiles) {
 						if (result.status !== 'success') {
+							console.log('in Recover myfilelist _onClickRestoreSelected result.status != success');
 							OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 						}
 						self.hideMask();

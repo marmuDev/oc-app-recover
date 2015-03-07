@@ -151,7 +151,11 @@ class PageController extends Controller {
             }
             if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
                 $error[] = $filename;
-                OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
+                // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
+                // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
+                // dev manual says to use...
+                throw new \Exception( "recover can't restore \$filename = $filename" );
+                //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
             } else {
                 $success[$i]['filename'] = $file;
                 $success[$i]['timestamp'] = $timestamp;
@@ -163,7 +167,9 @@ class PageController extends Controller {
             foreach ( $error as $e ) {
                 $filelist .= $e.', ';
             }
-            $l = OC::$server->getL10N('files_trashbin');
+            //$l = OC::$server->getL10N('files_trashbin');
+            // ?
+            $l = OC::$server->getL10N('recover');
             $message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             OCP\JSON::error(array("data" => array("message" => $message,
                                                   "success" => $success, "error" => $error)));
