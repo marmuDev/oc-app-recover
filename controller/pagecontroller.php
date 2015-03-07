@@ -17,7 +17,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 
-use OCP\JSON;
+//use OCP\JSON;
+use OCP\AppFramework\Http\JSONResponse;
 
 
 // for own DB entries, tables etc. - for standard trashbin stuff obsolete
@@ -98,7 +99,10 @@ class PageController extends Controller {
         //throw new \Exception( "\$data.files = $data.files" );
         //return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in myfilelist.js!!!
-        return new DataResponse(array('data' => $data));
+        // Use a AppFramework JSONResponse instead!!!
+        // http://api.owncloud.org/classes/OCP.JSON.html
+        //return new DataResponse(array('data' => $data));
+        return new JSONResponse(array('data' => $data));
         
         // original trashbin/ajax/list.php
         // OCP\JSON::success(array('data' => $data));
@@ -153,8 +157,10 @@ class PageController extends Controller {
                 $error[] = $filename;
                 // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
                 // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
-                // dev manual says to use...
+                // dev manual says to use... for debugging, 
+                //but exceptions make app crash, since they are exceptions...
                 throw new \Exception( "recover can't restore \$filename = $filename" );
+                // maybe OC_LOG is used for OC.dialogs.alert
                 //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
             } else {
                 $success[$i]['filename'] = $file;
@@ -171,11 +177,20 @@ class PageController extends Controller {
             // ?
             $l = OC::$server->getL10N('recover');
             $message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
-            OCP\JSON::error(array("data" => array("message" => $message,
-                                                  "success" => $success, "error" => $error)));
+            // port to App Framework
+            //OCP\JSON::error(array("data" => array("message" => $message,
+            //                                    "success" => $success, "error" => $error)));
+            return new JSONResponse(array("data" => array
+                                        ("message" => $message,
+                                        "success" => $success, "error" => $error)));
         } else {
             //OCP\JSON::success(array("data" => array("success" => $success)));
-            return new DataResponse(array('data' => array("success" => $success)));
+            // how to better imitate a JSON success message?
+            // Use a AppFramework JSONResponse instead!!
+            //return new DataResponse(array('data' => array("success" => $success)));
+            return new JSONResponse(array('data' => array("success" => $success)));
+            // funzt auch, aber View nicht aktualisiert!
+            //return new JSONResponse(array("success" => $success));
         }
     }
     

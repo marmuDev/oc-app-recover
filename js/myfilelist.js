@@ -233,13 +233,16 @@
 
 		/**  is only used when deleting entries from the list **/
 		_removeCallback: function(result) {
+			console.log('RESULT in _removeCallback = ' + result);
+			// result.status is undefined! WHY?????
 			if (result.status !== 'success') {
 				console.log('Error in RECOVER myfilelist _removeCallback result.status = ' + result.status);
-				OC.dialogs.alert(result.data.message, t('recover', 'Error'));
+				// triggers "unnecessary" Error Message...
+				//OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 			}
 
 			var files = result.data.success;
-			console.log(' _removeCallback files = result.data.success = ' + files);
+			console.log(' _removeCallback files = result.data.success[0].filename = ' + result.data.success[0].filename);
 			var $el;
 			for (var i = 0; i < files.length; i++) {
 				$el = this.remove(OC.basename(files[i].filename), {updateSummary: false});
@@ -282,8 +285,9 @@
 				function(result) {
 					if (allFiles) {
 						if (result.status !== 'success') {
-							console.log('in Recover myfilelist _onClickRestoreSelected result.status != success');
-							OC.dialogs.alert(result.data.message, t('recover', 'Error'));
+							console.log('in Recover myfilelist _onClickRestoreSelected result.status != success, status = ' + result.status);
+							OC.dialogs.alert(result.data.message.toSource(), t('recover', 'Error'));
+
 						}
 						self.hideMask();
 						// simply remove all files
@@ -291,6 +295,8 @@
 						self.enableActions();
 					}
 					else {
+						// isn't run when recovering a file by clicking recover
+						console.log('in Recover myfilelist _onClickRestoreSelected before _removeCallback result = ' + result);
 						self._removeCallback(result);
 					}
 				}
