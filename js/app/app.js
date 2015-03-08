@@ -108,7 +108,8 @@ OCA.Recover.App = {
 				fileList.disableActions();
 				// adapt to route + controller
 				// maybe further adapted for other file sources than OC
-				$.post(OC.filePath('recover', 'ajax', 'delete.php'), {
+				//$.post(OC.filePath('recover', 'ajax', 'delete.php'), {
+				$.post(OC.generateUrl('/apps/recover/delete'), {
 						files: JSON.stringify([filename]),
 						dir: fileList.getCurrentDirectory()
 					},

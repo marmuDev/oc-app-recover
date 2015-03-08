@@ -26,7 +26,8 @@ $application->registerRoutes($this, array(
         array('name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET'),
         array('name' => 'page#list_trash_bin', 'url' => '/trashlist{dir}', 'verb' => 'GET',
         		'requirements' => array('dir' => '.+')),
-        array('name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST')
+        array('name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST'),
+        array('name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST')
     )
 ));
 

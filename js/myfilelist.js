@@ -334,7 +334,8 @@
 				}
 			}
 
-			$.post(OC.filePath('recover', 'ajax', 'delete.php'),
+			//$.post(OC.filePath('recover', 'ajax', 'delete.php'),
+			$.post(OC.generateUrl('/apps/recover/delete'),
 					params,
 					function(result) {
 						if (allFiles) {
