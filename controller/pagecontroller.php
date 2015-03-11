@@ -12,6 +12,8 @@
 
 namespace OCA\Recover\Controller;
 
+// use OCP namespace for all classes that are considered public.
+// This means that they should be used by apps instead of the internal ownCloud classes
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -24,8 +26,8 @@ use OCP\AppFramework\Http\JSONResponse;
 // for own DB entries, tables etc. - for standard trashbin stuff obsolete
 //use \OCA\Recover\Db\Item; -> gibts nicht mehr ggf aus backup holen
 // for trashbin use (standard?) mapper
-use \OCA\Recover\Db\TrashBinMapper;
-use \OCA\Files_Trashbin;
+use OCA\Recover\Db\TrashBinMapper;
+use OCA\Files_Trashbin;
 
 class PageController extends Controller {
     private $userId;
@@ -62,6 +64,7 @@ class PageController extends Controller {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();
+        // maybe also obsolete!
         \OC::$server->getSession()->close();
 
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
@@ -81,13 +84,12 @@ class PageController extends Controller {
         try {
             $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
         } catch (Exception $e) {
+            // what about returning JSONResponse with "statusCode" => "500"
+            // how is result.status === error in original trashbin (filelist->reloadCallback)
             header("HTTP/1.0 404 Not Found");
-            //throw new \Exception( "pageCtrl error in make filelist" );
+            // throw new \Exception("pagecontroller error in make filelist");
             exit();
         }
-        //printf($files);
-        //throw new \Exception( "nach make filelist list = $files");
-        // encodeDir crashes!!!
         $encodedDir = \OCP\Util::encodePath($dir);
         
         $data['permissions'] = 0;
@@ -102,7 +104,7 @@ class PageController extends Controller {
         // Use a AppFramework JSONResponse instead!!!
         // http://api.owncloud.org/classes/OCP.JSON.html
         //return new DataResponse(array('data' => $data));
-        return new JSONResponse(array('data' => $data));
+        return new JSONResponse(array('data' => $data, "statusCode" => "200"));
         
         // original trashbin/ajax/list.php
         // OCP\JSON::success(array('data' => $data));
@@ -182,13 +184,14 @@ class PageController extends Controller {
             //                                    "success" => $success, "error" => $error)));
             return new JSONResponse(array("data" => array
                                         ("message" => $message,
-                                        "success" => $success, "error" => $error)));
+                                        "success" => $success, "error" => $error), "statusCode" => "500"));
         } else {
             //OCP\JSON::success(array("data" => array("success" => $success)));
             // how to better imitate a JSON success message?
             // Use a AppFramework JSONResponse instead!!
             //return new DataResponse(array('data' => array("success" => $success)));
-            return new JSONResponse(array('data' => array("success" => $success)));
+            //return new JSONResponse(array("data" => array("success" => $success)), "200");
+            return new JSONResponse(array("data" => array("success" => $success), "statusCode" => "200"));
             // funzt auch, aber View nicht aktualisiert!
             //return new JSONResponse(array("success" => $success));
         }
@@ -227,8 +230,8 @@ class PageController extends Controller {
                 $filename = $folder . '/' . $file;
                 $timestamp = null;
             }
-            OCA\Files_Trashbin\Trashbin::delete($filename, \OCP\User::getUser(), $timestamp);
-            if (OCA\Files_Trashbin\Trashbin::file_exists($filename, $timestamp)) {
+            \OCA\Files_Trashbin\Trashbin::delete($filename, \OCP\User::getUser(), $timestamp);
+            if (\OCA\Files_Trashbin\Trashbin::file_exists($filename, $timestamp)) {
                 $error[] = $filename;
                 OC_Log::write('trashbin','can\'t delete ' . $filename . ' permanently.', OC_Log::ERROR);
             }
@@ -249,10 +252,10 @@ class PageController extends Controller {
             //OCP\JSON::error(array("data" => array("message" => $message,
             //                                       "success" => $success, "error" => $error)));
             return new JSONResponse(array("data" => array("message" => $message,
-                                  "success" => $success, "error" => $error)));
+                                  "success" => $success, "error" => $error), "statusCode" => "500"));
         } else {
             //OCP\JSON::success(array("data" => array("success" => $success)));
-            return new JSONResponse(array("data" => array("success" => $success)));
+            return new JSONResponse(array("data" => array("success" => $success), "statusCode" => "200"));
         }
     }
     

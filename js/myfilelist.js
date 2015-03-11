@@ -170,7 +170,10 @@
 		reloadCallback: function(result) {
 			delete this._reloadCall;
 			this.hideMask();
-			if (!result || result.status === 'error') {
+			// result.status undefined -> use statusCode
+			//console.log("myfilelist reloadCallback result.status = " + result.status);
+			//if (!result || result.status === 'error') {
+			if (!result || result.statusCode === '500') {
 				// if the error is not related to folder we're trying to load, reload the page to handle logout etc
 				if (result.data.error === 'authentication_error' ||
 					result.data.error === 'token_expired' ||
@@ -233,12 +236,13 @@
 
 		/**  is only used when deleting entries from the list **/
 		_removeCallback: function(result) {
-			console.log('RESULT in _removeCallback = ' + result);
+			console.log('RESULT in _removeCallback = ' + result.toSource());
 			// result.status is undefined! WHY?????
-			if (result.status !== 'success') {
-				console.log('Error in RECOVER myfilelist _removeCallback result.status = ' + result.status);
+			//if (result.status !== 'success') {
+			if (result.statusCode !== '200') {
+				console.log('Error in RECOVER myfilelist _removeCallback result.statusCode = ' + result.statusCode);
 				// triggers "unnecessary" Error Message...
-				//OC.dialogs.alert(result.data.message, t('recover', 'Error'));
+				OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 			}
 
 			var files = result.data.success;
@@ -284,10 +288,10 @@
 				params,
 				function(result) {
 					if (allFiles) {
-						if (result.status !== 'success') {
-							console.log('in Recover myfilelist _onClickRestoreSelected result.status != success, status = ' + result.status);
-							OC.dialogs.alert(result.data.message.toSource(), t('recover', 'Error'));
-
+						//if (result.status !== 'success') {
+						if (result.statusCode !== '200') {
+							console.log('in Recover myfilelist _onClickRestoreSelected result.statusCode = ' + result.statusCode);
+							OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 						}
 						self.hideMask();
 						// simply remove all files
@@ -339,7 +343,8 @@
 					params,
 					function(result) {
 						if (allFiles) {
-							if (result.status !== 'success') {
+							//if (result.status !== 'success') {
+							if (result.statusCode !== '200') {
 								OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 							}
 							self.hideMask();
