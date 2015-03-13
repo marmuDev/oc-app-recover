@@ -47,9 +47,10 @@ OCA.Recover.App = {
 			}
 		);
 		//console.log('in init of OCA.Recover.App before manual reload');
-		// hack to force loading of list -> myfilelist reload -> getAjaxUrl
-		// trying to solve it via http.get in recentcontroller
-		// -> ajax obsolete, therefore reload/reloadCallback and getAjaxUrl obsolete(?)s
+		// hack to force loading of list -> myfilelist reload -> $.ajax
+		// trying to solve it via http.get in recentcontroller (angular)
+		// -> no, did it the trashbin-way
+		// still ajax and reload/reloadCallback, but getAjaxUrl obsolete
 		this.fileList.reload();
 	},
 
@@ -121,7 +122,7 @@ OCA.Recover.App = {
 	}
 };
 
-// hack from files/ja/app.js
+// hack from files/js/app.js
 $(document).ready(function() {
 	// wait for other apps/extensions to register their event handlers and file actions 
 	// in the "ready" clause

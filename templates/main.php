@@ -32,7 +32,9 @@ OCP\Util::addScript('files', 'jquery-visibility');
 OCP\Util::addScript('files', 'filesummary');
 OCP\Util::addScript('files', 'breadcrumb');
 OCP\Util::addScript('files', 'filelist');
-OCP\Util::addScript('files', 'search');
+//OCP\Util::addScript('files', 'search'); -> only using mysearch -> ok? seems so
+// how to not load /core/search/js/search.js or rather overwrite this.search with 
+// the adapted version in mysearch.js
 OCP\Util::addScript('files', 'favoritesfilelist');
 OCP\Util::addScript('files', 'tagsplugin');
 OCP\Util::addScript('files', 'favoritesplugin');
@@ -41,7 +43,10 @@ OCP\Util::addScript('files', 'favoritesplugin');
 
 OCP\Util::addScript('recover', 'app/app');
 OCP\Util::addScript('recover', 'myfilelist');
-OCP\Util::addScript('recover', 'mysearch');
+// searchbox adapted from core search
+OCP\Util::addScript('recover', 'search');
+// search adapted from core file
+OCP\Util::addScript('recover', 'recoversearch');
 // among others actions will have to be adapted for the recovery of files from different sources
 OCP\Util::addScript('files', 'fileactions');
 

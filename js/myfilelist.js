@@ -62,6 +62,7 @@
 				var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
 				for (var i = 1; i < parts.length; i++) {
 					parts[i].name = getDeletedFileName(parts[i].name);
+					console.log("parts[i].name = " + parts[i].name);
 				}
 				return parts;
 			};
@@ -162,10 +163,7 @@
 		},
 			
 		/** from files/js/filelist
-		 *  NOW THERE IS ONLY 	result.permissions
-								result.directory
-								result.files
-			BEFORE: result.data.*
+		 *  
 		 **/
 		reloadCallback: function(result) {
 			delete this._reloadCall;
@@ -199,15 +197,12 @@
 			// TODO: should rather return upload file size through
 			// the files list ajax call
 			this.updateStorageStatistics(true);
-			// result.data is undefined!!!
-			if (result.permissions) {
+			if (result.data.permissions) {
 				this.setDirectoryPermissions(result.data.permissions);
 			}
 			// original -> sends files-array to files/js/filelist.js
 			// set files seems ok
 			this.setFiles(result.data.files);
-			// adaptation (adaptation is always without ".data.")
-			//this.setFiles(result.files);
 			return true;
 		},
 		
@@ -372,6 +367,9 @@
 			return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);
 		},
 
+		/*
+		PERHAPS I WILL ENABLE DOWNLAODS? USEFUL?
+		*/
 		getDownloadUrl: function() {
 			// no downloads
 			return '#';

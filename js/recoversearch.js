@@ -17,7 +17,7 @@
 		this.initialize();
 	};
 	/**
-	 * @memberof OCA.Search
+	 * @memberof OCA.Recover.Search
 	 */
 	Files.prototype = {
 
@@ -204,7 +204,7 @@
 			search.setHandler(['file', 'audio', 'image'], this.handleFileClick.bind(this));
 		}
 	};
-	OCA.Search.Files = Files;
+	OCA.Recover.Search.Files = Files;
 	// Files Object: OCA.Search.files.fileList.files = specific file objects
-	OCA.Search.files = new Files();
+	OCA.Recover.Search.files = new Files();
 })();
