@@ -130,13 +130,14 @@ $(document).ready(function() {
 			OCA.Recover.App.initialize();
 	});
 });
-/**
+
+/* from original trashbin app
 $(document).ready(function() {
 	$('#app-content-trashbin').one('show', function() {
 		var App = OCA.Recover.App;
 		App.initialize($('#app-content-trashbin'));
 		// force breadcrumb init
-		// App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);
+		App.fileList.changeDirectory(App.fileList.getCurrentDirectory(), false, true);
 	});
 });
-**/
+*/

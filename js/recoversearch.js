@@ -17,7 +17,7 @@
 		this.initialize();
 	};
 	/**
-	 * @memberof OCA.Recover.Search
+	 * @memberof OCA.Search
 	 */
 	Files.prototype = {
 
@@ -163,7 +163,7 @@
 				}
 			};
 			this.setFileList = function (fileList) {
-				console.log('in RECOVER searchsetFileList function');
+				console.log('in RECOVER search setFileList function');
 				this.fileList = fileList;
 			};
 
@@ -173,20 +173,21 @@
 		/** eigentliche Filterung der Suchergebnisse 
 		 *	durch aufruf von (this.)search in 
 		 *  core/core/search/js/search.js - search = search-Object!
+		 * ich will jetzt meine search JS nutzen
 		**/
 		attach: function(search) {
 			var self = this;
-			console.log('in RECOVER searchattach before setFilter search = ' + search);
-			
-			//original: search.setFilter('files', function (query) {
+			// original: search.setFilter('files', function (query) {
+			// remove filter here, then no need to adapt core search js
+			// core search sets currentApp as default!!!
+			// and filter must be set, otherwise instant filtering via searchbox won't work!
 			search.setFilter('recover', function (query) {
-			// wird bei mir nicht ausgegeben!
-			console.log('in RECOVER searchattach in setFilter query = ' + query);	
+			console.log('in RECOVER search attach in setFilter query = ' + query);	
 				if (self.fileAppLoaded()) {
-					console.log('in RECOVER searchattach fileAppLoaded - before fileList.setFilter');
+					console.log('in RECOVER search attach fileAppLoaded - before fileList.setFilter');
 					self.fileList.setFilter(query);
 					if (query.length > 2) {
-						console.log('in RECOVER searchattach query.length > 2');
+						console.log('in RECOVER search attach query.length > 2');
 						//search is not started until 500msec have passed
 						window.setTimeout(function() {
 							$('.nofilterresults').addClass('hidden');
@@ -204,7 +205,7 @@
 			search.setHandler(['file', 'audio', 'image'], this.handleFileClick.bind(this));
 		}
 	};
-	OCA.Recover.Search.Files = Files;
+	OCA.Search.Files = Files;
 	// Files Object: OCA.Search.files.fileList.files = specific file objects
-	OCA.Recover.Search.files = new Files();
+	OCA.Search.files = new Files();
 })();
