@@ -8,7 +8,6 @@
  * @copyright Marcus Mundt 2015
  */
 (function() {
-
 	/**
 	 * Construct a new FileActions instance
 	 * @constructs Files
@@ -168,6 +167,7 @@
 			};
 
 			OC.Plugins.register('OCA.Search', this);
+			//OC.Plugins.register('OCA.Recover.Search', this);
 		},
 		
 		/** eigentliche Filterung der Suchergebnisse 
@@ -184,7 +184,6 @@
 			search.setFilter('recover', function (query) {
 			console.log('in RECOVER search attach in setFilter query = ' + query);	
 				if (self.fileAppLoaded()) {
-					console.log('in RECOVER search attach fileAppLoaded - before fileList.setFilter');
 					self.fileList.setFilter(query);
 					if (query.length > 2) {
 						console.log('in RECOVER search attach query.length > 2');

@@ -25,19 +25,18 @@ OCP\Util::addStyle('files_trashbin', 'trash');
 // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
 // added further scripts found while comparing trashbin DOM with recover DOM
 OCP\Util::addScript('files', 'app');
-OCP\Util::addScript('files', 'file-upload');
+//OCP\Util::addScript('files', 'file-upload');
 OCP\Util::addScript('files', 'jquery.iframe-transport');
 OCP\Util::addScript('files', 'jquery.fileupload');
 OCP\Util::addScript('files', 'jquery-visibility');
 OCP\Util::addScript('files', 'filesummary');
 OCP\Util::addScript('files', 'breadcrumb');
 OCP\Util::addScript('files', 'filelist');
-// wenn ich files search lade, geht searchbox filter
-// nein auch nicht mehr!
-OCP\Util::addScript('files', 'search');
-OCP\Util::addScript('files', 'favoritesfilelist');
-OCP\Util::addScript('files', 'tagsplugin');
-OCP\Util::addScript('files', 'favoritesplugin');
+
+//OCP\Util::addScript('files', 'search');
+//OCP\Util::addScript('files', 'favoritesfilelist');
+//OCP\Util::addScript('files', 'tagsplugin');
+//OCP\Util::addScript('files', 'favoritesplugin');
 
 //\OC_Util::addVendorScript('core', 'handlebars/handlebars');
 OCP\Util::addScript('recover', 'app/app');
@@ -49,7 +48,6 @@ OCP\Util::addScript('recover', 'myfilelist');
 OCP\Util::addScript('recover', 'recoversearch');
 // among others actions will have to be adapted for the recovery of files from different sources
 OCP\Util::addScript('files', 'fileactions');
-
 OCP\Util::addScript('files', 'files');
 OCP\Util::addScript('files', 'navigation');
 OCP\Util::addScript('files', 'keyboardshortcuts');

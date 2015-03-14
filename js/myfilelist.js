@@ -51,8 +51,9 @@
 		initialize: function() {
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
-			//console.log('in init of OCA.Recover.FileList');
 			this.setSort('mtime', 'desc');
+			// adaption to set path
+			this.breadcrumb.setDirectory('/');
 			/**
 			 * Override crumb making to add "Deleted Files" entry
 			 * and convert files with ".d" extensions to a more
@@ -60,10 +61,12 @@
 			 */
 			this.breadcrumb._makeCrumbs = function() {
 				var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
+				console.log('in init of OCA.Recover.FileList - parts.length = ' + parts.length);
 				for (var i = 1; i < parts.length; i++) {
 					parts[i].name = getDeletedFileName(parts[i].name);
 					console.log("parts[i].name = " + parts[i].name);
 				}
+				console.log('in myfilelist init - _makeCrumbs')
 				return parts;
 			};
 
