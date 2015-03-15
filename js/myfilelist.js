@@ -61,12 +61,10 @@
 			 */
 			this.breadcrumb._makeCrumbs = function() {
 				var parts = OCA.Files.BreadCrumb.prototype._makeCrumbs.apply(this, arguments);
-				console.log('in init of OCA.Recover.FileList - parts.length = ' + parts.length);
 				for (var i = 1; i < parts.length; i++) {
 					parts[i].name = getDeletedFileName(parts[i].name);
-					console.log("parts[i].name = " + parts[i].name);
+					//console.log("parts[i].name = " + parts[i].name);
 				}
-				console.log('in myfilelist init - _makeCrumbs')
 				return parts;
 			};
 
@@ -78,7 +76,6 @@
 		 * Override to only return read permissions
 		 */
 		getDirectoryPermissions: function() {
-			//console.log('in get dir permissions'); // -> not run!
 			return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
 		},
 
@@ -234,7 +231,7 @@
 
 		/**  is only used when deleting entries from the list **/
 		_removeCallback: function(result) {
-			console.log('RESULT in _removeCallback = ' + result.toSource());
+			//console.log('RESULT in _removeCallback = ' + result.toSource());
 			// result.status is undefined! WHY?????
 			//if (result.status !== 'success') {
 			if (result.statusCode !== '200') {
@@ -244,7 +241,7 @@
 			}
 
 			var files = result.data.success;
-			console.log(' _removeCallback files = result.data.success[0].filename = ' + result.data.success[0].filename);
+			//console.log(' _removeCallback files = result.data.success[0].filename = ' + result.data.success[0].filename);
 			var $el;
 			for (var i = 0; i < files.length; i++) {
 				$el = this.remove(OC.basename(files[i].filename), {updateSummary: false});
@@ -298,7 +295,7 @@
 					}
 					else {
 						// isn't run when recovering a file by clicking recover
-						console.log('in Recover myfilelist _onClickRestoreSelected before _removeCallback result = ' + result);
+						//console.log('in Recover myfilelist _onClickRestoreSelected before _removeCallback result = ' + result);
 						self._removeCallback(result);
 					}
 				}
@@ -365,6 +362,7 @@
 			return OCA.Files.FileList.prototype._onClickFile.apply(this, arguments);
 		},
 		// what for ? -> must be adapted to use framework (route + controller)
+		// isn't run, when should it be run?
 		generatePreviewUrl: function(urlSpec) {
 			console.log('in generatePreviewUrl');
 			return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);

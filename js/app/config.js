@@ -7,9 +7,12 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-app.config(function($httpProvider, $provide) {
+ 
     'use strict';
-    $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
-    // wie wo so definieren, dass alle darauf zugriff haben -> config-service?
-    $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
-});
+	var app = angular.module('recover', []);
+	app.config(function($httpProvider, $provide) {
+	    'use strict';
+	    $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
+	    // wie wo so definieren, dass alle darauf zugriff haben -> config-service?
+	    $provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
+	})

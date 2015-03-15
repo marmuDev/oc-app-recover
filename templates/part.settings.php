@@ -1,12 +1,11 @@
-<div id="app-settings">
-	<div id="app-settings-header">
-		<button class="settings-button"
-				data-apps-slide-toggle="#app-settings-content"
-		></button>
-	</div>
-	<div id="app-settings-content">
-		<!-- Your settings in here -->
-                settings wären ggf zu viel für den begrenzten platz <br>
-                -> in hauptnavi <br>
-	</div>
+<div id="app-settings-header">
+	<button class="settings-button"
+			data-apps-slide-toggle="#app-settings-content"
+	></button>
+</div>
+<div id="app-settings-content">
+	<!-- Your settings in here -->
+        Was könnte hier hin?<br>
+        E-Mail-Adresse für Benachrichtigungen?<br>
+        Die könnte man default einfach an die TU-Adresse schicken!
 </div>

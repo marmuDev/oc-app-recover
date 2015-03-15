@@ -18,9 +18,6 @@ OCP\Util::addStyle('files', 'files');
 OCP\Util::addStyle('files', 'upload');
 OCP\Util::addStyle('files', 'mobile');
 OCP\Util::addStyle('files_trashbin', 'trash');
-// angular and app first, now more with OCP\UTIL to change orders more comfortable
-//script('recover', array('vendor/angular.min', 'app/app', 'app/run', 'app/config', 'app/services/services'));
-
 // scripts for files lists and trashbin stuff
 // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
 // added further scripts found while comparing trashbin DOM with recover DOM
@@ -39,6 +36,7 @@ OCP\Util::addScript('files', 'filelist');
 //OCP\Util::addScript('files', 'favoritesplugin');
 
 //\OC_Util::addVendorScript('core', 'handlebars/handlebars');
+// init of recover app 
 OCP\Util::addScript('recover', 'app/app');
 OCP\Util::addScript('recover', 'myfilelist');
 // searchbox adapted from core search
@@ -54,20 +52,28 @@ OCP\Util::addScript('files', 'keyboardshortcuts');
 // now trying with no angular at all!
 //OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
+// angular is back for navigation...
+OCP\Util::addScript('recover', 'vendor/angular.min');
+// var app as angular module and further angular stuff
+OCP\Util::addScript('recover', 'app/config');
+OCP\Util::addScript('recover', 'app/run');
+OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
 ?>
-<!-- seems like angular stuff messes with DOM
-<div id="app">
-             seems like angular menu stuff messes with DOM expected by trashbin
-    <div ng-app="recover"> -->
-<div id="app-navigation"> 
-        <?php print_unescaped($this->inc('part.navigation')); ?>
-        
-        <!-- einfach rausnehmen, wenn settings unten stören, da ohne funktion -->
-        <?php print_unescaped($this->inc('part.settings')); ?>
-</div>
-
-<div id="app-content">
-		    <?php print_unescaped($this->inc('part.recent')); ?>
+<!-- seems like angular stuff messes with DOM, but trying again to make navigation work again -->
+<div id="app"> 
+    <div ng-app="recover"> 
+		<div id="app-navigation"> 
+	        <?php print_unescaped($this->inc('part.navigation')); ?>
+	        <div id="app-settings">
+		        <!-- einfach rausnehmen, wenn settings unten stören, da ohne funktion -->
+		        <?php print_unescaped($this->inc('part.settings')); ?>
+		    </div>
+		</div>
+		<div id="app-content">
+			    <?php print_unescaped($this->inc('part.recent')); ?>
+		</div>
+	</div>
 </div>

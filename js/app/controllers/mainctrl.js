@@ -9,24 +9,13 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-(function(window, document, angular, $, OC, csrfToken, undefined){
+//(function(window, document, angular, $, OC, csrfToken, undefined){
     
     
     /** trashbin filelist (later this could become a service "TrashResource")
      *  adapted from trashbin filelist.js / myfilelist.js
-     
-    //var TrashList = function($el, options)
-    var TrashList =  function ($el, options) {
-        OCA.Recover.FileList.prototype.initialize.apply(this, arguments);
-        //this.initialize($el, options);
-    };
-    //TrashList.prototype = Object.create(Resource.prototype);
-    TrashList.prototype = Object.create(FileList.prototype);
-    **/
-    console.log('in script.js oben');
-        
-    
-
+     */
+    console.log('in mainctrl.js oben');
 /** zunächst überflüssig...
     .service('GetRecDelTrash', function($http, BASE_URL) {
         this.getData = function() {
@@ -36,18 +25,21 @@
 */
     app.controller('ContentController', function($rootScope){
     })
-    /** do not hide any content for now!
+    
     app.controller('NaviController', function($rootScope){
-         this.link = 1;
+         // should be covered by app.run...
+         //this.link = 1;
          this.selectLink = function(linkNum) {
             this.link = linkNum;
             $rootScope.linkNum = linkNum;
          };
+         // if not run, link won't know if it's active! how did this work before???
          this.isSelected = function(checkLink){
+            console.log('isSelected musst be run!');
             return this.link === checkLink;
          };
     })
-    
+    /** 
     // wird nur ausgeführt, 
     // wenn <div ng-controller="RecentController as recentCtrl"> in template!
     
@@ -121,4 +113,4 @@
 
     });
 
-})(window, document, angular, jQuery, OC, oc_requesttoken);
+//})(window, document, angular, jQuery, OC, oc_requesttoken);

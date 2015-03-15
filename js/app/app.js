@@ -11,7 +11,6 @@
 	weitere bestandteile wie controller etc. unterteilen
 
  */
-//var app = angular.module('recover', []);
 if (!OCA.Files) {
 		/**
 		 * Namespace for the files app

@@ -8,7 +8,11 @@
  * @copyright Marcus Mundt 2015
  */
 //.run(function($rootScope, $http, BASE_URL, GetRecDelTrash){
-app.run(function($rootScope){
-	'use strict';
-    $rootScope.linkNum = 1;
-})
+//(function(window, document, angular, $, OC, csrfToken, undefined){
+	//app.run(["$rootScope", function($rootScope){
+	app.run(function($rootScope){
+		'use strict';
+		// not marked active at start up!!
+	    $rootScope.linkNum = 1;
+	})
+//})(window, document, angular, jQuery, OC, oc_requesttoken);
