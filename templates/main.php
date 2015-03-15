@@ -62,18 +62,23 @@ OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
 ?>
-<!-- seems like angular stuff messes with DOM, but trying again to make navigation work again -->
-<div id="app"> 
-    <div ng-app="recover"> 
-		<div id="app-navigation"> 
-	        <?php print_unescaped($this->inc('part.navigation')); ?>
-	        <div id="app-settings">
-		        <!-- einfach rausnehmen, wenn settings unten stören, da ohne funktion -->
-		        <?php print_unescaped($this->inc('part.settings')); ?>
-		    </div>
+<!-- seems like angular stuff messes with DOM, but trying again to make navigation work again 
+ng-app must be there, id="app" is redundant
+ng-app only works when surrounding navigation not more!
+<div id="app"> -->
+
+<div id="app-navigation"> 
+	<div ng-app="recover"> 	
+        <?php print_unescaped($this->inc('part.navigation')); ?>
+	
+    	<div id="app-settings">
+	        <!-- einfach rausnehmen, wenn settings unten stören, da ohne funktion -->
+	        <?php print_unescaped($this->inc('part.settings')); ?>
 		</div>
-		<div id="app-content">
-			    <?php print_unescaped($this->inc('part.recent')); ?>
-		</div>
-	</div>
+	</div>    
 </div>
+<div id="app-content">
+		    <?php print_unescaped($this->inc('part.recent')); ?>
+</div>
+<!--	
+</div> -->

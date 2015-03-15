@@ -12,10 +12,10 @@ warum ng-module="selectedLink" ??? das wird nirgends definiert
             <a href ng-click="naviCtrl.selectLink(1)">Zuletzt geändert</a>
         </li>
         <li ng-class="{ active:naviCtrl.isSelected(2) }">
-            <a href ng-click="naviCtrl.selectLink(2)">Suche</a>
+            <a ng-click="naviCtrl.selectLink(2)">Suche</a>
         </li>
         <li ng-class="{ active:naviCtrl.isSelected(3) }">
-            <a href ng-click="naviCtrl.selectLink(3)">Hilfe</a>
+            <a ng-click="naviCtrl.selectLink(3)">Hilfe</a>
         </li>
     <!--    
         <li ng-class="{ active:naviCtrl.isSelected(4) }">

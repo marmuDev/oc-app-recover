@@ -9,7 +9,7 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-//(function(window, document, angular, $, OC, csrfToken, undefined){
+(function(window, document, angular, $, OC, csrfToken, undefined){
     
     
     /** trashbin filelist (later this could become a service "TrashResource")
@@ -26,17 +26,42 @@
     app.controller('ContentController', function($rootScope){
     })
     
+    // could use http.get here instead of generating links for template...
     app.controller('NaviController', function($rootScope){
-         // should be covered by app.run...
-         //this.link = 1;
-         this.selectLink = function(linkNum) {
-            this.link = linkNum;
-            $rootScope.linkNum = linkNum;
+        // should be covered by app.run... but does not work!
+        //this.link = 1;
+        // werden richtig gesetzt, aber active funzt nicht!
+        this.selectLink = function(linkNum) {
+            this.linkNum = linkNum;
+            //$rootScope.linkNum = linkNum;
+            console.log("linkNum = " + linkNum);
+            /*
+            this.url = OC.Router.generate('recover_index');
+            so geht das nicht, da links erst bei click generiert,
+            da müssen die aber schon feststehen!
+            oder statt routen, wie vorher einfach inhalte aus template ein- und ausblenden?
+
+            switch(linkNum) {
+                case 1:
+                    this.url = OC.generateUrl('/apps/recover');
+                    break;
+                case 2:
+                    this.url = OC.generateUrl('/apps/recover/search');
+                    break;
+                case 3:
+                    this.url = OC.generateUrl('/apps/recover/help');
+                    break;
+                default:
+                    this.url = OC.generateUrl('/apps/recover');
+                    break;
+            }
+            console.log('url = ' + this.url);
+            */
          };
          // if not run, link won't know if it's active! how did this work before???
          this.isSelected = function(checkLink){
-            console.log('isSelected musst be run!');
-            return this.link === checkLink;
+            console.log("isSelected = " + checkLink);
+            return this.linkNum === checkLink;
          };
     })
     /** 
@@ -66,7 +91,7 @@
         
     })
 **/
-    app.controller('SearchController', function() {
+    app.controller('SearchController', function($rootScope) {
         //var searchAttribute = {
         this.search = [
             {
@@ -103,6 +128,9 @@
         this.addSearch = function(search) {
             alert(search);
         };
+        this.linkNum = $rootScope.linkNum;
+        console.log('rootScope linkNum = ' + $rootScope.linkNum);
+        console.log('this linkNum = ' + this.linkNum);
     })
 
     .controller('HelpController', function () {
@@ -113,4 +141,4 @@
 
     });
 
-//})(window, document, angular, jQuery, OC, oc_requesttoken);
+})(window, document, angular, jQuery, OC, oc_requesttoken);
