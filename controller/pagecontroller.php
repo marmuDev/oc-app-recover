@@ -46,7 +46,8 @@ class PageController extends Controller {
         return new TemplateResponse($this->appName, 'main', [
             'user' => $this->userId,
             'appname' => $this->appName,
-            'request' => $this->request
+            'request' => $this->request,
+            'appNavigation' => $this->nav
         ]);
     }
 
@@ -258,6 +259,6 @@ class PageController extends Controller {
             return new JSONResponse(array("data" => array("success" => $success), "statusCode" => "200"));
         }
     }
-    
+
     
 }
