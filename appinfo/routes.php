@@ -28,6 +28,7 @@ $application->registerRoutes($this, array(
         		'requirements' => array('dir' => '.+')),
         array('name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST'),
         array('name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST')
+        //array('name' => 'page#search', 'url' => '/search', 'verb' => 'GET')
     )
 ));
 

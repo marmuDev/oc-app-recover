@@ -37,6 +37,8 @@ OCA.Recover.App = {
 		if (this._initialized) {
 			return;
 		}
+		this.navigation = new OCA.Recover.Navigation($('#app-navigation'));
+		this.navigation.setActiveItem('recently_deleted');
 		console.log('in init from OCA.Recover.App');
 		this._initialized = true;
 		this.fileList = new OCA.Recover.FileList(
@@ -118,7 +120,14 @@ OCA.Recover.App = {
 			}
 		});
 		return fileActions;
+	},
+	// now recovernavigation.js
+	getSearchTemplate: function() {
+		$.get(OC.generateUrl('/apps/recover/recover/search'), function(data) {
+			$('#app-content').replaceAll(data)
+		});
 	}
+
 };
 
 // hack from files/js/app.js

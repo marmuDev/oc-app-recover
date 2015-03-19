@@ -46,10 +46,13 @@ class PageController extends Controller {
         return new TemplateResponse($this->appName, 'main', [
             'user' => $this->userId,
             'appname' => $this->appName,
-            'request' => $this->request,
-            'appNavigation' => $this->nav
+            'request' => $this->request
         ]);
     }
+    /** could get template data mit JS an replace app-content
+    public function search() {
+        return new TemplateResponse($this->appname, 'part.search');
+    }*/
 
     /**
      * @NoAdminRequired
