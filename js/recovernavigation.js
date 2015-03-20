@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2014
+ * Copyright (c) 2014 - 2015 - recover adapted from files app
  *
  * @author Vincent Petry
+ * @author Marcus Mundt
  * @copyright 2014 Vincent Petry <pvince81@owncloud.com>
- *
+ * @copyright 2015 Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * This file is licensed under the Affero General Public License version 3
  * or later.
  *
@@ -36,7 +37,7 @@
 		/**
 		 * Currently selected container
 		 */
-		$currentContent: null,
+		//$currentContent: null,
 
 		/**
 		 * Initializes the navigation from the given container
@@ -47,7 +48,7 @@
 		initialize: function($el) {
 			this.$el = $el;
 			this._activeItem = null;
-			this.$currentContent = null;
+			//this.$currentContent = null;
 			this._setupEvents();
 		},
 
@@ -62,11 +63,12 @@
 		 * Returns the container of the currently active app.
 		 *
 		 * @return app container
-		 */
+		 
 		getActiveContainer: function() {
 			return this.$currentContent;
 		},
-
+		*/
+		
 		/**
 		 * Returns the currently active item
 		 * 
@@ -95,16 +97,18 @@
 				return;
 			}
 			this.$el.find('li').removeClass('active');
+			/*
 			if (this.$currentContent) {
 				this.$currentContent.addClass('hidden');
 				this.$currentContent.trigger(jQuery.Event('hide'));
 			}
+			*/
 			this._activeItem = itemId;
 			this.$el.find('li[data-id=' + itemId + ']').addClass('active');
-			this.$currentContent = $('#app-content-' + itemId);
-			this.$currentContent.removeClass('hidden');
+			//this.$currentContent = $('#app-content-' + itemId);
+			//this.$currentContent.removeClass('hidden');
 			if (!options || !options.silent) {
-				this.$currentContent.trigger(jQuery.Event('show'));
+				//this.$currentContent.trigger(jQuery.Event('show'));
 				this.$el.trigger(
 					new $.Event('itemChanged', {itemId: itemId, previousItemId: oldItemId})
 				);
@@ -126,10 +130,16 @@
 			var itemId = $target.closest('li').attr('data-id');
 			this.setActiveItem(itemId);
 			console.log('clicked on item in nav! itemId = ' + itemId);
+			/* something generates links for navi - 
+			at least they are shown in the address bar of the browser
+			*/
+			$.get(OC.generateUrl('/apps/recover/' + itemId), function(data) {
+				$('#app-content').replaceAll(data);
+				console.log(data);
+			});
+			
 			return false;
 		}
 	};
-
 	OCA.Recover.Navigation = Navigation;
-
 })();

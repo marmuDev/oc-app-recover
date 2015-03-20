@@ -16,7 +16,6 @@ namespace OCA\Recover\Controller;
 // This means that they should be used by apps instead of the internal ownCloud classes
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 
 //use OCP\JSON;
@@ -49,10 +48,10 @@ class PageController extends Controller {
             'request' => $this->request
         ]);
     }
-    /** could get template data mit JS an replace app-content
+    // get template data with JS and replace app-content
     public function search() {
         return new TemplateResponse($this->appname, 'part.search');
-    }*/
+    }
 
     /**
      * @NoAdminRequired

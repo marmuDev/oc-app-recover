@@ -41,7 +41,8 @@ OCP\Util::addScript('files', 'filelist');
 //OCP\Util::addScript('files', 'tagsplugin');
 //OCP\Util::addScript('files', 'favoritesplugin');
 
-//\OC_Util::addVendorScript('core', 'handlebars/handlebars');
+// now trying handlebars for navigation
+\OC_Util::addVendorScript('core', 'handlebars/handlebars');
 // won't work here, now set in init in app.js 
 //OCP\App::setActiveNavigationEntry('recently_deleted');
 
@@ -54,7 +55,8 @@ OCP\Util::addScript('recover', 'myfilelist');
 OCP\Util::addScript('recover', 'recoversearch');
 // redundant but files/app depends on it
 OCP\Util::addScript('files', 'navigation');
-OCP\Util::addScript('recover', 'recovernavigation');
+//OCP\Util::addScript('recover', 'recovernavigation');
+OCP\Util::addScript('recover', 'navigation');
 // among others actions will have to be adapted for the recovery of files from different sources
 OCP\Util::addScript('files', 'fileactions');
 OCP\Util::addScript('files', 'files');
@@ -88,7 +90,16 @@ now trying to add navi the files app way:
 <?php print_unescaped($this->inc('recovernavigation')); ?>
 
 <div id="app-content">
-	<?php print_unescaped($this->inc('part.recent')); ?>
+	<script id="content-tpl" type="text/x-handlebars-template">
+    {{#if recently_deleted}}
+        <?php print_unescaped($this->inc('part.recent')); ?>
+    {{else}} {{#if search}}
+    	<?php print_unescaped($this->inc('part.search')); ?>	
+    {{else}} {{#if help}}
+        <?php print_unescaped($this->inc('part.help')); ?>
+    {{/if}}{{/if}}{{/if}}
+</script>
+	
 </div>
 <!--	
 </div> -->
