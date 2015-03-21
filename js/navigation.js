@@ -1,4 +1,8 @@
-// nav with handlebars
+/** nav with handlebars
+ *  "this._notes = [{id:5, title:"blub", content:"blub"}]"
+ *	"this._notes = [{id:5, title:"blub", content:"blub", active:true}]"
+ *	
+ */
 (function (OC, window, $, undefined) {
 'use strict';
 
@@ -11,13 +15,19 @@ var translations = {
 // this links object holds all our links (meaning navigation links?)
 var Links = function (baseUrl) {
     this._baseUrl = baseUrl;
-    this._links = ["recently_deleted", "search", "help"];
-    console.log("in var Links links[0] = " + this._links[0])
+    this._links = [
+    	//{id:1, title:"recently_deleted", content:"index"},
+    	{id:1, title:"recently_deleted", content:"<?php print_unescaped($this->inc('part.recent')); ?>"},
+    	{id:2, title:"search", content:"<?php print_unescaped($this->inc('part.search')); ?>"},
+    	{id:3, title:"help", content:"<?php print_unescaped($this->inc('part.help')); ?>"}
+    ];
+    console.log("in var Links links[0] = " + this._links[0].toSource())
     //this._activeLink = undefined;
     this._activeLink = this._links[0];
 };
 
 Links.prototype = {
+    /*
     load: function (id) {
         var self = this;
         this._links.forEach(function (link) {
@@ -29,6 +39,7 @@ Links.prototype = {
             }
         });
     },
+    */
     getActive: function () {
         return this._activeLink;
     },
@@ -82,6 +93,10 @@ Links.prototype = {
         return deferred.promise();
     },
     getAll: function () {
+    	/* returns the whole html code, isn't that a bit too much?
+		 * seems like that's the way it should be...
+    	 * console.log('this._links = ' + this._links.toSource());
+    	 */
         return this._links;
     },
     loadAll: function () {
@@ -97,6 +112,7 @@ Links.prototype = {
         return deferred.promise();
     },
     updateActive: function (title, content) {
+    //updateActive: function (title) {
         var link = this.getActive();
         link.title = title;
         link.content = content;
@@ -117,40 +133,43 @@ var View = function (links) {
 
 View.prototype = {
     renderContent: function () {
+        var self = this;
         var source = $('#content-tpl').html();
         var template = Handlebars.compile(source);
-        var html = template({link: this._links.getActive()});
-        var self = this;
-
+        console.log('template in renderContent = ' + template);
+        // param is undefined
+        $('#app-content').append(template(this._links.getActive().content));
+        this.render();
         /*
-        $('#editor').html(html);
-
-        // handle saves
-        var textarea = $('#app-content');
+        var html = template({link: this._links.getActive()});
+        var content = $('#app-content');
+        console.log('content = ' + content);
         var self = this;
-        $('#app-content button').click(function () {
-            var content = textarea.val();
-            var title = content.split('\n')[0]; // first line is the title
-
-            self._links.updateActive(title, content).done(function () {
-                self.render();
-            }).fail(function () {
-                alert('Could not update link, not found');
-            });
+        
+        //var title = this._links.getActive().title;
+        //console.log('title = ' +title);
+		//self.render();
+		/**
+		self._links.updateActive(title, content).done(function () {
+            self.render();
+        }).fail(function () {
+            alert('Could not update link, not found');
         });
-		*/
+        */ 
     },
     renderNavigation: function () {
         var source = $('#navigation-tpl').html();
-        console.log('renderNav source =' + source);
+        //console.log('renderNav source = ' + source);
         var template = Handlebars.compile(source);
+        //console.log('renderNav template = ' + template);
         var html = template({links: this._links.getAll()});
-
+        console.log('renderNav html = ' + html);
         $('#app-navigation ul').html(html);
 
         // create a new link
-        
-        var self = this;
+		// script crashes here
+        //self.render();
+        /*
         $('#new-link').click(function () {
             var link = {
                 title: translations.newNote,
@@ -164,22 +183,26 @@ View.prototype = {
                 alert('Could not create link');
             });
         });
-
+		*/
        
         // load a link
         $('#app-navigation .link > a').click(function () {
             var id = parseInt($(this).parent().data('id'), 10);
             self._links.load(id);
             self.render();
+            console.log("load link self = " + self);
             //$('#editor textarea').focus();
         });
     },
     render: function () {
+    	//console.log('before render Nav');
         this.renderNavigation();
+        console.log('before render Content');
         this.renderContent();
     }
 };
 
+//var links = new Links(OC.generateUrl('/apps/recover/index'));
 var links = new Links(OC.generateUrl('/apps/recover/'));
 var view = new View(links);
 links.loadAll().done(function () {

@@ -87,19 +87,20 @@ now trying to add navi the files app way:
 <div id="app-navigation"> 
 	<div ng-app="recover"> 	
  -->       
-<?php print_unescaped($this->inc('recovernavigation')); ?>
 
-<div id="app-content">
-	<script id="content-tpl" type="text/x-handlebars-template">
-    {{#if recently_deleted}}
-        <?php print_unescaped($this->inc('part.recent')); ?>
-    {{else}} {{#if search}}
-    	<?php print_unescaped($this->inc('part.search')); ?>	
-    {{else}} {{#if help}}
-        <?php print_unescaped($this->inc('part.help')); ?>
-    {{/if}}{{/if}}{{/if}}
-</script>
-	
+<div id="app">
+	<div id="app-navigation">
+		<?php print_unescaped($this->inc('recovernavigation')); ?>
+		<?php print_unescaped($this->inc('part.settings')); ?>
+	</div>
+
+	<div id="app-content">
+		<div id="app-content-wrapper">
+			<?php print_unescaped($this->inc('part.content')); ?>
+		</div>
+	</div>
 </div>
+
+
 <!--	
 </div> -->

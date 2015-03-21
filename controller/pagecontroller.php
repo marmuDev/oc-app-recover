@@ -48,9 +48,16 @@ class PageController extends Controller {
             'request' => $this->request
         ]);
     }
-    // get template data with JS and replace app-content
+    // get template data with JS and replace app-content via handlebars client-side templating
+    // are routes + controllers needed at all for this?
+    public function recently() {
+        return new JSONResponse(array("data" => array("content" => "recently"), "statusCode" => "200"));
+    }
     public function search() {
-        return new TemplateResponse($this->appname, 'part.search');
+        return new JSONResponse(array("data" => array("content" => "search"), "statusCode" => "200"));
+    }
+    public function help() {
+        return new JSONResponse(array("data" => array("content" => "help"), "statusCode" => "200"));
     }
 
     /**
