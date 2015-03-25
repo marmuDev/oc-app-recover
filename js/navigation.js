@@ -21,13 +21,14 @@ var Links = function (baseUrl) {
     	{id:2, title:"search", content:"<?php print_unescaped($this->inc('part.search')); ?>"},
     	{id:3, title:"help", content:"<?php print_unescaped($this->inc('part.help')); ?>"}
     ];
-    console.log("in var Links links[0] = " + this._links[0].toSource())
+    
     //this._activeLink = undefined;
     this._activeLink = this._links[0];
+    console.log("in var Links _activeLink = " + this._activeLink.toSource())
 };
 
 Links.prototype = {
-    /*
+    
     load: function (id) {
         var self = this;
         this._links.forEach(function (link) {
@@ -39,7 +40,7 @@ Links.prototype = {
             }
         });
     },
-    */
+    
     getActive: function () {
         return this._activeLink;
     },
@@ -116,7 +117,7 @@ Links.prototype = {
         var link = this.getActive();
         link.title = title;
         link.content = content;
-
+        console.log('update active title = ' + title + ', content = ' + content);
         return $.ajax({
             url: this._baseUrl + '/' + link.id,
             method: 'PUT',
@@ -135,11 +136,27 @@ View.prototype = {
     renderContent: function () {
         var self = this;
         var source = $('#content-tpl').html();
+        console.log('renderContent source = ' + source);
         var template = Handlebars.compile(source);
         console.log('template in renderContent = ' + template);
+        console.log('getActive = ' + this._links.getActive());
+        // -> result of getActive is undefined!!!
+
+        var html = template({link: this._links.getActive()});
+        console.log('html in renderContent = ' + html);
         // param is undefined
-        $('#app-content').append(template(this._links.getActive().content));
-        this.render();
+        $('#app-content').html(html);
+        
+        // also undefined
+        //$('#app-content').append(template(this._links[0].content));
+        //self.render();
+        /*
+        var title = self._links.getActive().title;
+        self._links.updateActive(title, content).done(function () {
+            self.render();
+        }).fail(function () {
+            alert('Could not update link, not found');
+        });
         /*
         var html = template({link: this._links.getActive()});
         var content = $('#app-content');
@@ -150,11 +167,7 @@ View.prototype = {
         //console.log('title = ' +title);
 		//self.render();
 		/**
-		self._links.updateActive(title, content).done(function () {
-            self.render();
-        }).fail(function () {
-            alert('Could not update link, not found');
-        });
+		
         */ 
     },
     renderNavigation: function () {
@@ -195,9 +208,7 @@ View.prototype = {
         });
     },
     render: function () {
-    	//console.log('before render Nav');
-        this.renderNavigation();
-        console.log('before render Content');
+    	this.renderNavigation();
         this.renderContent();
     }
 };
@@ -206,6 +217,7 @@ View.prototype = {
 var links = new Links(OC.generateUrl('/apps/recover/'));
 var view = new View(links);
 links.loadAll().done(function () {
+	//console.log('load all done, links[0].content = ' + links[0].content);
     view.render();
 }).fail(function () {
     alert('Could not load links');
