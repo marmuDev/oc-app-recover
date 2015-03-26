@@ -20,10 +20,13 @@
 	translation strings 
 
 <div style="display:none" id="recently-deleted-string"><?php p($l->t('Recently Deleted')); ?></div>
+
+statt <li id="recently_deleted">  <li id="1"> !!!!
 -->
+
 <script id="navigation-tpl" type="text/x-handlebars-template">
-	<li id="recently_deleted"><a href="#"><?php p($l->t('Recently Deleted')); ?></a></li>
-	<li id="search"><a href="#"><?php p($l->t('Search')); ?></a></li>
-	<li id="help"><a href="#"><?php p($l->t('Help')); ?></a></li>
+	<li id="1"><a href="#"><?php p($l->t('Recently Deleted')); ?></a></li>
+	<li id="2"><a href="#"><?php p($l->t('Search')); ?></a></li>
+	<li id="3"><a href="#"><?php p($l->t('Help')); ?></a></li>
 </script>
 <ul></ul>

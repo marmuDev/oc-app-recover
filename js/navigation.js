@@ -17,19 +17,20 @@ var Links = function (baseUrl) {
     this._baseUrl = baseUrl;
     this._links = [
     	//{id:1, title:"recently_deleted", content:"index"},
-    	{id:1, title:"recently_deleted", content:"<?php print_unescaped($this->inc('part.recent')); ?>"},
-    	{id:2, title:"search", content:"<?php print_unescaped($this->inc('part.search')); ?>"},
-    	{id:3, title:"help", content:"<?php print_unescaped($this->inc('part.help')); ?>"}
+    	{id:1, title:"recently_deleted", content:"blub", active:true},
+    	{id:2, title:"search", content:"blub", active:false},
+    	{id:3, title:"help", content:"blub", active:false}
     ];
     
-    //this._activeLink = undefined;
-    this._activeLink = this._links[0];
-    console.log("in var Links _activeLink = " + this._activeLink.toSource())
+    this._activeLink = undefined;
+    //this._activeLink = this._links[0];
+    //console.log("in var Links _activeLink = " + this._activeLink.toSource())
 };
 
 Links.prototype = {
     
     load: function (id) {
+        console.log('in Links load');
         var self = this;
         this._links.forEach(function (link) {
             if (link.id === id) {
@@ -42,6 +43,7 @@ Links.prototype = {
     },
     
     getActive: function () {
+    	console.log('in Links getActive');
         return this._activeLink;
     },
     removeActive: function () {
@@ -103,9 +105,11 @@ Links.prototype = {
     loadAll: function () {
         var deferred = $.Deferred();
         var self = this;
+        console.log('in Links loadAll');
         $.get(this._baseUrl).done(function (links) {
             self._activeLink = undefined;
             self._links = links;
+            console.log('in links loadAll links = ' + links);
             deferred.resolve();
         }).fail(function () {
             deferred.reject();
@@ -118,6 +122,7 @@ Links.prototype = {
         link.title = title;
         link.content = content;
         console.log('update active title = ' + title + ', content = ' + content);
+        // wat wie wo warum?
         return $.ajax({
             url: this._baseUrl + '/' + link.id,
             method: 'PUT',
@@ -135,28 +140,37 @@ var View = function (links) {
 View.prototype = {
     renderContent: function () {
         var self = this;
-        var source = $('#content-tpl').html();
-        console.log('renderContent source = ' + source);
-        var template = Handlebars.compile(source);
-        console.log('template in renderContent = ' + template);
-        console.log('getActive = ' + this._links.getActive());
-        // -> result of getActive is undefined!!!
-
-        var html = template({link: this._links.getActive()});
-        console.log('html in renderContent = ' + html);
-        // param is undefined
-        $('#app-content').html(html);
-        
-        // also undefined
-        //$('#app-content').append(template(this._links[0].content));
-        //self.render();
         /*
+        * WARUM IS GETACTIVE UNDEFINED?!?!?!
+        /*        
         var title = self._links.getActive().title;
         self._links.updateActive(title, content).done(function () {
             self.render();
         }).fail(function () {
             alert('Could not update link, not found');
         });
+        */
+        // source was already wrong, now part.content = part.recent
+        	// how to use if or switch to render based on active navi link?
+        var source = $('#content-tpl').html();
+        //console.log('renderContent source = ' + source);
+        var template = Handlebars.compile(source);
+        //console.log('template in renderContent = ' + template);
+        //console.log('getActive = ' + this._links.getActive());
+        // -> result of getActive is undefined!!!
+        var data = "init";
+        //var html = template({link: this._links.getActive()});
+        var html = template(data);
+        //console.log('html in renderContent = ' + html);
+        
+        //$('#app-content').html(html);
+        //$('#app-content').append(html);
+        //self.render();
+        
+        // also undefined
+        //$('#app-content').append(template(this._links[0].content));
+        //self.render();
+
         /*
         var html = template({link: this._links.getActive()});
         var content = $('#app-content');
@@ -171,6 +185,7 @@ View.prototype = {
         */ 
     },
     renderNavigation: function () {
+        var self = this;
         var source = $('#navigation-tpl').html();
         //console.log('renderNav source = ' + source);
         var template = Handlebars.compile(source);
@@ -199,12 +214,18 @@ View.prototype = {
 		*/
        
         // load a link
-        $('#app-navigation .link > a').click(function () {
+        $('#app-navigation a').click(function () {
+            // id is NaN!!!
+            //wenn data hinzu -> undefined
+            var dataToParse = $(this).parent();
+            console.log('dataToParse' + dataToParse.toSource());
+            //var id = parseInt($(this).parent().data('id'), 10);
             var id = parseInt($(this).parent().data('id'), 10);
+            console.log("load link self = " + self + ", id = " + id);
             self._links.load(id);
-            self.render();
-            console.log("load link self = " + self);
+            
             //$('#editor textarea').focus();
+            self.render();
         });
     },
     render: function () {
@@ -217,7 +238,7 @@ View.prototype = {
 var links = new Links(OC.generateUrl('/apps/recover/'));
 var view = new View(links);
 links.loadAll().done(function () {
-	//console.log('load all done, links[0].content = ' + links[0].content);
+	//links.load(1);
     view.render();
 }).fail(function () {
     alert('Could not load links');
