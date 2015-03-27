@@ -17,21 +17,23 @@ var Links = function (baseUrl) {
     this._baseUrl = baseUrl;
     this._links = [
     	//{id:1, title:"recently_deleted", content:"index"},
-    	{id:1, title:"recently_deleted", content:"blub", active:true},
-    	{id:2, title:"search", content:"blub", active:false},
-    	{id:3, title:"help", content:"blub", active:false}
+    	{id:0, title:"recently_deleted", content:"blub", active:true},
+    	{id:1, title:"search", content:"blub", active:false},
+    	{id:2, title:"help", content:"blub", active:false}
     ];
     
-    this._activeLink = undefined;
-    //this._activeLink = this._links[0];
-    //console.log("in var Links _activeLink = " + this._activeLink.toSource())
+    //this._activeLink = undefined;
+    this._activeLink = this._links[0]; // -> getActive still returning undefined
+    console.log("in var Links _activeLink = " + this._activeLink.toSource())
 };
 
 Links.prototype = {
     
     load: function (id) {
-        console.log('in Links load');
+        // link is not defined, since no link created in create()?
+        console.log('in Links load id = ' + id + 'link.id = ' + link.id);
         var self = this;
+        // is not a function!
         this._links.forEach(function (link) {
             if (link.id === id) {
                 link.active = true;
@@ -43,9 +45,10 @@ Links.prototype = {
     },
     
     getActive: function () {
-    	console.log('in Links getActive');
+    	console.log('in Links getActive this._activeLink = ' + this._activeLink);
         return this._activeLink;
     },
+    /*
     removeActive: function () {
         var index;
         var deferred = $.Deferred();
@@ -77,6 +80,7 @@ Links.prototype = {
         }
         return deferred.promise();
     },
+    
     create: function (link) {
         var deferred = $.Deferred();
         var self = this;
@@ -95,20 +99,30 @@ Links.prototype = {
         });
         return deferred.promise();
     },
+    */
     getAll: function () {
     	/* returns the whole html code, isn't that a bit too much?
 		 * seems like that's the way it should be...
     	 * console.log('this._links = ' + this._links.toSource());
     	 */
         return this._links;
-    },
+    }
+};
+    //},
+    /* gets notes via BASE_URL and route from service "NoteService" 
     loadAll: function () {
         var deferred = $.Deferred();
         var self = this;
-        console.log('in Links loadAll');
+        //console.log('in Links loadAll');
         $.get(this._baseUrl).done(function (links) {
             self._activeLink = undefined;
             self._links = links;
+            /* so sollte das aussehen
+             * "in links loadAll notes = [object Object],[object Object]" script.js:91
+             * "this._notes = [{id:5, title:"blub", content:"blub"}, {id:6, title:"test", content:"test"}]"
+             */
+            // komplette HTML source!
+            /*
             console.log('in links loadAll links = ' + links);
             deferred.resolve();
         }).fail(function () {
@@ -116,13 +130,15 @@ Links.prototype = {
         });
         return deferred.promise();
     },
+        // not needed!
     updateActive: function (title, content) {
     //updateActive: function (title) {
+        console.log('in updateActive at beginning');
         var link = this.getActive();
         link.title = title;
         link.content = content;
         console.log('update active title = ' + title + ', content = ' + content);
-        // wat wie wo warum?
+        // writes new notes, see /controller/noteapicontroller
         return $.ajax({
             url: this._baseUrl + '/' + link.id,
             method: 'PUT',
@@ -130,7 +146,7 @@ Links.prototype = {
             data: JSON.stringify(link)
         });
     }
-};
+};  */
 
 // this will be the view that is used to update the html
 var View = function (links) {
@@ -142,14 +158,14 @@ View.prototype = {
         var self = this;
         /*
         * WARUM IS GETACTIVE UNDEFINED?!?!?!
-        /*        
+        */        
         var title = self._links.getActive().title;
         self._links.updateActive(title, content).done(function () {
             self.render();
         }).fail(function () {
             alert('Could not update link, not found');
         });
-        */
+        
         // source was already wrong, now part.content = part.recent
         	// how to use if or switch to render based on active navi link?
         var source = $('#content-tpl').html();
@@ -215,16 +231,30 @@ View.prototype = {
        
         // load a link
         $('#app-navigation a').click(function () {
-            // id is NaN!!!
-            //wenn data hinzu -> undefined
-            var dataToParse = $(this).parent();
-            console.log('dataToParse' + dataToParse.toSource());
-            //var id = parseInt($(this).parent().data('id'), 10);
-            var id = parseInt($(this).parent().data('id'), 10);
-            console.log("load link self = " + self + ", id = " + id);
-            self._links.load(id);
+            /* wenn data hinzu -> undefined, 
+                data muss irgendwo gesetzt werden, bevor man es lesen kann
+            // parent -> komplette HTML Source
+            // nur this -> komplette HTML Source
+            // immer komplette source!
+            */
+            //var dataToParse = $( this ).parent().get( 0 ).id;
+            //console.log('dataToParse = ' + dataToParse);
+            var id = $( this ).parent().get( 0 ).id;
+            // no need to load, set active and change content!
+            //self._links.load(id);
+            
+            
+            self._links.forEach(function(link) {
+                if (link.id === id) {
+                    link.active = true;
+                } else { 
+                    link.active = false ;
+                }
+                console.log("load link link.id = " + link.id + ", id = " + id);
+            });
             
             //$('#editor textarea').focus();
+            // render needed???
             self.render();
         });
     },
@@ -237,12 +267,12 @@ View.prototype = {
 //var links = new Links(OC.generateUrl('/apps/recover/index'));
 var links = new Links(OC.generateUrl('/apps/recover/'));
 var view = new View(links);
-links.loadAll().done(function () {
+//links.loadAll().done(function () {
 	//links.load(1);
     view.render();
-}).fail(function () {
-    alert('Could not load links');
-});
+//}).fail(function () {
+//    alert('Could not load links');
+//});
 
 
 });

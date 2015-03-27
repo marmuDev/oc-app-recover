@@ -25,8 +25,8 @@ statt <li id="recently_deleted">  <li id="1"> !!!!
 -->
 
 <script id="navigation-tpl" type="text/x-handlebars-template">
-	<li id="1"><a href="#"><?php p($l->t('Recently Deleted')); ?></a></li>
-	<li id="2"><a href="#"><?php p($l->t('Search')); ?></a></li>
-	<li id="3"><a href="#"><?php p($l->t('Help')); ?></a></li>
+	<li id="0"><a href="#"><?php p($l->t('Recently Deleted')); ?></a></li>
+	<li id="1"><a href="#"><?php p($l->t('Search')); ?></a></li>
+	<li id="2"><a href="#"><?php p($l->t('Help')); ?></a></li>
 </script>
 <ul></ul>
