@@ -96,7 +96,7 @@ now trying to add navi the files app way:
 
 	<div id="app-content">
 		<div id="app-content-wrapper">
-			<?php print_unescaped($this->inc('part.recent')); ?>
+			<?php print_unescaped($this->inc('part.content')); ?>
 		</div>
 	</div>
 </div>

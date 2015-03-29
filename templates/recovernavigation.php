@@ -21,12 +21,17 @@
 
 <div style="display:none" id="recently-deleted-string"><?php p($l->t('Recently Deleted')); ?></div>
 
+<li id="1" class="{{#if active}}active{{/if}}"><a href="#"><?php p($l->t('Search')); ?></a></li>
+<li id="2" class="{{#if active}}active{{/if}}"><a href="#"><?php p($l->t('Help')); ?></a></li>
+
 statt <li id="recently_deleted">  <li id="1"> !!!!
 -->
 
 <script id="navigation-tpl" type="text/x-handlebars-template">
-	<li id="0"><a href="#"><?php p($l->t('Recently Deleted')); ?></a></li>
-	<li id="1"><a href="#"><?php p($l->t('Search')); ?></a></li>
-	<li id="2"><a href="#"><?php p($l->t('Help')); ?></a></li>
+	{{#each links}}
+		<li id="{{id}}" class="nav-recover {{#if active}}active{{/if}}">
+			<a href="#">{{title}}</a>
+		</li>
+	{{/each}}
 </script>
 <ul></ul>

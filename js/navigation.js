@@ -17,35 +17,35 @@ var Links = function (baseUrl) {
     this._baseUrl = baseUrl;
     this._links = [
     	//{id:1, title:"recently_deleted", content:"index"},
-    	{id:0, title:"recently_deleted", content:"blub", active:true},
-    	{id:1, title:"search", content:"blub", active:false},
-    	{id:2, title:"help", content:"blub", active:false}
+    	{id:0, title:"recently_deleted", content:"<?php print_unescaped($this->inc('part.recent')); ?>", active:true},
+    	{id:1, title:"search", content:"<?php print_unescaped($this->inc('part.search')); ?>", active:false},
+    	{id:2, title:"help", content:"<?php print_unescaped($this->inc('part.help')); ?>", active:false}
     ];
     
-    //this._activeLink = undefined;
-    this._activeLink = this._links[0]; // -> getActive still returning undefined
-    console.log("in var Links _activeLink = " + this._activeLink.toSource())
+    this._activeLink = undefined;
+    //this._activeLink = this._links[0]; // -> getActive still returning undefined
+    //console.log("in var Links init _activeLink = " + this._activeLink.toSource())
 };
 
 Links.prototype = {
     
     load: function (id) {
-        // link is not defined, since no link created in create()?
-        console.log('in Links load id = ' + id + 'link.id = ' + link.id);
         var self = this;
-        // is not a function!
         this._links.forEach(function (link) {
-            if (link.id === id) {
+            //console.log('in Links load loop: id = ' + id + ', link.id = ' + link.id);
+            if (link.id == id) {
+                console.log("id == id");
                 link.active = true;
                 self._activeLink = link;
             } else {
                 link.active = false;
             }
         });
+        console.log('active link now = ' + this._activeLink.toSource());
     },
     
     getActive: function () {
-    	console.log('in Links getActive this._activeLink = ' + this._activeLink);
+    	console.log('in Links getActive this._activeLink = ' + this._activeLink.toSource());
         return this._activeLink;
     },
     /*
@@ -130,7 +130,7 @@ Links.prototype = {
         });
         return deferred.promise();
     },
-        // not needed!
+        // not needed! 
     updateActive: function (title, content) {
     //updateActive: function (title) {
         console.log('in updateActive at beginning');
@@ -156,31 +156,26 @@ var View = function (links) {
 View.prototype = {
     renderContent: function () {
         var self = this;
-        /*
-        * WARUM IS GETACTIVE UNDEFINED?!?!?!
-        */        
-        var title = self._links.getActive().title;
-        self._links.updateActive(title, content).done(function () {
-            self.render();
-        }).fail(function () {
-            alert('Could not update link, not found');
-        });
-        
-        // source was already wrong, now part.content = part.recent
-        	// how to use if or switch to render based on active navi link?
+        // how to use if or switch to render based on active navi link?
         var source = $('#content-tpl').html();
-        //console.log('renderContent source = ' + source);
+        console.log('renderContent source = ' + source);
+        // problem?        
         var template = Handlebars.compile(source);
-        //console.log('template in renderContent = ' + template);
-        //console.log('getActive = ' + this._links.getActive());
+        console.log('template in renderContent = ' + template);
+        //console.log('in render Content getActive = ' + this._links.getActive().content);
         // -> result of getActive is undefined!!!
-        var data = "init";
-        //var html = template({link: this._links.getActive()});
-        var html = template(data);
+        //var data = "init";
+        
+        var html = template({content: this._links.getActive().content});
+        //var html = template(data);
         //console.log('html in renderContent = ' + html);
         
-        //$('#app-content').html(html);
+        $('#app-content').html(html);
+        //$('#app-content').html(this._links.getActive().content);
+        // inc part.recent steht nun da!
         //$('#app-content').append(html);
+        
+        // crashes script !!!
         //self.render();
         
         // also undefined
@@ -206,13 +201,16 @@ View.prototype = {
         //console.log('renderNav source = ' + source);
         var template = Handlebars.compile(source);
         //console.log('renderNav template = ' + template);
+        console.log('this links get all = ' + this._links.getAll());
         var html = template({links: this._links.getAll()});
         console.log('renderNav html = ' + html);
+        //$('#app-navigation ul').html(html);
         $('#app-navigation ul').html(html);
+        // script crashes here, seems like endless loop, 
+        // render calls render again and again
+        //self.render();
 
         // create a new link
-		// script crashes here
-        //self.render();
         /*
         $('#new-link').click(function () {
             var link = {
@@ -240,21 +238,22 @@ View.prototype = {
             //var dataToParse = $( this ).parent().get( 0 ).id;
             //console.log('dataToParse = ' + dataToParse);
             var id = $( this ).parent().get( 0 ).id;
-            // no need to load, set active and change content!
-            //self._links.load(id);
-            
-            
-            self._links.forEach(function(link) {
+            self._links.load(id);
+            /*
+            no need to load, set active and change content!
+            load does part of it
+            load does this already
+            self._links._links.forEach(function(link) {
                 if (link.id === id) {
                     link.active = true;
                 } else { 
                     link.active = false ;
                 }
-                console.log("load link link.id = " + link.id + ", id = " + id);
             });
-            
+            self._links.getActive();
+            */
             //$('#editor textarea').focus();
-            // render needed???
+            // render needed? -> update of CSS class to "active"?
             self.render();
         });
     },
@@ -268,10 +267,10 @@ View.prototype = {
 var links = new Links(OC.generateUrl('/apps/recover/'));
 var view = new View(links);
 //links.loadAll().done(function () {
-	//links.load(1);
+	links.load(0);
     view.render();
 //}).fail(function () {
-//    alert('Could not load links');
+ //   alert('Could not load links');
 //});
 
 
