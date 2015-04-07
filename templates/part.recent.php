@@ -52,8 +52,14 @@ now without angular!
     -> standard files, trashbin, sharing etc.
 <div id="app-content-trashbin" class="hidden viewcontainer"> 
 -->
+
 <div id="app-content-trashbin">
-<?php /** @var $l OC_L10N */ ?>
+<?php 
+/** @var $l OC_L10N */ 
+// wird ausgegeben, aber trashlist kommt nicht...
+p("in part.recent");
+p($_['request']);
+?>
 <div id="controls">
     <div id="file_action_panel"></div>
 </div>

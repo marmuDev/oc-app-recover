@@ -21,11 +21,12 @@
     var Links = function (baseUrl) {
         this._baseUrl = baseUrl;
         this._links = [
-        	{id:0, title:"recently_deleted", content:"<?php print_unescaped($this->inc('part.recent')); ?>", active:true},
-        	{id:1, title:"search", content:"<?php print_unescaped($this->inc('part.search')); ?>", active:false},
-        	{id:2, title:"help", content:"<?php print_unescaped($this->inc('part.help')); ?>", active:false}
+        	{id:0, title:"recently_deleted", active:true},
+        	{id:1, title:"search", active:false},
+        	{id:2, title:"help", active:false}
         ];
-        this._activeLink = undefined;
+        this._activeLink = this._links[0];
+        //this._activeLink = undefined;
         //this._activeLink = this._links[0]; // -> getActive still returning undefined
         //console.log("in var Links init _activeLink = " + this._activeLink.toSource())
     };
@@ -113,9 +114,18 @@
             console.log('id = ' + id);
             switch(id) {
                 case "0":
-                    // maybe better /index or /recently_deleted
                     $.ajax({
-                        url : OC.generateUrl('/apps/recover/trashlist')
+                        url : OC.generateUrl('/apps/recover/recently_deleted'),
+                        // -> empty content wrapper
+                        //url : OC.generateUrl('/apps/recover/trashlist'),
+                        // -> Object Object, since Trashbin returned as JSON data
+                        //url : OC.generateUrl('/apps/recover/trashlist'),
+                        data : {
+                            dir: '/',
+                            sort: 'mtime',
+                            sortdirection: 'desc'
+                        }
+                        // how to use objects / methods from other files? 
                         /*
                         data : {
                             dir : OCA.Recover.App.fileList.getCurrentDirectory(),
@@ -125,17 +135,19 @@
                         */
                     })
                         .success(function( html ) {
-                            $( "#app-content" ).append( html ); 
+                            // simple hack replacing whole page instead of just "app-content"
+                            $("#app-content").html( html ); 
+                            //$("#app-content-trashbin").html( html );
+                            console.log('html = ' + html);
                         });
                     console.log('case 0');
                     break;
                 case "1":
-                   $.ajax({
+                    $.ajax({
                         url : OC.generateUrl('/apps/recover/search')
                     })
                         .success(function( html ) {
-                            $( "#app-content" ).append( html ); 
-                            console.log('html');
+                            $( "#app-content" ).html( html ); 
                         });
                     console.log('case 1');
                     break;
@@ -144,14 +156,14 @@
                         url : OC.generateUrl('/apps/recover/help')
                     })
                         .success(function( html ) {
-                            $( "#app-content" ).append( html ); 
+                            $( "#app-content" ).html( html ); 
                         });
                     console.log('case 2');
                     break;                    
                 default:
                     //url='undefined';
                     $.ajax({
-                        url : OC.generateUrl('/apps/recover/trashlist')
+                        url : OC.generateUrl('/apps/recover/recently_deleted')
                         /*
                         data : {
                             dir : OCA.Recover.App.fileList.getCurrentDirectory(),
@@ -161,7 +173,7 @@
                         */
                     })
                         .done(function( html ) {
-                            $( "#app-content" ).append( html ); 
+                            $( "#app-content" ).html( html ); 
                         });
                     console.log('case default -> wie 0');
             }   

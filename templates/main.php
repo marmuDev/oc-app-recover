@@ -50,7 +50,7 @@ OCP\Util::addScript('files', 'filelist');
 OCP\Util::addScript('recover', 'app/app');
 OCP\Util::addScript('recover', 'myfilelist');
 // searchbox adapted from core search
-// now adapted search.setFilter('', function (query) in recoversearch
+// now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
 // search adapted from core files search
 OCP\Util::addScript('recover', 'recoversearch');
 // redundant but files/app depends on it
@@ -63,15 +63,16 @@ OCP\Util::addScript('files', 'files');
 OCP\Util::addScript('files', 'keyboardshortcuts');
 // now trying with no angular at all!
 // back to angular for search stuff
-OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
 // angular is back for navigation...
 // now navi the files app way (\OCA\Files\App::getNavigationManager()->add)
-//OCP\Util::addScript('recover', 'vendor/angular.min');
+// and back to angular for search
+OCP\Util::addScript('recover', 'vendor/angular.min');
 // var app as angular module and further angular stuff
-//OCP\Util::addScript('recover', 'app/config');
-//OCP\Util::addScript('recover', 'app/run');
-//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+OCP\Util::addScript('recover', 'app/config');
+OCP\Util::addScript('recover', 'app/run');
+OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
@@ -96,10 +97,13 @@ now trying to add navi the files app way:
 	</div>
 
 	<div id="app-content">
-		<div id="app-content-wrapper">
+		<!--<div id="app-content-wrapper">-->
 			<?php
-				print_unescaped($this->inc('part.content')); 
-				p($_['request']);
+			// load part.recent initially
+				//p($_['request']);
+				//print_unescaped($this->inc('part.content')); 
+				print_unescaped($this->inc('part.recent')); 
+				
 			?>
 
 		</div>

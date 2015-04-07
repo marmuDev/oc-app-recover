@@ -16,6 +16,7 @@ namespace OCA\Recover\Controller;
 // This means that they should be used by apps instead of the internal ownCloud classes
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
 
 //use OCP\JSON;
@@ -51,7 +52,7 @@ class PageController extends Controller {
     /** get template data with JS and replace app-content via handlebars client-side templating
      *  are routes + controllers needed at all for this?
      *  back to trashbin-style, trying to load different contents via ajax
-    
+    */
     public function recently() {
         //return new JSONResponse(array("data" => array("content" => "recently"), "statusCode" => "200"));
         return new TemplateResponse($this->appName, 'part.recent', [
@@ -60,9 +61,10 @@ class PageController extends Controller {
             'request' => $this->request
         ]);
     }
-    **/
+    
     public function search() {
         return new TemplateResponse($this->appName, 'part.search', [
+        //return new DataResponse($this->appName, 'part.search', [
             'user' => $this->userId,
             'appname' => $this->appName,
             'request' => $this->request
