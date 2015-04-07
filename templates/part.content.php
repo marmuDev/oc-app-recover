@@ -5,3 +5,10 @@
     	{{/if}}
 	{{/each}}
 </script>
+
+<?php 
+
+	print_unescaped($this->inc('part.recent')); 
+	//print_unescaped($this->inc('part.search')); 
+	//print_unescaped($this->inc('part.help')); 
+?>

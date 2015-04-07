@@ -27,7 +27,7 @@ $application->registerRoutes($this, array(
         array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
         // another route for the same function, 
         // but triggered when clicking again on recently deleted in nav
-        array('name' => 'page#recently', 'url' => '/recently_deleted', 'verb' => 'GET'),
+        //array('name' => 'page#recently', 'url' => '/recently_deleted', 'verb' => 'GET'),
         array('name' => 'page#search', 'url' => '/search', 'verb' => 'GET'),
         array('name' => 'page#help', 'url' => '/help', 'verb' => 'GET'),
         

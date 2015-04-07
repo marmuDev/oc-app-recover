@@ -62,7 +62,8 @@ OCP\Util::addScript('files', 'fileactions');
 OCP\Util::addScript('files', 'files');
 OCP\Util::addScript('files', 'keyboardshortcuts');
 // now trying with no angular at all!
-//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+// back to angular for search stuff
+OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
 // angular is back for navigation...
 // now navi the files app way (\OCA\Files\App::getNavigationManager()->add)
@@ -96,7 +97,11 @@ now trying to add navi the files app way:
 
 	<div id="app-content">
 		<div id="app-content-wrapper">
-			<?php print_unescaped($this->inc('part.content')); ?>
+			<?php
+				print_unescaped($this->inc('part.content')); 
+				p($_['request']);
+			?>
+
 		</div>
 	</div>
 </div>
