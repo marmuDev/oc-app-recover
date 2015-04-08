@@ -1,7 +1,8 @@
 /**
  * ownCloud - recover - navigation with handlebars and client-side templating
- *  would be really nice to switch whole app to client-side tmplating...
- *
+ * would be really nice to switch whole app to client-side tmplating...
+ * Further rerendering view onClick via jQuery 
+ * 
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
  *
@@ -17,7 +18,7 @@
         recentlyDeleted: $('#recently-deleted-string').text()
     };
 
-    // this links object holds all our links (meaning navigation links?)
+    // this links object holds all our links
     var Links = function (baseUrl) {
         this._baseUrl = baseUrl;
         this._links = [
@@ -25,8 +26,10 @@
         	{id:1, title:"search", active:false},
         	{id:2, title:"help", active:false}
         ];
-        this._activeLink = this._links[0];
-        //this._activeLink = undefined;
+        // even without this line it is grey (active) for a moment when loading, 
+        // but should stay grey until another link is clicked -> to solve
+        //this._activeLink = this._links[0];
+        this._activeLink = undefined;
         //this._activeLink = this._links[0]; // -> getActive still returning undefined
         //console.log("in var Links init _activeLink = " + this._activeLink.toSource())
     };
@@ -111,16 +114,16 @@
         renderContent: function (id) {
             //var url = 'init';
             //var data = 'init';
-            console.log('id = ' + id);
+            console.log('renderContent id = ' + id);
             switch(id) {
                 case "0":
                     $.ajax({
-                        url : OC.generateUrl('/apps/recover/recently_deleted'),
+                        url: OC.generateUrl('/apps/recover/recently_deleted'),
                         // -> empty content wrapper
                         //url : OC.generateUrl('/apps/recover/trashlist'),
                         // -> Object Object, since Trashbin returned as JSON data
                         //url : OC.generateUrl('/apps/recover/trashlist'),
-                        data : {
+                        data: {
                             dir: '/',
                             sort: 'mtime',
                             sortdirection: 'desc'
@@ -135,25 +138,40 @@
                         */
                     })
                         .success(function( html ) {
-                            // simple hack replacing whole page instead of just "app-content"
                             $("#app-content").html( html ); 
-                            //$("#app-content-trashbin").html( html );
+                            //var newContent = oldContent.html(html);
+                            /** so gleiches verhalten wie mit HTML
+                            $("#app-content").empty();
+                            $("#app-content").append(html);
+                            //$("#app-content").first().empty(); 
+                            //$("#app-content").first().append(html); 
+                            */
                             console.log('html = ' + html);
+
                         });
                     console.log('case 0');
                     break;
                 case "1":
                     $.ajax({
-                        url : OC.generateUrl('/apps/recover/search')
+                        url: OC.generateUrl('/apps/recover/search')
                     })
                         .success(function( html ) {
                             $( "#app-content" ).html( html ); 
+                            //console.log('html = ' + html);
+                            /** auch gleiches verhalten wie mit .html
+                            $("#app-content").first().empty(); 
+                            $("#app-content").first().append(html); 
+                            var oldContent = $("#app-content").first(); 
+                            console.log('oldContent = ' + oldContent.toSource());
+                            // WTF?!?!
+                            oldContent = ({0:{jQuery110209579967259923061:66, 'sizzle-1428513883807':{parentNode:["443 8", 59]}}, length:1, prevObject:{0:{jQuery110209579967259923061:66, 'sizzle-1428513883807':{parentNode:["443 8", 59]}}, length:1, context:{location:({}), searchForm:{0:{}, 1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{0:{}, 1:{}, 2:{}, 3:{}, 4:{}}, 7:{}}, jQuery110209579967259923061:1, jQuery110207578655761315917:1}, selector:"#app-content"}, context:{location:({}), searchForm:{0:{}, 1:{}, 2:{}, 3:{}, 4:{}, 5:{}, 6:{0:{}, 1:{}, 2:{}, 3:{}, 4:{}}, 7:{}}, jQuery110209579967259923061:1, jQuery110207578655761315917:1}})" navigation.js:166
+                            */
                         });
                     console.log('case 1');
                     break;
                 case "2":
                     $.ajax({
-                        url : OC.generateUrl('/apps/recover/help')
+                        url: OC.generateUrl('/apps/recover/help')
                     })
                         .success(function( html ) {
                             $( "#app-content" ).html( html ); 
@@ -163,7 +181,7 @@
                 default:
                     //url='undefined';
                     $.ajax({
-                        url : OC.generateUrl('/apps/recover/recently_deleted')
+                        url: OC.generateUrl('/apps/recover/recently_deleted')
                         /*
                         data : {
                             dir : OCA.Recover.App.fileList.getCurrentDirectory(),
@@ -180,14 +198,15 @@
         },
 
         renderNavigation: function () {
+            console.log('in renderNavigation');
             var self = this;
             var source = $('#navigation-tpl').html();
             //console.log('renderNav source = ' + source);
             var template = Handlebars.compile(source);
             //console.log('renderNav template = ' + template);
-            console.log('this links get all = ' + this._links.getAll());
+            //console.log('this links get all = ' + this._links.getAll());
             var html = template({links: this._links.getAll()});
-            console.log('renderNav html = ' + html);
+            //console.log('renderNav html = ' + html);
             //$('#app-navigation ul').html(html);
             $('#app-navigation ul').html(html);
            

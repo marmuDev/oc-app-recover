@@ -17,10 +17,13 @@ namespace OCA\Recover\Controller;
 use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Controller;
-
+use OCP\AppFramework\Http\Response;
 //use OCP\JSON;
 use OCP\AppFramework\Http\JSONResponse;
+
+use OCP\AppFramework\Controller;
+
+
 
 
 // for own DB entries, tables etc. - for standard trashbin stuff obsolete
@@ -55,6 +58,7 @@ class PageController extends Controller {
     */
     public function recently() {
         //return new JSONResponse(array("data" => array("content" => "recently"), "statusCode" => "200"));
+        //return new DataResponse($this->appName, 'part.recent', [
         return new TemplateResponse($this->appName, 'part.recent', [
             'user' => $this->userId,
             'appname' => $this->appName,

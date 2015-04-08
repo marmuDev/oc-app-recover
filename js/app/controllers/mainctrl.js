@@ -9,12 +9,70 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-(function(window, document, angular, $, OC, csrfToken, undefined){
+//(function(window, document, angular, $, OC, csrfToken, undefined){
+//(function(window, document, angular, $, OC, csrfToken){
     
-    
+    app.controller('SearchController', function($rootScope) {
+    //app.controller('SearchController', function() {
+        'use strict';
+        console.log('in mainctrl.js oben');
+        //var searchAttribute = {
+        this.search = [
+            {
+                fileName: 'Name',
+                fileType: 'Type',
+                fileSizeMin: 'Min Size',
+                fileSizeMax: 'Max Size',
+                dateStart: 'Date',
+                dateEnd: 'Date',
+                fileSources: [
+                    {
+                        id: 1,
+                        source: "all"
+                    },
+                    {
+                        id: 2,
+                        source: "trashbin"
+                    },
+                    {
+                        id: 3,
+                        source: "AFS"
+                    },
+                    {
+                        id: 4,
+                        source: "GPFS"
+                    },
+                    {
+                        id: 5,
+                        source: "TSM"
+                    }
+                ]
+            }
+
+        ];
+        this.addSearch = function(search) {
+            alert(search);
+        };
+        /*
+        this.linkNum = $rootScope.linkNum;
+        console.log('rootScope linkNum = ' + $rootScope.linkNum);
+        console.log('this linkNum = ' + this.linkNum);
+        */
+    });
+
+    app.controller('HelpController', function () {
+
+    });
+
+    app.controller('SettingsController', function () {
+
+    });
+//})(window, document, angular, $, OC, csrfToken, undefined); // wie oben nach function
+//});
+
     /** trashbin filelist (later this could become a service "TrashResource")
      *  adapted from trashbin filelist.js / myfilelist.js
-     */
+     
     console.log('in mainctrl.js oben');
 /** zunächst überflüssig...
     .service('GetRecDelTrash', function($http, BASE_URL) {
@@ -22,7 +80,7 @@
             return $http.get(BASE_URL + '/recently', {cache: 'true'});
         };
     })
-*/
+
     app.controller('ContentController', function($rootScope){
     })
     
@@ -56,7 +114,7 @@
                     break;
             }
             console.log('url = ' + this.url);
-            */
+            
          };
          // if not run, link won't know if it's active! how did this work before???
          this.isSelected = function(checkLink){
@@ -91,54 +149,5 @@
         
     })
 **/
-    app.controller('SearchController', function($rootScope) {
-        //var searchAttribute = {
-        this.search = [
-            {
-                fileName: 'FileName',
-                fileSizeMin: 'min size',
-                fileSizeMax: 'max size',
-                dateStart: 'date',
-                dateEnd: 'date',
-                fileSources: [
-                    {
-                        id: 1,
-                        source: "all"
-                    },
-                    {
-                        id: 2,
-                        source: "trashbin"
-                    },
-                    {
-                        id: 3,
-                        source: "AFS"
-                    },
-                    {
-                        id: 4,
-                        source: "GPFS"
-                    },
-                    {
-                        id: 5,
-                        source: "TSM"
-                    }
-                ]
-            }
-
-        ];
-        this.addSearch = function(search) {
-            alert(search);
-        };
-        this.linkNum = $rootScope.linkNum;
-        console.log('rootScope linkNum = ' + $rootScope.linkNum);
-        console.log('this linkNum = ' + this.linkNum);
-    })
-
-    .controller('HelpController', function () {
-
-    })
-
-    .controller('SettingsController', function () {
-
-    });
-
-})(window, document, angular, jQuery, OC, oc_requesttoken);
+//})(window, document, angular, jQuery, OC, oc_requesttoken);
+//})(window, document, angular, $, OC, csrfToken, undefined); // wie oben nach function

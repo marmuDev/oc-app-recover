@@ -65,14 +65,16 @@ OCP\Util::addScript('files', 'keyboardshortcuts');
 // back to angular for search stuff
 //OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
+// load angular only in search template!!
 // angular is back for navigation...
 // now navi the files app way (\OCA\Files\App::getNavigationManager()->add)
-// and back to angular for search
-OCP\Util::addScript('recover', 'vendor/angular.min');
+// and back to angular for search form... 
+//	-> fucks up DOM, find other solution
+//OCP\Util::addScript('recover', 'vendor/angular.min');
 // var app as angular module and further angular stuff
-OCP\Util::addScript('recover', 'app/config');
-OCP\Util::addScript('recover', 'app/run');
-OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+//OCP\Util::addScript('recover', 'app/config');
+//OCP\Util::addScript('recover', 'app/run');
+//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
@@ -98,6 +100,7 @@ now trying to add navi the files app way:
 
 	<div id="app-content">
 		<!--<div id="app-content-wrapper">-->
+		<div id="app-content-wrapper">
 			<?php
 			// load part.recent initially
 				//p($_['request']);
@@ -105,11 +108,7 @@ now trying to add navi the files app way:
 				print_unescaped($this->inc('part.recent')); 
 				
 			?>
-
 		</div>
 	</div>
 </div>
 
-
-<!--	
-</div> -->

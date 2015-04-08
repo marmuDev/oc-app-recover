@@ -52,73 +52,72 @@ now without angular!
     -> standard files, trashbin, sharing etc.
 <div id="app-content-trashbin" class="hidden viewcontainer"> 
 -->
-
-<div id="app-content-trashbin">
 <?php 
-/** @var $l OC_L10N */ 
-// wird ausgegeben, aber trashlist kommt nicht...
-p("in part.recent");
-p($_['request']);
+    /** @var $l OC_L10N */ 
+    /* wird ausgegeben, aber trashlist kommt nicht...
+    p("in part.recent");
+    p('request = '.$_['request']);
+    */
+    p("in part.recent");
 ?>
-<div id="controls">
-    <div id="file_action_panel"></div>
-</div>
-<div id='notification'></div>
+<div id="app-content-trashbin">
+    <div id="controls">
+        <div id="file_action_panel"></div>
+    </div>
+    <div id='notification'></div>
 
-<div id="emptycontent" class="hidden">
-    <div class="icon-delete"></div>
-    <h2><?php p($l->t('No deleted files')); ?></h2>
-    <p><?php p($l->t('You will be able to recover deleted files from here')); ?></p>
-</div>
+    <div id="emptycontent" class="hidden">
+        <div class="icon-delete"></div>
+        <h2><?php p($l->t('No deleted files')); ?></h2>
+        <p><?php p($l->t('You will be able to recover deleted files from here')); ?></p>
+    </div>
 
-<input type="hidden" name="dir" value="" id="dir">
+    <input type="hidden" name="dir" value="" id="dir">
 
-<div class="nofilterresults hidden">
-    <div class="icon-search"></div>
-    <h2><?php p($l->t('No entries found in this folder')); ?></h2>
-    <p></p>
-</div>
+    <div class="nofilterresults hidden">
+        <div class="icon-search"></div>
+        <h2><?php p($l->t('No entries found in this folder')); ?></h2>
+        <p></p>
+    </div>
 
-<table id="filestable">
-    <thead>
-        <tr>
-            <th id='headerName' class="hidden column-name">
-                <div id="headerName-container">
-                    <input type="checkbox" id="select_all_trash" class="select-all"/>
-                    <label for="select_all_trash">
-                        <span class="hidden-visually"><?php p($l->t('Select all'))?></span>
-                    </label>
-                    <a class="name sort columntitle" data-sort="name"><span><?php p($l->t( 'Name' )); ?></span><span class="sort-indicator"></span></a>
-                    <span id="selectedActionsList" class='selectedActions'>
-                        <a href="" class="undelete">
+    <table id="filestable">
+        <thead>
+            <tr>
+                <th id='headerName' class="hidden column-name">
+                    <div id="headerName-container">
+                        <input type="checkbox" id="select_all_trash" class="select-all"/>
+                        <label for="select_all_trash">
+                            <span class="hidden-visually"><?php p($l->t('Select all'))?></span>
+                        </label>
+                        <a class="name sort columntitle" data-sort="name"><span><?php p($l->t( 'Name' )); ?></span><span class="sort-indicator"></span></a>
+                        <span id="selectedActionsList" class='selectedActions'>
+                            <a href="" class="undelete">
+                                <img class="svg" alt=""
+                                     src="<?php print_unescaped(OCP\image_path("core", "actions/history.svg")); ?>" />
+                                <?php 
+                                    // original
+                                    //p($l->t('Restore'))
+                                    p($l->t('Recover'))
+                                ?>
+                            </a>
+                        </span>
+                    </div>
+                </th>
+                <th id="headerDate" class="hidden column-mtime">
+                    <a id="modified" class="columntitle" data-sort="mtime"><span><?php p($l->t( 'Deleted' )); ?></span><span class="sort-indicator"></span></a>
+                    <span class="selectedActions">
+                        <a href="" class="delete-selected">
+                            <?php p($l->t('Delete'))?>
                             <img class="svg" alt=""
-                                 src="<?php print_unescaped(OCP\image_path("core", "actions/history.svg")); ?>" />
-                            <?php 
-                                // original
-                                //p($l->t('Restore'))
-                                p($l->t('Recover'))
-                            ?>
+                                src="<?php print_unescaped(OCP\image_path("core", "actions/delete.svg")); ?>" />
                         </a>
                     </span>
-                </div>
-            </th>
-            <th id="headerDate" class="hidden column-mtime">
-                <a id="modified" class="columntitle" data-sort="mtime"><span><?php p($l->t( 'Deleted' )); ?></span><span class="sort-indicator"></span></a>
-                <span class="selectedActions">
-                    <a href="" class="delete-selected">
-                        <?php p($l->t('Delete'))?>
-                        <img class="svg" alt=""
-                            src="<?php print_unescaped(OCP\image_path("core", "actions/delete.svg")); ?>" />
-                    </a>
-                </span>
-            </th>
-        </tr>
-    </thead>
-    <tbody id="fileList">
-    </tbody>
-    <tfoot>
-    </tfoot>
-</table>
-</div> <!-- app-content-trashbin
-  now without angular
-</div> -->
+                </th>
+            </tr>
+        </thead>
+        <tbody id="fileList">
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+</div> 
