@@ -1,6 +1,6 @@
 <?php
 /**
- * ownCloud - recover
+ * ownCloud - recover - main template
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -10,6 +10,7 @@
  *
  * TO DO: split into several template files, 
  * only load CSS an JS needed for specific template
+ * now loading most JS scripts in part.recent
  *
  */
 // this is for using ownCloud Templates
@@ -18,49 +19,7 @@
 
 // this is how to do it using Twig Templates
 //{{ script('public/app', 'appframework') }}
-OCP\Util::addStyle('files', 'files');
-OCP\Util::addStyle('files', 'upload');
-OCP\Util::addStyle('files', 'mobile');
-OCP\Util::addStyle('files_trashbin', 'trash');
-// should I be able to load this, or obsolete_
-//OCP\Util::addScript('appframework', 'public/app');
-// scripts for files lists and trashbin stuff
-// https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
-// added further scripts found while comparing trashbin DOM with recover DOM
-OCP\Util::addScript('files', 'app');
-//OCP\Util::addScript('files', 'file-upload');
-OCP\Util::addScript('files', 'jquery.iframe-transport');
-OCP\Util::addScript('files', 'jquery.fileupload');
-OCP\Util::addScript('files', 'jquery-visibility');
-OCP\Util::addScript('files', 'filesummary');
-OCP\Util::addScript('files', 'breadcrumb');
-OCP\Util::addScript('files', 'filelist');
 
-//OCP\Util::addScript('files', 'search');
-//OCP\Util::addScript('files', 'favoritesfilelist');
-//OCP\Util::addScript('files', 'tagsplugin');
-//OCP\Util::addScript('files', 'favoritesplugin');
-
-// now trying handlebars for navigation
-\OC_Util::addVendorScript('core', 'handlebars/handlebars');
-// won't work here, now set in init in app.js 
-//OCP\App::setActiveNavigationEntry('recently_deleted');
-
-// init of recover app 
-OCP\Util::addScript('recover', 'app/app');
-OCP\Util::addScript('recover', 'myfilelist');
-// searchbox adapted from core search
-// now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
-// search adapted from core files search
-OCP\Util::addScript('recover', 'recoversearch');
-// redundant but files/app depends on it
-OCP\Util::addScript('files', 'navigation');
-//OCP\Util::addScript('recover', 'recovernavigation');
-OCP\Util::addScript('recover', 'navigation');
-// among others actions will have to be adapted for the recovery of files from different sources
-OCP\Util::addScript('files', 'fileactions');
-OCP\Util::addScript('files', 'files');
-OCP\Util::addScript('files', 'keyboardshortcuts');
 // now trying with no angular at all!
 // back to angular for search stuff
 //OCP\Util::addScript('recover', 'app/controllers/mainctrl');
@@ -94,20 +53,16 @@ now trying to add navi the files app way:
 
 <div id="app">
 	<div id="app-navigation">
-		<?php print_unescaped($this->inc('recovernavigation')); ?>
+		<?php print_unescaped($this->inc('part.navigation')); ?>
 		<?php print_unescaped($this->inc('part.settings')); ?>
 	</div>
 
 	<div id="app-content">
-		<!--<div id="app-content-wrapper">-->
 		<div id="app-content-wrapper">
-			<?php
+		<?php
 			// load part.recent initially
-				//p($_['request']);
-				//print_unescaped($this->inc('part.content')); 
-				print_unescaped($this->inc('part.recent')); 
-				
-			?>
+			print_unescaped($this->inc('part.recent')); 
+		?>
 		</div>
 	</div>
 </div>
