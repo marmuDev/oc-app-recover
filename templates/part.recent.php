@@ -60,49 +60,31 @@ now without angular!
     p('request = '.$_['request']);
     */
 ?>
--->
+--> 
 <?php
-    OCP\Util::addStyle('files', 'files');
-    OCP\Util::addStyle('files', 'upload');
-    OCP\Util::addStyle('files', 'mobile');
-    OCP\Util::addStyle('files_trashbin', 'trash');
-    // should I be able to load this, or obsolete_
-    //OCP\Util::addScript('appframework', 'public/app');
-    // scripts for files lists and trashbin stuff
-    // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
-    // added further scripts found while comparing trashbin DOM with recover DOM
-    OCP\Util::addScript('files', 'app');
-    //OCP\Util::addScript('files', 'file-upload');
-    OCP\Util::addScript('files', 'jquery.iframe-transport');
-    OCP\Util::addScript('files', 'jquery.fileupload');
-    OCP\Util::addScript('files', 'jquery-visibility');
-    OCP\Util::addScript('files', 'filesummary');
-    OCP\Util::addScript('files', 'breadcrumb');
-    OCP\Util::addScript('files', 'filelist');
+    style('files', 'files');
+    style('files', 'upload');
+    style('files', 'mobile');
+    style('files_trashbin', 'trash');
 
-    //OCP\Util::addScript('files', 'search');
-    //OCP\Util::addScript('files', 'favoritesfilelist');
-    //OCP\Util::addScript('files', 'tagsplugin');
-    //OCP\Util::addScript('files', 'favoritesplugin');
+    script('files', 'app');
+    script('files', 'file-upload');
+    script('files', 'jquery.iframe-transport');
+    script('files', 'jquery.fileupload');
+    script('files', 'jquery-visibility');
+    script('files', 'filesummary');
+    script('files', 'breadcrumb');
+    script('files', 'filelist');
 
-    // now trying handlebars for navigation
-    \OC_Util::addVendorScript('core', 'handlebars/handlebars');
-    // won't work here, now set in init in app.js 
-    //OCP\App::setActiveNavigationEntry('recently_deleted');
+    script('recover', 'app/app');
+    script('recover', 'myfilelist');
+    script('recover', 'recoversearch');
+    script('files', 'navigation');
+    script('files', 'fileactions');
+    script('files', 'files');
+    script('files', 'keyboardshortcuts');
 
-    // init of recover app 
-    OCP\Util::addScript('recover', 'app/app');
-    OCP\Util::addScript('recover', 'myfilelist');
-    // searchbox adapted from core search
-    // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
-    // search adapted from core files search
-    OCP\Util::addScript('recover', 'recoversearch');
-    // redundant but files/app depends on it
-    OCP\Util::addScript('files', 'navigation');
-    // among others actions will have to be adapted for the recovery of files from different sources
-    OCP\Util::addScript('files', 'fileactions');
-    OCP\Util::addScript('files', 'files');
-    OCP\Util::addScript('files', 'keyboardshortcuts');
+
 ?>
 <div id="app-content-trashbin">
     <div id="controls">

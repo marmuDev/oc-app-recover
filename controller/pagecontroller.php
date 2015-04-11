@@ -18,6 +18,7 @@ use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
+use OCP\AppFramework\Http\NotFoundResponse;
 //use OCP\JSON;
 use OCP\AppFramework\Http\JSONResponse;
 
@@ -55,31 +56,37 @@ class PageController extends Controller {
     /** get template data with JS and replace app-content via handlebars client-side templating
      *  are routes + controllers needed at all for this?
      *  back to trashbin-style, trying to load different contents via ajax
+     *  __construct(string $appName, string $templateName, array $params, string $renderAs)
     */
     public function recently() {
-        //return new JSONResponse(array("data" => array("content" => "recently"), "statusCode" => "200"));
-        //return new DataResponse($this->appName, 'part.recent', [
         return new TemplateResponse($this->appName, 'part.recent', [
-            'user' => $this->userId,
-            'appname' => $this->appName,
-            'request' => $this->request
-        ]);
+                'user' => $this->userId,
+                'appname' => $this->appName,
+                'request' => $this->request
+            ],
+            // don't include in web interface, solely render the template
+            //'blank'
+            ''
+        );
     }
     
     public function search() {
         return new TemplateResponse($this->appName, 'part.search', [
-        //return new DataResponse($this->appName, 'part.search', [
-            'user' => $this->userId,
-            'appname' => $this->appName,
-            'request' => $this->request
-        ]);
+                'user' => $this->userId,
+                'appname' => $this->appName,
+                'request' => $this->request
+            ],
+            ''
+        );
     }
     public function help() {
         return new TemplateResponse($this->appName, 'part.help', [
-            'user' => $this->userId,
-            'appname' => $this->appName,
-            'request' => $this->request
-        ]);
+                'user' => $this->userId,
+                'appname' => $this->appName,
+                'request' => $this->request
+            ],
+            ''
+        );
     }
 
     /**
@@ -90,24 +97,23 @@ class PageController extends Controller {
         return $this->trashBinMapper->find($this->userId);
     }
 
-    // adapted from files_trashbin/ajax/list
-    // http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
-    public function listTrashBin() {
+    /** adapted from files_trashbin/ajax/list
+     * http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
+     * raydiation: listTrashBin($dir='', $sort='name', $sortdirection=false)
+     * meaning test it with those values?
+     */
+    //public function listTrashBin() {
+    public function listTrashBin($dir='', $sort='name', $sortdirection=false) {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();
-        // maybe also obsolete!
-        \OC::$server->getSession()->close();
+        // also obsolete!
+        //\OC::$server->getSession()->close();
 
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
         // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
         $dir = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
-        // zu viel in dir!!!
-        // throw new \Exception verursacht schon CRASH!?!?
-        // wirkt nur als sei da zu viel drin in "dir" exception spuckt viel zusatzinfos
-        //throw new \Exception( "\$dir = $dir" );
-        //printf($dir);
         $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
         $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $data = array();
@@ -118,9 +124,12 @@ class PageController extends Controller {
         } catch (Exception $e) {
             // what about returning JSONResponse with "statusCode" => "500"
             // how is result.status === error in original trashbin (filelist->reloadCallback)
-            header("HTTP/1.0 404 Not Found");
-            // throw new \Exception("pagecontroller error in make filelist");
-            exit();
+            // don't use the header method but return a Response with the Http::STATUS_NOT_FOUND
+            //header("HTTP/1.0 404 Not Found");
+            $notFound = new NotFoundResponse();
+            $notFound.setStatus(404);
+            return $notFound;
+            throw new \Exception("pagecontroller error in make filelist");
         }
         $encodedDir = \OCP\Util::encodePath($dir);
         
@@ -128,9 +137,6 @@ class PageController extends Controller {
         $data['directory'] = $dir;
         //throw new \Exception( "PAGECONTROLLER vor data files" );
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
-        //throw new \Exception( "PAGECONTROLLER after data files" );
-        //printf($data);
-        //throw new \Exception( "\$data.files = $data.files" );
         //return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in myfilelist.js!!!
         // Use a AppFramework JSONResponse instead!!!

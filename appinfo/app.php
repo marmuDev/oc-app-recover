@@ -17,8 +17,8 @@ use OCP\App;
 // what for?
 //$l = \OC::$server->getL10N('files_trashbin');
 
-// register hooks 
-\OCA\Files_Trashbin\Trashbin::registerHooks();
+// register hooks? what for, seems to work without registering...
+//\OCA\Files_Trashbin\Trashbin::registerHooks();
 
 $app = new App('recover');
 $app->addNavigationEntry(array(

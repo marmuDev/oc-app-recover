@@ -37,8 +37,56 @@
 
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
+	/* trashbin/recover and files stuff
+	OCP\Util::addStyle('files', 'files');
+    OCP\Util::addStyle('files', 'upload');
+    OCP\Util::addStyle('files', 'mobile');
+    OCP\Util::addStyle('files_trashbin', 'trash');
+    // should I be able to load this, or obsolete_
+    //OCP\Util::addScript('appframework', 'public/app');
+    // scripts for files lists and trashbin stuff
+    // https://github.com/owncloud/core/blob/master/apps/files/index.php#L37
+    // added further scripts found while comparing trashbin DOM with recover DOM
+    OCP\Util::addScript('files', 'app');
+    //OCP\Util::addScript('files', 'file-upload');
+    OCP\Util::addScript('files', 'jquery.iframe-transport');
+    OCP\Util::addScript('files', 'jquery.fileupload');
+    OCP\Util::addScript('files', 'jquery-visibility');
+    OCP\Util::addScript('files', 'filesummary');
+    OCP\Util::addScript('files', 'breadcrumb');
+    OCP\Util::addScript('files', 'filelist');
 
+    //OCP\Util::addScript('files', 'search');
+    //OCP\Util::addScript('files', 'favoritesfilelist');
+    //OCP\Util::addScript('files', 'tagsplugin');
+    //OCP\Util::addScript('files', 'favoritesplugin');
 
+    // now trying handlebars for navigation
+    \OC_Util::addVendorScript('core', 'handlebars/handlebars');
+    // won't work here, now set in init in app.js 
+    //OCP\App::setActiveNavigationEntry('recently_deleted');
+
+    // init of recover app 
+    OCP\Util::addScript('recover', 'app/app');
+    OCP\Util::addScript('recover', 'myfilelist');
+    // searchbox adapted from core search
+    // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
+    // search adapted from core files search
+    OCP\Util::addScript('recover', 'recoversearch');
+    // redundant but files/app depends on it
+    OCP\Util::addScript('files', 'navigation');
+    // among others actions will have to be adapted for the recovery of files from different sources
+    OCP\Util::addScript('files', 'fileactions');
+    OCP\Util::addScript('files', 'files');
+    OCP\Util::addScript('files', 'keyboardshortcuts');
+    */
+
+    /* search template stuff
+   	OCP\Util::addScript('recover', 'vendor/angular.min');
+    OCP\Util::addScript('recover', 'app/config');
+    //OCP\Util::addScript('recover', 'app/run');
+    OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+    */
 ?>
 <!-- seems like angular stuff messes with DOM, but trying again to make navigation work again 
 ng-app must be there, id="app" is redundant
@@ -58,12 +106,12 @@ now trying to add navi the files app way:
 	</div>
 
 	<div id="app-content">
-		<div id="app-content-wrapper">
+		<!-- <div id="app-content-wrapper"> -->
 		<?php
 			// load part.recent initially
 			print_unescaped($this->inc('part.recent')); 
 		?>
-		</div>
+		
 	</div>
 </div>
 

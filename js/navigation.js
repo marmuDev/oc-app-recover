@@ -43,18 +43,17 @@
                 this._links.forEach(function (link) {
                     //console.log('in Links load loop: id = ' + id + ', link.id = ' + link.id);
                     if (link.id == id) {
-                        console.log("id == id");
                         link.active = true;
                         self._activeLink = link;
                     } else {
                         link.active = false;
                     }
                 });
-                console.log('active link now = ' + this._activeLink.toSource());
+                //console.log('active link now = ' + this._activeLink.toSource());
             },
             
             getActive: function () {
-            	console.log('in Links getActive this._activeLink = ' + this._activeLink.toSource());
+            	//console.log('in Links getActive this._activeLink = ' + this._activeLink.toSource());
                 return this._activeLink;
             },
             
@@ -82,7 +81,6 @@
             renderContent: function (id) {
                 //var url = 'init';
                 //var data = 'init';
-                console.log('renderContent id = ' + id);
                 switch(id) {
                     case "0":
                         $.ajax({
@@ -105,7 +103,6 @@
                                 $("#app-content").html( html ); 
                                 //console.log('html = ' + html);
                             });
-                        console.log('case 0');
                         break;
                     case "1":
                         $.ajax({
@@ -113,9 +110,7 @@
                         })
                             .success(function( html ) {
                                 $( "#app-content" ).html( html ); 
-                                //console.log('html = ' + html);
                             });
-                        console.log('case 1');
                         break;
                     case "2":
                         $.ajax({
@@ -124,7 +119,6 @@
                             .success(function( html ) {
                                 $( "#app-content" ).html( html ); 
                             });
-                        console.log('case 2');
                         break;                    
                     default:
                         $.ajax({
@@ -143,18 +137,11 @@
             },
 
             renderNavigation: function () {
-                console.log('in renderNavigation');
                 var self = this;
                 var source = $('#navigation-tpl').html();
-                //console.log('renderNav source = ' + source);
                 var template = Handlebars.compile(source);
-                //console.log('renderNav template = ' + template);
-                //console.log('this links get all = ' + this._links.getAll());
                 var html = template({links: this._links.getAll()});
-                //console.log('renderNav html = ' + html);
-                //$('#app-navigation ul').html(html);
                 $('#app-navigation ul').html(html);
-               
                 // load a link on click event
                 $('#app-navigation a').click(function () {
                     // get id of clicked link
@@ -171,7 +158,6 @@
             }
             */
         };
-
         //var links = new Links(OC.generateUrl('/apps/recover/index'));
         var links = new Links(OC.generateUrl('/apps/recover/'));
         var view = new View(links);

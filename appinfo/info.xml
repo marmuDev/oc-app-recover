@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <info>
+    <!-- Required: This field contains the internal app name, and has to be the same as the folder name of the app. This id needs to be unique in ownCloud, meaning no other app should have this id. -->
     <id>recover</id>
     <name>Recover</name>
     <description>Recover files from different sources</description>
     <namespace>Recover</namespace>
     <licence>AGPL</licence>
     <author>Marcus Mundt</author>
-    <version>0.0.2</version>
-    <requiremin>7.6</requiremin>
+    <version>0.0.3</version>
+    <requiremin>7.0</requiremin>
     <types>
         <type>filesystem</type>
     </types>
+    <repository type="git">https://github.com/marmuDev/oc-app-bck.git</repository>
 </info>

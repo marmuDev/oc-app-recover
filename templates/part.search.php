@@ -9,10 +9,11 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-OCP\Util::addScript('recover', 'vendor/angular.min');
-OCP\Util::addScript('recover', 'app/config');
-//OCP\Util::addScript('recover', 'app/run');
-OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+    script('recover', 'vendor/angular.min');
+    script('recover', 'app/config');
+    //script('recover', 'app/run');
+    script('recover', 'app/controllers/mainctrl');
+
 
 ?>
 <!-- <div ng-controller="SearchController as searchCtrl">
