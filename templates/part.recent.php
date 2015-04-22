@@ -61,31 +61,6 @@ now without angular!
     */
 ?>
 --> 
-<?php
-    style('files', 'files');
-    style('files', 'upload');
-    style('files', 'mobile');
-    style('files_trashbin', 'trash');
-
-    script('files', 'app');
-    script('files', 'file-upload');
-    script('files', 'jquery.iframe-transport');
-    script('files', 'jquery.fileupload');
-    script('files', 'jquery-visibility');
-    script('files', 'filesummary');
-    script('files', 'breadcrumb');
-    script('files', 'filelist');
-
-    script('recover', 'app/app');
-    script('recover', 'myfilelist');
-    script('recover', 'recoversearch');
-    script('files', 'navigation');
-    script('files', 'fileactions');
-    script('files', 'files');
-    script('files', 'keyboardshortcuts');
-
-
-?>
 <div id="app-content-trashbin">
     <div id="controls">
         <div id="file_action_panel"></div>

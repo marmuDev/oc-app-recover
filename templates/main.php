@@ -37,7 +37,7 @@
 
 //include appframework which helps to interact with the OC-server?
 // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
-	/* trashbin/recover and files stuff
+	// trashbin/recover and files stuff
 	OCP\Util::addStyle('files', 'files');
     OCP\Util::addStyle('files', 'upload');
     OCP\Util::addStyle('files', 'mobile');
@@ -79,14 +79,14 @@
     OCP\Util::addScript('files', 'fileactions');
     OCP\Util::addScript('files', 'files');
     OCP\Util::addScript('files', 'keyboardshortcuts');
-    */
+    
 
-    /* search template stuff
+    // search template stuff
    	OCP\Util::addScript('recover', 'vendor/angular.min');
     OCP\Util::addScript('recover', 'app/config');
     //OCP\Util::addScript('recover', 'app/run');
     OCP\Util::addScript('recover', 'app/controllers/mainctrl');
-    */
+    
 ?>
 <!-- seems like angular stuff messes with DOM, but trying again to make navigation work again 
 ng-app must be there, id="app" is redundant

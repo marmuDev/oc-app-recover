@@ -101,6 +101,7 @@
                         })
                             .success(function( html ) {
                                 $("#app-content").html( html ); 
+                                OCA.Recover.App.fileList.reload();
                                 //console.log('html = ' + html);
                             });
                         break;

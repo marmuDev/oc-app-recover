@@ -9,12 +9,7 @@
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  */
-    script('recover', 'vendor/angular.min');
-    script('recover', 'app/config');
-    //script('recover', 'app/run');
-    script('recover', 'app/controllers/mainctrl');
-
-
+    
 ?>
 <!-- <div ng-controller="SearchController as searchCtrl">
       searchCtrl.search als gesamtes Objekt an addSearch übergeben,

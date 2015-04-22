@@ -139,6 +139,7 @@
 		reload: function() {
 			//console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
 			this._selectedFiles = {};
+			// bei erneutem reload null -> if? jetzt testweise erstmal raus -> dann this.$el is null
 			this._selectionSummary.clear();
 			this.$el.find('.select-all').prop('checked', false);
 			this.showMask();
@@ -147,6 +148,7 @@
 			if (this._reloadCall) {
 				this._reloadCall.abort();
 			}
+			// call this directly for reloading trash list?
 			this._reloadCall = $.ajax({
 				//url: 'http://localhost/core/index.php/apps/recover/trashlist', 
 				url : OC.generateUrl('/apps/recover/trashlist'),
@@ -157,8 +159,8 @@
 					
 				}
             });
+            // now run after another click on nav, but no trash list
 			console.log('dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
-
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
 		},
