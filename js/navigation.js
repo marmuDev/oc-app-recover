@@ -30,9 +30,10 @@
             // even without this line it is grey (active) for a moment when loading, 
             // but should stay grey until another link is clicked -> to solve
             //this._activeLink = this._links[0];
-            this._activeLink = undefined;
+            //this._activeLink = undefined;
             //this._activeLink = this._links[0]; // -> getActive still returning undefined
             //console.log("in var Links init _activeLink = " + this._activeLink.toSource())
+            //this.load('0');
         };
 
         Links.prototype = {
@@ -85,23 +86,17 @@
                     case "0":
                         $.ajax({
                             url: OC.generateUrl('/apps/recover/recently_deleted'),
-                            data: {
-                                dir: '/',
-                                sort: 'mtime',
-                                sortdirection: 'desc'
-                            }
-                            // how to use objects / methods from other files? 
-                            /*
                             data : {
                                 dir : OCA.Recover.App.fileList.getCurrentDirectory(),
                                 sort: OCA.Recover.App.fileList._sort,
                                 sortdirection: OCA.Recover.App.fileList._sortDirection
                             }
-                            */
+                            
                         })
                             .success(function( html ) {
                                 $("#app-content").html( html ); 
                                 OCA.Recover.App.fileList.reload();
+                                OCA.Recover.App.fileList.$el.appendTo('#app-content');
                                 //console.log('html = ' + html);
                             });
                         break;
@@ -110,7 +105,8 @@
                             url: OC.generateUrl('/apps/recover/search')
                         })
                             .success(function( html ) {
-                                $( "#app-content" ).html( html ); 
+                                $( "#app-content" ).html( html );
+                                
                             });
                         break;
                     case "2":
@@ -124,14 +120,18 @@
                     default:
                         $.ajax({
                             url: OC.generateUrl('/apps/recover/recently_deleted'),
-                            data: {
-                                dir: '/',
-                                sort: 'mtime',
-                                sortdirection: 'desc'
+                            data : {
+                                dir : OCA.Recover.App.fileList.getCurrentDirectory(),
+                                sort: OCA.Recover.App.fileList._sort,
+                                sortdirection: OCA.Recover.App.fileList._sortDirection
                             }
+                            
                         })
-                            .done(function( html ) {
-                                $( "#app-content" ).html( html ); 
+                            .success(function( html ) {
+                                $("#app-content").html( html ); 
+                                OCA.Recover.App.fileList.reload();
+                                OCA.Recover.App.fileList.$el.appendTo('#app-content');
+                                //console.log('html = ' + html);
                             });
                         console.log('case default -> wie 0');
                 }   

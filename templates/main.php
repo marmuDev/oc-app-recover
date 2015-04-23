@@ -80,7 +80,6 @@
     OCP\Util::addScript('files', 'files');
     OCP\Util::addScript('files', 'keyboardshortcuts');
     
-
     // search template stuff
    	OCP\Util::addScript('recover', 'vendor/angular.min');
     OCP\Util::addScript('recover', 'app/config');
@@ -108,7 +107,7 @@ now trying to add navi the files app way:
 	<div id="app-content">
 		<!-- <div id="app-content-wrapper"> -->
 		<?php
-			// load part.recent initially
+			// initially load part.recent 
 			print_unescaped($this->inc('part.recent')); 
 		?>
 		

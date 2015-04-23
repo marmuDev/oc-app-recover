@@ -1,5 +1,6 @@
 /**
- * ownCloud - recover - adapted from OC Core Files Trashbin filelist.js
+ * ownCloud - recover - filelist
+ *	adapted from OC Core files_trashbin and files filelist.js 
  *
  * This file is licensed under the Affero General Public License version 3 or
  * later. See the COPYING file.
@@ -95,7 +96,7 @@
 			//console.log('in createRow  this.files[0].displayName = ' + this.files[0].displayName); 
 			return tr;
 		},
-		// must be the problems source
+		// also ok when reloading trashbin
 		_renderRow: function(fileData, options) {
 			options = options || {};
 			var dir = this.getCurrentDirectory();
@@ -145,9 +146,11 @@
 			this.showMask();
 			// -> params ok, aber http get kackt ab,
 			// route didn't match "/trashlist?dir=...."
+			/*
 			if (this._reloadCall) {
 				this._reloadCall.abort();
 			}
+			*/
 			// call this directly for reloading trash list?
 			this._reloadCall = $.ajax({
 				//url: 'http://localhost/core/index.php/apps/recover/trashlist', 
@@ -156,11 +159,9 @@
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
 					sortdirection: this._sortDirection
-					
 				}
             });
-            // now run after another click on nav, but no trash list
-			console.log('dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
+            //console.log('dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
 		},
@@ -206,6 +207,7 @@
 			// original -> sends files-array to files/js/filelist.js
 			// set files seems ok
 			this.setFiles(result.data.files);
+			console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
 			return true;
 		},
 		
@@ -220,6 +222,7 @@
 		/**
 		 * this.fileList = List of rows (table tbody) = <tbody id="fileList">
 		 * rows are added with files/js/filelist.js: add: function(fileData, options)
+		 * 	but appended to table in 
 		 * 		@param {OCA.Files.FileInfo} fileData map of file attributes
 		 * 		@param {Object} [options] map of attributes
 		 *		...
@@ -367,7 +370,7 @@
 		// what for ? -> must be adapted to use framework (route + controller)
 		// isn't run, when should it be run?
 		generatePreviewUrl: function(urlSpec) {
-			console.log('in generatePreviewUrl');
+			//console.log('in generatePreviewUrl');
 			return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);
 		},
 
@@ -380,7 +383,7 @@
 		},
 
 		enableActions: function() {
-			console.log('in enableActions');
+			//console.log('in enableActions');
 			this.$el.find('.action').css('display', 'inline');
 			this.$el.find(':input:checkbox').css('display', 'inline');
 		},
