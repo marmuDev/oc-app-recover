@@ -9,16 +9,16 @@
 
 	script.js in app.js, config.js, run.js und 
 	weitere bestandteile wie controller etc. unterteilen
+*/
 
- */
 if (!OCA.Files) {
 		/**
 		 * Namespace for the files app
 		 * @namespace OCA.Files
 		 */
 		OCA.Files = {};
-	}
-
+}
+ 
 if (!OCA.Recover) {
 	/**
 	 * Namespace for the recover app
@@ -34,13 +34,14 @@ OCA.Recover.App = {
 	_initialized: false,
 
 	initialize: function($el) {
+		console.log('in init from OCA.Recover.App - will init this.fileList = new OCA.Recover.FileList');
 		if (this._initialized) {
+			console.log('in init from OCA.Recover.App, initialized already true');
 			return;
 		}
 		// obsolete - adapted files navigation
 		//this.navigation = new OCA.Recover.Navigation($('#app-navigation'));
 		//this.navigation.setActiveItem('recently_deleted');
-		console.log('in init from OCA.Recover.App');
 		this._initialized = true;
 		this.fileList = new OCA.Recover.FileList(
 			$('#app-content-trashbin'), {
@@ -50,10 +51,11 @@ OCA.Recover.App = {
 		);
 		//console.log('in init of OCA.Recover.App before manual reload');
 		// hack to force loading of list -> myfilelist reload -> $.ajax
+		this.fileList.reload();
 		// trying to solve it via http.get in recentcontroller (angular)
 		// -> no, did it the trashbin-way
 		// still ajax and reload/reloadCallback, but getAjaxUrl obsolete
-		this.fileList.reload();
+		
 	},
 
 	// adapt according to file source and coresponding functions etc.

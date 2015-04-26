@@ -85,12 +85,18 @@
                 switch(id) {
                     case "0":
                         $.ajax({
-                            url: OC.generateUrl('/apps/recover/recently_deleted'),
+                            url: OC.generateUrl('/apps/recover/recently_deleted')
+                            /* only used in myfilelist!!!
+                                JUST GETTING BLANK TEMPLATE HERE!
                             data : {
-                                dir : OCA.Recover.App.fileList.getCurrentDirectory(),
+                                // when click on nav load root dir not current/last dir!!!
+                                // dir : OCA.Recover.App.fileList.getCurrentDirectory(),
+
+                                dir: '/',
                                 sort: OCA.Recover.App.fileList._sort,
                                 sortdirection: OCA.Recover.App.fileList._sortDirection
                             }
+                            */
                             
                         })
                             .success(function( html ) {

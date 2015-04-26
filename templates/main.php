@@ -54,6 +54,11 @@
     OCP\Util::addScript('files', 'jquery-visibility');
     OCP\Util::addScript('files', 'filesummary');
     OCP\Util::addScript('files', 'breadcrumb');
+    /* out due to initializing Files filelist two times, when out TypeError!
+     * --> 	TypeError: OCA.Files.FileList is undefined myfilelist.js:44:1
+     *		TypeError: OCA.Files.FileList is not a constructor app.js:67:19
+	 *		TypeError: OCA.Recover.FileList is not a constructor app.js:45:18
+ 	 */
     OCP\Util::addScript('files', 'filelist');
 
     //OCP\Util::addScript('files', 'search');
@@ -68,7 +73,7 @@
 
     // init of recover app 
     OCP\Util::addScript('recover', 'app/app');
-    OCP\Util::addScript('recover', 'myfilelist');
+    OCP\Util::addScript('recover', 'filelist');
     // searchbox adapted from core search
     // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
     // search adapted from core files search

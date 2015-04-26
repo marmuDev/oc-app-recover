@@ -50,6 +50,9 @@
 		 * @private
 		 */
 		initialize: function() {
+			if (this._initialized) {
+				return;
+			}
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
 			this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
 			this.setSort('mtime', 'desc');
@@ -68,7 +71,7 @@
 				}
 				return parts;
 			};
-
+			console.log('in init file list RECOVER');
 			OC.Plugins.attach('OCA.Recover.FileList', this);
 			return result;
 		},
@@ -156,6 +159,7 @@
 				//url: 'http://localhost/core/index.php/apps/recover/trashlist', 
 				url : OC.generateUrl('/apps/recover/trashlist'),
 				data : {
+					// problem when reloading trashbin, it should use root, not last folder?
 					dir : this.getCurrentDirectory(),
 					sort: this._sort,
 					sortdirection: this._sortDirection
