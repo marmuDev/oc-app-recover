@@ -134,10 +134,13 @@ OCA.Recover.App = {
 
 };
 
-// hack from files/js/app.js
+
+// hack from files/js/app.js 
 $(document).ready(function() {
 	// wait for other apps/extensions to register their event handlers and file actions 
 	// in the "ready" clause
+	// also seems to be working with out defer
+	//OCA.Recover.App.initialize();
 	_.defer(function() { 
 			OCA.Recover.App.initialize();
 	});

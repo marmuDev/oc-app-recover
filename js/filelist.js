@@ -90,6 +90,8 @@
 			if (baseDir !== '') {
 				this.setPageTitle(getDeletedFileName(baseDir));
 			}
+			// never printed!
+			//console.log('in RECOVER _setCurrentDir, baseDir = ' + baseDir);
 		},
 		// all files still exist / ok here
 		_createRow: function() {
@@ -149,12 +151,12 @@
 			this.showMask();
 			// -> params ok, aber http get kackt ab,
 			// route didn't match "/trashlist?dir=...."
-			/*
+			
 			if (this._reloadCall) {
 				this._reloadCall.abort();
 			}
-			*/
-			// call this directly for reloading trash list?
+			
+			// call this directly for reloading trash list? no
 			this._reloadCall = $.ajax({
 				//url: 'http://localhost/core/index.php/apps/recover/trashlist', 
 				url : OC.generateUrl('/apps/recover/trashlist'),
@@ -165,7 +167,7 @@
 					sortdirection: this._sortDirection
 				}
             });
-            //console.log('dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
+            console.log('in RECOVER file list reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
 		},
@@ -194,6 +196,7 @@
 
 			if (result.status === 404) {
 				// go back home
+				console.log('in reloadCallback 404 -> go back home');
 				this.changeDirectory('/');
 				return false;
 			}
@@ -211,16 +214,29 @@
 			// original -> sends files-array to files/js/filelist.js
 			// set files seems ok
 			this.setFiles(result.data.files);
-			console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
+			//console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
 			return true;
 		},
 		
 		setupUploadEvents: function() {
 			// override and do nothing
 		},
-		// ??? to be adapted?
+		/* ??? to be adapted? YES!
+				http://api.owncloud.org/classes/OCP.Util.html#linkTo
+				linkTo(string $app, string $file, array $args) : string
+				Deprecated 8.1.0 Use \OC::$server->getURLGenerator()->linkTo($app, $file, $args)
+		 * at least there is one "/" too much
+		 */
 		linkTo: function(dir){
-			return OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
+			console.log('in RECOVER file list linkTo dir = ' + dir);
+			console.log('in RECOVER file list linkTo dir ENCODED = ' + encodeURIComponent(dir));
+			console.log('in RECOVER file list linkTo dir ENCODED + Replace = ' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+			//return OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
+			// hack to replace one of the two "/" (slashes)
+			//dir = dir.replace('', '/');
+			return OC.generateUrl('/apps/recover/?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+
+			// redirect error http://localhost/core/index.php/apps/recover/trashlist?dir=//folder1.d1429801627
 		},
 
 		/**
@@ -374,7 +390,7 @@
 		// what for ? -> must be adapted to use framework (route + controller)
 		// isn't run, when should it be run?
 		generatePreviewUrl: function(urlSpec) {
-			//console.log('in generatePreviewUrl');
+			console.log('in generatePreviewUrl');
 			return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);
 		},
 
