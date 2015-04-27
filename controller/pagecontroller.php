@@ -102,8 +102,8 @@ class PageController extends Controller {
      * raydiation: listTrashBin($dir='', $sort='name', $sortdirection=false)
      * meaning test it with those values?
      */
-    //public function listTrashBin() {
-    public function listTrashBin($dir='', $sort='name', $sortdirection=false) {
+    public function listTrashBin() {
+    //public function listTrashBin($dir='', $sort='name', $sortdirection=false) {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();

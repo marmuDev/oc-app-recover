@@ -71,7 +71,7 @@
 				}
 				return parts;
 			};
-			console.log('in init file list RECOVER');
+			console.log('in RECOVER init filelist');
 			OC.Plugins.attach('OCA.Recover.FileList', this);
 			return result;
 		},
@@ -228,14 +228,31 @@
 		 * at least there is one "/" too much
 		 */
 		linkTo: function(dir){
-			console.log('in RECOVER file list linkTo dir = ' + dir);
-			console.log('in RECOVER file list linkTo dir ENCODED = ' + encodeURIComponent(dir));
-			console.log('in RECOVER file list linkTo dir ENCODED + Replace = ' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+			// why encode and replace, when result is again the original dir from above...
+			//console.log('in RECOVER file list linkTo dir ENCODED = ' + encodeURIComponent(dir));
+			//console.log('in RECOVER file list linkTo dir ENCODED + Replace = ' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+			//console.log('in RECOVER linkTo = ' + OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/'));
 			//return OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
 			// hack to replace one of the two "/" (slashes)
 			//dir = dir.replace('', '/');
-			return OC.generateUrl('/apps/recover/?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
-
+			
+			/* source of problem maybe onClickFile in FILES filelist, further redirection issue
+			dir = dir.substr(1, dir.length - 1);
+			console.log('dir substr = ' + dir); // -> one slash, ok!
+			*/
+			dir = dir.substr(1, dir.length - 1);
+			var genUrl = OC.generateUrl('/apps/recover/trashlist?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+			console.log('RECOVER linkTo genUrl = ' + genUrl);
+			return genUrl;
+			// linkToRoute? is not a function! 
+				// seems to be PHP only!
+			// ohne linkTo passiert nichts
+			
+			// -> redirect to files app
+			//var linkTo = OC.linkTo('recover')+"?dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
+			//console.log('in RECOVER filelist linkTo = ' + linkTo);
+			//return linkTo;
+			
 			// redirect error http://localhost/core/index.php/apps/recover/trashlist?dir=//folder1.d1429801627
 		},
 
