@@ -101,6 +101,8 @@
                         })
                             .success(function( html ) {
                                 $("#app-content").html( html ); 
+                                // has to work without init, further $el not defined!!
+                                //OCA.Recover.App.fileList.initialize();
                                 OCA.Recover.App.fileList.reload();
                                 OCA.Recover.App.fileList.$el.appendTo('#app-content');
                                 //console.log('html = ' + html);

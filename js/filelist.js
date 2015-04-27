@@ -51,6 +51,7 @@
 		 */
 		initialize: function() {
 			if (this._initialized) {
+				console.log('RECOVER filelist already initialized')
 				return;
 			}
 			var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
@@ -71,7 +72,7 @@
 				}
 				return parts;
 			};
-			console.log('in RECOVER init filelist');
+			console.log('RECOVER init filelist');
 			OC.Plugins.attach('OCA.Recover.FileList', this);
 			return result;
 		},
@@ -91,7 +92,7 @@
 				this.setPageTitle(getDeletedFileName(baseDir));
 			}
 			// never printed!
-			//console.log('in RECOVER _setCurrentDir, baseDir = ' + baseDir);
+			//console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
 		},
 		// all files still exist / ok here
 		_createRow: function() {
@@ -167,7 +168,7 @@
 					sortdirection: this._sortDirection
 				}
             });
-            console.log('in RECOVER file list reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
+            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
 			var callBack = this.reloadCallback.bind(this);
 			return this._reloadCall.then(callBack, callBack);
 		},
@@ -225,13 +226,15 @@
 				http://api.owncloud.org/classes/OCP.Util.html#linkTo
 				linkTo(string $app, string $file, array $args) : string
 				Deprecated 8.1.0 Use \OC::$server->getURLGenerator()->linkTo($app, $file, $args)
+					-> I don't want linkTo($app, $file, $args), since using App Framework and routes!
 		 * at least there is one "/" too much
 		 */
 		linkTo: function(dir){
 			// why encode and replace, when result is again the original dir from above...
-			//console.log('in RECOVER file list linkTo dir ENCODED = ' + encodeURIComponent(dir));
-			//console.log('in RECOVER file list linkTo dir ENCODED + Replace = ' + encodeURIComponent(dir).replace(/%2F/g, '/'));
-			//console.log('in RECOVER linkTo = ' + OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/'));
+			//console.log('RECOVER file list linkTo dir ENCODED = ' + encodeURIComponent(dir));
+			//console.log('RECOVER file list linkTo dir ENCODED + Replace = ' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+			//console.log('RECOVER linkTo = ' + OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/'));
+			
 			//return OC.linkTo('files', 'index.php')+"?view=Recover&dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
 			// hack to replace one of the two "/" (slashes)
 			//dir = dir.replace('', '/');
@@ -240,7 +243,8 @@
 			dir = dir.substr(1, dir.length - 1);
 			console.log('dir substr = ' + dir); // -> one slash, ok!
 			*/
-			dir = dir.substr(1, dir.length - 1);
+			//dir = dir.substr(1, dir.length - 1);
+			//var genUrl = OC.generateUrl('/apps/recoverT/trashlist?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
 			var genUrl = OC.generateUrl('/apps/recover/trashlist?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
 			console.log('RECOVER linkTo genUrl = ' + genUrl);
 			return genUrl;
@@ -250,7 +254,7 @@
 			
 			// -> redirect to files app
 			//var linkTo = OC.linkTo('recover')+"?dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
-			//console.log('in RECOVER filelist linkTo = ' + linkTo);
+			//console.log('RECOVER filelist linkTo = ' + linkTo);
 			//return linkTo;
 			
 			// redirect error http://localhost/core/index.php/apps/recover/trashlist?dir=//folder1.d1429801627
@@ -278,7 +282,7 @@
 			// result.status is undefined! WHY?????
 			//if (result.status !== 'success') {
 			if (result.statusCode !== '200') {
-				console.log('Error in RECOVER myfilelist _removeCallback result.statusCode = ' + result.statusCode);
+				console.log('Error RECOVER myfilelist _removeCallback result.statusCode = ' + result.statusCode);
 				// triggers "unnecessary" Error Message...
 				OC.dialogs.alert(result.data.message, t('recover', 'Error'));
 			}
