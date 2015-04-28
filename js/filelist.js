@@ -144,6 +144,7 @@
 		 */
 		
 		reload: function() {
+			//debugger;
 			//console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
 			this._selectedFiles = {};
 			// bei erneutem reload null -> if? jetzt testweise erstmal raus -> dann this.$el is null
@@ -215,19 +216,22 @@
 			// original -> sends files-array to files/js/filelist.js
 			// set files seems ok
 			this.setFiles(result.data.files);
-			//console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
+			console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
 			return true;
 		},
 		
 		setupUploadEvents: function() {
 			// override and do nothing
 		},
+
 		/* ??? to be adapted? YES!
 				http://api.owncloud.org/classes/OCP.Util.html#linkTo
 				linkTo(string $app, string $file, array $args) : string
 				Deprecated 8.1.0 Use \OC::$server->getURLGenerator()->linkTo($app, $file, $args)
 					-> I don't want linkTo($app, $file, $args), since using App Framework and routes!
 		 * at least there is one "/" too much
+				WHAT IS THIS FOR, for now only creates a href link for file and folder,
+				which seems not to be used. since using onClickFile event...
 		 */
 		linkTo: function(dir){
 			// why encode and replace, when result is again the original dir from above...
@@ -402,6 +406,7 @@
 		},
 
 		_onClickFile: function(event) {
+			console.log('RECOVER _onClickFile');
 			var mime = $(this).parent().parent().data('mime');
 			if (mime !== 'httpd/unix-directory') {
 				event.preventDefault();

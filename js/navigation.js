@@ -80,6 +80,7 @@
               -> statt .done .success
              */
             renderContent: function (id) {
+                console.log('RECOVER nav render content');
                 //var url = 'init';
                 //var data = 'init';
                 switch(id) {
@@ -102,6 +103,15 @@
                             .success(function( html ) {
                                 $("#app-content").html( html ); 
                                 // has to work without init, further $el not defined!!
+                                // if you still want to delete the table completely, 
+                                // then you need to recreate a new FileList() and point it at the new table element
+                                OCA.Recover.App.fileList = new OCA.Recover.FileList(
+                                    $('#app-content-trashbin'), {
+                                        scrollContainer: $('#app-content'),
+                                        fileActions: OCA.Recover.App._createFileActions()
+                                    }
+                                );
+                                // initialized in constructor!
                                 //OCA.Recover.App.fileList.initialize();
                                 OCA.Recover.App.fileList.reload();
                                 OCA.Recover.App.fileList.$el.appendTo('#app-content');
