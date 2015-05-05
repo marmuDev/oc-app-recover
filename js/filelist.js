@@ -216,7 +216,7 @@
 			// original -> sends files-array to files/js/filelist.js
 			// set files seems ok
 			this.setFiles(result.data.files);
-			console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
+			//console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
 			return true;
 		},
 		

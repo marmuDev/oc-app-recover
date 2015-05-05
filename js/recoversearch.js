@@ -29,14 +29,14 @@
 		initialize: function() {
 
 			var self = this;
-			console.log('in RECOVER search init');
+			//console.log('RECOVER search init');
 			this.fileAppLoaded = function() {
 				return !!OCA.Files && !!OCA.Files.App;
 			};
 			function inFileList($row, result) {
-				console.log('in RECOVER search inFileList function');
+				//console.log('RECOVER search inFileList function');
 				if (! self.fileAppLoaded()) {
-					console.log('in RECOVER search file app not loaded');
+					console.log('RECOVER search file app not loaded');
 					return false;
 				}
 				var dir = self.fileList.getCurrentDirectory().replace(/\/+$/,'');
@@ -57,7 +57,7 @@
 			}
 
 			this.renderFolderResult = function($row, result) {
-				console.log('in RECOVER search renderFolderResult function');
+				console.log('RECOVER search renderFolderResult function');
 				if (inFileList($row, result)) {
 					return null;
 				}
@@ -75,7 +75,7 @@
 			};
 
 			this.renderFileResult = function($row, result) {
-				console.log('in RECOVER search renderFileResult function');
+				console.log('RECOVER search renderFileResult function');
 				if (inFileList($row, result)) {
 					return null;
 				}
@@ -162,7 +162,7 @@
 				}
 			};
 			this.setFileList = function (fileList) {
-				console.log('in RECOVER search setFileList function');
+				//console.log('RECOVER search setFileList function');
 				this.fileList = fileList;
 			};
 
@@ -182,11 +182,11 @@
 			// core search sets currentApp as default!!!
 			// and filter must be set, otherwise instant filtering via searchbox won't work!
 			search.setFilter('recover', function (query) {
-			console.log('in RECOVER search attach in setFilter query = ' + query);	
+			//console.log('RECOVER search attach in setFilter query = ' + query);	
 				if (self.fileAppLoaded()) {
 					self.fileList.setFilter(query);
 					if (query.length > 2) {
-						console.log('in RECOVER search attach query.length > 2');
+						//console.log('RECOVER search attach query.length > 2');
 						//search is not started until 500msec have passed
 						window.setTimeout(function() {
 							$('.nofilterresults').addClass('hidden');

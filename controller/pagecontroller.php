@@ -100,10 +100,10 @@ class PageController extends Controller {
     /** adapted from files_trashbin/ajax/list
      * http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
      * raydiation: listTrashBin($dir='', $sort='name', $sortdirection=false)
-     * meaning test it with those values?
+     *  -> setting default parameter values
      */
     //public function listTrashBin() {
-    public function listTrashBin($dir='', $sort='name', $sortdirection=false) {
+    public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();

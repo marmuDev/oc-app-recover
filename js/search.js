@@ -36,7 +36,7 @@
 		initialize: function($searchBox, $searchResults) {
 
 			var self = this;
-			console.log('MY searchbox init');
+			//console.log('MY searchbox init');
 			/**
 			 * contains closures that are called to filter the current content
 			 */
@@ -131,7 +131,7 @@
 						// results is empty!
 						//$.getJSON(OC.generateUrl('core/search'), {query:query, inApps:inApps, page:page, size:size }, function(results) {							
 							$.getJSON(OC.generateUrl('core/search'), {query:query, page:page, size:size }, function(results) {							
-							console.log('MY searchBox in this.search getJSON results = ' + results);
+							//console.log('MY searchBox in this.search getJSON results = ' + results);
 							lastResults = results;
 							if (page === 1) {
 								showResults(results);
@@ -270,7 +270,7 @@
 				setTimeout(function() {
 					if (isStatusOffScreen()) {
 						var newScrollTop = $('#app-content').prop('scrollHeight') - $searchResults.height();
-						console.log('scrolling to ' + newScrollTop);
+						//console.log('scrolling to ' + newScrollTop);
 						$('#app-content').animate({
 							scrollTop: newScrollTop
 						}, {
