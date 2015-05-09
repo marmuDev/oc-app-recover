@@ -23,6 +23,7 @@
     ->  searchForm.$valid && nur wenn valid, dann submitten... 
         noch weitere tests, prüfung auf "number" und "date" automatisch
     -->
+<div id="app-content-search">
 <div ng-app="recover">
     <div ng-controller="SearchController as searchCtrl">    
         <form name="searchForm" 
@@ -108,4 +109,5 @@
             Source: {{searchCtrl.search.filesources}}
         </form>
     </div>
+</div>
 </div>

@@ -1,6 +1,8 @@
 <!-- <div id="app-content"> -->
 <!-- <div ng-controller="HelpController as helpCtrl"> -->
+<div id="app-content-help">
     <h1>Hilfe</h1>
+</div>    
 <!-- Wen überhaupt, dann mittels Formular, siehe z.b.
     http://campus.codeschool.com/courses/shaping-up-with-angular-js/level/3/section/1/video/1
 	

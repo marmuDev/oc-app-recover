@@ -73,7 +73,7 @@
             /** not using client-side templating for now
              *  now loading content into app-content via ajax?
              *  first check trashbin way again... too complicated, maybe later
-             *  is it possible not to have 3 times $.ajax despite havein to change url and data?
+             *  is it possible not to have 3 times $.ajax despite having to change url and data?
              why is OCA.Recover.App.fileList.getCurrentDirectory() not available?
              how to get objects and functions available here?!?!
               http://xhr.spec.whatwg.org/ - http://api.jquery.com/jQuery.ajax/
@@ -168,6 +168,8 @@
                     self._links.load(id);
                     // render content of clicked link
                     self.renderContent(id);
+                    // call methods from OCA.Files.Navigation? 
+                    // gotta override FILES navigation.js?
                 });
             },
             /*
