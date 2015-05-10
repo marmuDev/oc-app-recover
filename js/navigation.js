@@ -23,9 +23,10 @@
         var Links = function (baseUrl) {
             this._baseUrl = baseUrl;
             this._links = [
-            	{id:0, title:"recently_deleted", active:true},
-            	{id:1, title:"search", active:false},
-            	{id:2, title:"help", active:false}
+            	//{id:"trashbin", title:"Recently Deleted", active:true},
+                {id:"recently_deleted", title:"Recently Deleted", active:true},
+            	{id:"search", title:"Search", active:false},
+            	{id:"help", title:"Help", active:false}
             ];
             // even without this line it is grey (active) for a moment when loading, 
             // but should stay grey until another link is clicked -> to solve
@@ -43,9 +44,16 @@
                 var self = this;
                 this._links.forEach(function (link) {
                     //console.log('in Links load loop: id = ' + id + ', link.id = ' + link.id);
-                    if (link.id == id) {
+                    if (link.id === id) {
                         link.active = true;
                         self._activeLink = link;
+                        // setActiveItem in Files Navigation for using Browser History
+                        // OCA.Files.App.navigation.setActiveItem(id, {silent: true});
+                        // from files app _onNavigationChanged
+                        // possible only using one parameter? originally item and dir
+                        // in both cases OC.Util.History.pushState is called -> only using pushState
+                        // OCA.Files.App._changeUrl(id);
+                        OC.Util.History.pushState(id);
                     } else {
                         link.active = false;
                     }
@@ -84,7 +92,8 @@
                 //var url = 'init';
                 //var data = 'init';
                 switch(id) {
-                    case "0":
+                    //case "0":
+                    case "recently_deleted":
                         $.ajax({
                             url: OC.generateUrl('/apps/recover/recently_deleted')
                             /* only used in myfilelist!!!
@@ -118,7 +127,8 @@
                                 //console.log('html = ' + html);
                             });
                         break;
-                    case "1":
+                    //case "1":
+                    case "search":
                         $.ajax({
                             url: OC.generateUrl('/apps/recover/search')
                         })
@@ -127,7 +137,8 @@
                                 
                             });
                         break;
-                    case "2":
+                    //case "2":
+                    case "help":
                         $.ajax({
                             url: OC.generateUrl('/apps/recover/help')
                         })
@@ -168,8 +179,6 @@
                     self._links.load(id);
                     // render content of clicked link
                     self.renderContent(id);
-                    // call methods from OCA.Files.Navigation? 
-                    // gotta override FILES navigation.js?
                 });
             },
             /*

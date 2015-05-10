@@ -30,7 +30,7 @@
             ng-submit="searchForm.$valid && searchCtrl.addSearch(searchCtrl.search.filename)"
             novalidate>
 
-            <h1>Suche</h1><br>
+            <h1>Search</h1><br>
             <!-- am besten suchfeld, dass direkt dynamisch Ergebnisse anzeigt -->
             <input type="text" 
                 ng-model="searchCtrl.search.filename"

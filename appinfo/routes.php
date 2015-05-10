@@ -26,10 +26,18 @@ $application->registerRoutes($this, array(
         // init
         array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
         // another route for the same function, 
-        // but triggered when clicking again on recently deleted in nav
+        // but triggered when clicking again on recently deleted in nav -> returning 'blank' template
         array('name' => 'page#recently', 'url' => '/recently_deleted', 'verb' => 'GET'),
+        
         array('name' => 'page#search', 'url' => '/search', 'verb' => 'GET'),
+        // how to: http://localhost/core/index.php/apps/recover/?search
+        array('name' => 'page#search', 'url' => '/{search}', 'verb' => 'GET',
+                'requirements' => array('search' => 'search')),
+        
         array('name' => 'page#help', 'url' => '/help', 'verb' => 'GET'),
+        // hack for pushed history state
+        array('name' => 'page#help', 'url' => '/{help}', 'verb' => 'GET',
+                'requirements' => array('help' => 'help')),
         
         // functions to get and post data
         array('name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET'),
