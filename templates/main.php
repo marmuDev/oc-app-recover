@@ -78,8 +78,9 @@
     // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
     // search adapted from core files search
     OCP\Util::addScript('recover', 'recoversearch');
-    // redundant but files/app depends on it
+    // redundant but files/app depends on it and my nav is using it too!
     OCP\Util::addScript('files', 'navigation');
+    OCP\Util::addScript('recover', 'navigation');
     // among others actions will have to be adapted for the recovery of files from different sources
     OCP\Util::addScript('files', 'fileactions');
     OCP\Util::addScript('files', 'files');

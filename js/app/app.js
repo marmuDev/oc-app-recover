@@ -42,7 +42,12 @@ OCA.Recover.App = {
 		// obsolete - adapted files navigation
 		//this.navigation = new OCA.Recover.Navigation($('#app-navigation'));
 		//this.navigation.setActiveItem('recently_deleted');
-		this._initialized = true;
+		// back to constructing nav here
+		//this.navigation = new OCA.Recover.Navigation(OC.generateUrl('/apps/recover/'));
+		this.navigation = new OCA.Recover.Navigation();
+    	this.view = new OCA.Recover.View(navigation);
+    	this.view.renderNavigation();
+		
 		this.fileList = new OCA.Recover.FileList(
 			$('#app-content-trashbin'), {
 				scrollContainer: $('#app-content'),
@@ -55,7 +60,7 @@ OCA.Recover.App = {
 		// trying to solve it via http.get in recentcontroller (angular)
 		// -> no, did it the trashbin-way
 		// still ajax and reload/reloadCallback, but getAjaxUrl obsolete
-		
+		this._initialized = true;
 	},
 
 	// adapt according to file source and coresponding functions etc.
