@@ -44,7 +44,7 @@ OCA.Recover.App = {
 		//this.navigation.setActiveItem('recently_deleted');
 		// back to constructing nav here
 		//this.navigation = new OCA.Recover.Navigation(OC.generateUrl('/apps/recover/'));
-		this.navigation = new OCA.Recover.Navigation();
+		this.navigation = new OCA.Recover.Navigation($('#app-navigation'));
     	this.view = new OCA.Recover.View(navigation);
     	this.view.renderNavigation();
 		
@@ -60,6 +60,11 @@ OCA.Recover.App = {
 		// trying to solve it via http.get in recentcontroller (angular)
 		// -> no, did it the trashbin-way
 		// still ajax and reload/reloadCallback, but getAjaxUrl obsolete
+
+		this._setupEvents();
+		// what for? obsolete in my case?
+		//this._onPopState(urlParams);
+		this._onPopState('({})');
 		this._initialized = true;
 	},
 
@@ -129,6 +134,85 @@ OCA.Recover.App = {
 		});
 		return fileActions;
 	},
+
+	/**
+	 * Setup events based on URL changes
+	 */
+	_setupEvents: function() {
+		OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
+		// detect when app changed their current directory
+		// -> still done by files App
+		//$('#app-content').delegate('>div', 'changeDirectory', _.bind(this._onDirectoryChanged, this));
+		//$('#app-content').delegate('>div', 'changeViewerMode', _.bind(this._onChangeViewerMode, this));
+		//console.log('RECOVER app _setupEvents, this = ' + this.toSource())
+		// I guess obsolete, see below
+		//$('#app-navigation').on('itemChanged', _.bind(this._onNavigationChanged, this));
+	},
+
+	/**
+	 * Event handler for when the current navigation item has changed
+	 * ONLY triggered when user clicks on nav link
+	 * I guess I don't need that, only for _changeURL in my case?
+	 
+	_onNavigationChanged: function(e) {
+		console.log('RECOVER app _onNavigationChanged, e = ' + e.toSource());
+		var params;
+		// active Container = 
+		//console.log('RECOVER app _onNavigationChanged, nav.getActiveContainer = ' + this.navigation.getActiveContainer().toSource());
+		// if not true -> not executed in RECOVER! -> no event triggered!
+		if (e && e.itemId) {
+			console.log('RECOVER app _onNavigationChanged in if');
+			params = {
+				view: e.itemId,
+				dir: '/'
+			};
+			// not triggered?
+			console.log('RECOVER _onNavigationChanged - params.view = ' + params.view + ', params.dir = ' + params.dir);
+			//debugger;
+			this._changeUrl(params.view, params.dir);
+			// Returns the container of the currently active app.
+			this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
+
+		}
+	},
+	*/
+
+	/**
+	 * Event handler for when the URL changed
+	 */
+	_onPopState: function(params) {
+		console.log('RECOVER _onPopState anfangs params.view = ' + params.view);
+		params = _.extend({
+			dir: '/',
+			view: 'files'
+		}, params);
+		var lastId = this.navigation.getActiveLink();
+		console.log('RECOVER app _onPopState, lastId = ' + lastId + ', params.view = ' + params.view);
+		if (!this.navigation.itemExists(params.view)) {
+			console.log('RECOVER app _onPopState, if item does not exist, params.view = "files"');
+			params.view = 'files';
+		}
+		this.navigation.setActiveItem(params.view, {silent: true});
+		if (lastId !== this.navigation.getActiveItem()) {
+			console.log('RECOVER app _onPopState, lastId != activeItem -> trigger new event show');
+			this.navigation.getActiveContainer().trigger(new $.Event('show'));
+		}
+		console.log('RECOVER app _onPopState, trigger event urlChanged');
+		this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
+	},
+
+	/**
+	 * Change the URL to point to the given dir and view
+	 * called by _onNavigationChanged
+	 */
+	_changeUrl: function(view, dir) {
+		var params = {dir: dir};
+		if (view !== 'files') {
+			params.view = view;
+		}
+		OC.Util.History.pushState(params);
+	}
+
 	/* now recovernavigation.js
 	getSearchTemplate: function() {
 		$.get(OC.generateUrl('/apps/recover/search'), function(data) {

@@ -28,13 +28,13 @@
      *
      * @param baseUrl... I guess this is obsolete
      */
-    var Navigation = function() {
-        this.initialize();
+    var Navigation = function($el) {
+        this.initialize($el);
     };
 
     
-
-    Navigation.prototype = {
+    // now inhereting from files
+    Navigation.prototype = _.extend({}, OCA.Files.Navigation.prototype, {
         /**
          * Currently selected item in the list
          */
@@ -48,15 +48,18 @@
             {id:"help", title:"Help", active:false}
         ],
         
-        initialize: function() {
+        initialize: function($el) {
+            this.$el = $el;
             // initially set recently_deleted as active Link
             // even without this line it is grey (active) for a moment when loading, 
             // but should stay grey until another link is clicked -> to solve
             this._activeLink = this._items[0];
             this._activeLink.active = true; // still not grey 
             OC.Util.History.pushState(this._activeLink.id);
-            OCA.Files.App.navigation.setActiveItem(this._activeLink.id, {silent: true});
-            console.log("RECOVER nav Links init Active Link = " + this._activeLink.toSource());
+            //OCA.Files.App.navigation.setActiveItem(this._activeLink.id, {silent: true});
+            // does setActiveView help? this only calls setActiveItem from navigation class
+            OCA.Files.App.setActiveView(this._activeLink.id, {silent: true});
+            console.log("RECOVER nav init Active Link = " + this._activeLink.toSource());
             //links.loadLink(0);
             //view.render();
         },
@@ -110,7 +113,7 @@
         getAll: function () {
             return this._items;
         }
-    };
+    });
         
     OCA.Recover.Navigation = Navigation;    
 
