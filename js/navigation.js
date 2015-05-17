@@ -50,6 +50,11 @@
         
         initialize: function($el) {
             this.$el = $el;
+            // AUCH SETZEN??? auf recently_deleted?
+            this._activeItem = null;
+            this.$currentContent = null;
+            // wie _setupEvents umgehen? siehe init von filelist, gleiches gilt dann für app?
+
             // initially set recently_deleted as active Link
             // even without this line it is grey (active) for a moment when loading, 
             // but should stay grey until another link is clicked -> to solve
@@ -58,10 +63,10 @@
             OC.Util.History.pushState(this._activeLink.id);
             //OCA.Files.App.navigation.setActiveItem(this._activeLink.id, {silent: true});
             // does setActiveView help? this only calls setActiveItem from navigation class
-            OCA.Files.App.setActiveView(this._activeLink.id, {silent: true});
-            console.log("RECOVER nav init Active Link = " + this._activeLink.toSource());
-            //links.loadLink(0);
-            //view.render();
+            //OCA.Files.App.setActiveView(this._activeLink.id, {silent: true});
+            //this.setActiveItem(this._activeLink.id, '{silent: true}');
+            this.setActiveItem(this._activeLink.id, {silent: true});
+            //console.log("RECOVER nav init Active Link = " + this._activeLink.toSource());
         },
 
         /*
@@ -91,7 +96,11 @@
                     // in both cases OC.Util.History.pushState is called -> only using pushState
                     // OCA.Files.App._changeUrl(id);
                     OC.Util.History.pushState(id);
-                    OCA.Files.App.navigation.setActiveItem(id, {silent: true});
+                    //OCA.Files.App.navigation.setActiveItem(id, '{silent: true}');
+                    // this is undefined!?!?
+                    //self.setActiveItem(id, '{silent: true}');
+                    // options again undefined
+                    this.setActiveItem(id, {silent: true});
                 } else {
                     link.active = false;
                 }
@@ -112,6 +121,9 @@
         
         getAll: function () {
             return this._items;
+        },
+        itemExists: function(itemId) {
+            return this.$el.find('li[id=' + itemId + ']').length;
         }
     });
         

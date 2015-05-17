@@ -30,11 +30,11 @@ if (!OCA.Recover) {
 /**
  * @namespace OCA.Recover.App
  */
-OCA.Recover.App = {
+OCA.Recover.App = _.extend({}, OCA.Files.App, {
 	_initialized: false,
 
 	initialize: function($el) {
-		console.log('in init from OCA.Recover.App - will init this.fileList = new OCA.Recover.FileList');
+		//console.log('in init from OCA.Recover.App - will init this.fileList = new OCA.Recover.FileList');
 		if (this._initialized) {
 			console.log('in init from OCA.Recover.App, initialized already true');
 			return;
@@ -64,7 +64,12 @@ OCA.Recover.App = {
 		this._setupEvents();
 		// what for? obsolete in my case?
 		//this._onPopState(urlParams);
-		this._onPopState('({})');
+		//this._onPopState('({})');
+		params = 	{
+						dir: '/',
+						view: 'recently_deleted'
+					}
+		this._onPopState(params);
 		this._initialized = true;
 	},
 
@@ -171,6 +176,8 @@ OCA.Recover.App = {
 			//debugger;
 			this._changeUrl(params.view, params.dir);
 			// Returns the container of the currently active app.
+			
+			// REMOVE triggering of urlChanged EVENT?
 			this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
 
 		}
@@ -184,15 +191,16 @@ OCA.Recover.App = {
 		console.log('RECOVER _onPopState anfangs params.view = ' + params.view);
 		params = _.extend({
 			dir: '/',
-			view: 'files'
+			view: 'recently_deleted'
 		}, params);
 		var lastId = this.navigation.getActiveLink();
 		console.log('RECOVER app _onPopState, lastId = ' + lastId + ', params.view = ' + params.view);
 		if (!this.navigation.itemExists(params.view)) {
 			console.log('RECOVER app _onPopState, if item does not exist, params.view = "files"');
-			params.view = 'files';
+			// set initial view (active Link to recover)
+			params.view = 'recently_deleted';
 		}
-		this.navigation.setActiveItem(params.view, {silent: true});
+		this.navigation.setActiveItem(params.view, '{silent: true}');
 		if (lastId !== this.navigation.getActiveItem()) {
 			console.log('RECOVER app _onPopState, lastId != activeItem -> trigger new event show');
 			this.navigation.getActiveContainer().trigger(new $.Event('show'));
@@ -221,7 +229,7 @@ OCA.Recover.App = {
 	}
 	*/
 
-};
+});
 
 
 // hack from files/js/app.js 
