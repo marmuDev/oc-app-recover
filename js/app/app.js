@@ -65,11 +65,14 @@ OCA.Recover.App = _.extend({}, OCA.Files.App, {
 		// what for? obsolete in my case?
 		//this._onPopState(urlParams);
 		//this._onPopState('({})');
+		/*
 		params = 	{
 						dir: '/',
 						view: 'recently_deleted'
 					}
+		// triggers setActive, shouldn't be triggered twice!
 		this._onPopState(params);
+		*/
 		this._initialized = true;
 	},
 
@@ -158,6 +161,8 @@ OCA.Recover.App = _.extend({}, OCA.Files.App, {
 	 * Event handler for when the current navigation item has changed
 	 * ONLY triggered when user clicks on nav link
 	 * I guess I don't need that, only for _changeURL in my case?
+	 * just get activeContainer, rest is done by RECOVER nav?
+	 */
 	 
 	_onNavigationChanged: function(e) {
 		console.log('RECOVER app _onNavigationChanged, e = ' + e.toSource());
@@ -182,7 +187,7 @@ OCA.Recover.App = _.extend({}, OCA.Files.App, {
 
 		}
 	},
-	*/
+	
 
 	/**
 	 * Event handler for when the URL changed
@@ -215,9 +220,10 @@ OCA.Recover.App = _.extend({}, OCA.Files.App, {
 	 */
 	_changeUrl: function(view, dir) {
 		var params = {dir: dir};
-		if (view !== 'files') {
+		if (view !== 'recently_deleted') {
 			params.view = view;
 		}
+		console.log('RECOVER app changeUrl, params.view = ' +params.view + ', params.dir = ' + params.dir);
 		OC.Util.History.pushState(params);
 	}
 

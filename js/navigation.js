@@ -95,18 +95,66 @@
                     // possible only using one parameter? originally item and dir
                     // in both cases OC.Util.History.pushState is called -> only using pushState
                     // OCA.Files.App._changeUrl(id);
-                    OC.Util.History.pushState(id);
+                    
+                    //OC.Util.History.pushState(id);
+                    
                     //OCA.Files.App.navigation.setActiveItem(id, '{silent: true}');
                     // this is undefined!?!?
                     //self.setActiveItem(id, '{silent: true}');
                     // options again undefined
-                    this.setActiveItem(id, {silent: true});
+                    self.setActiveItem(id, {silent: true});
                 } else {
                     link.active = false;
                 }
             });
             console.log('active link now = ' + this._activeLink.toSource());
         },
+        /** FIRST CHECK IF getActiveContainer is responsible for wrong lastItemId
+         * Switch the currently selected item, mark it as selected and
+         * make the content container visible, if any.
+         *
+         * Adapted from files app navigation, for compatibility with files nav
+         *  keeping it always silent? 
+         *
+         * @param string itemId id of the navigation item to select
+         * @param array options "silent" to not trigger event
+         
+        setActiveItem: function(itemId, options) {
+            //console.log('FILES nav setActiveItem');
+            this.setActiveCounter++;
+            console.log('RECOVER nav setActiveItem counter = ' + this.setActiveCounter);
+            console.log('RECOVER nav setActiveItem, itemId = ' + itemId + ', oldItemId = ' + oldItemId + ', options.silent = ' + options.silent);
+            // to avoid options undefined error
+            // console.log('RECOVER nav setActiveItem, itemId = ' + itemId + ', oldItemId = ' + oldItemId);  
+            var oldItemId = this._activeItem;
+            if (itemId === this._activeItem) {
+                console.log('RECOVER nav setActiveItem, itemId === this._activeItem');
+                if (!options || !options.silent) {
+                    console.log('RECOVER nav setActiveItem: !options or !options.silent');
+                    this.$el.trigger(
+                        new $.Event('itemChanged', {itemId: itemId, previousItemId: oldItemId})
+                    );
+                }
+                return;
+            }
+            this.$el.find('li').removeClass('active');
+            if (this.$currentContent) {
+                this.$currentContent.addClass('hidden');
+                this.$currentContent.trigger(jQuery.Event('hide'));
+            }
+            this._activeItem = itemId;
+            this.$el.find('li[data-id=' + itemId + ']').addClass('active');
+            this.$currentContent = $('#app-content-' + itemId);
+            this.$currentContent.removeClass('hidden');
+            if (!options || !options.silent) {
+                console.log('RECOVER nav setActiveItem: !options or !options.silent');
+                this.$currentContent.trigger(jQuery.Event('show'));
+                this.$el.trigger(
+                    new $.Event('itemChanged', {itemId: itemId, previousItemId: oldItemId})
+                );
+            }
+        },
+        */
         /*
         setActiveLink: function (id) {
             //var self = this;
@@ -226,7 +274,7 @@
                             OCA.Recover.App.fileList.$el.appendTo('#app-content');
                             //console.log('html = ' + html);
                         });
-                    console.log('case default -> wie 0');
+                    console.log('case default -> like case 0');
             }   
         },
 
