@@ -9,6 +9,7 @@
  * @copyright Marcus Mundt 2015
  */
 (function() {
+	'use strict';
 	var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
 	// how to define? in script.js (angular) ok, here -> "$provide is undefined"
 	// hab ich bereits in angular module config, nix doppelt machen!!!

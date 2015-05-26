@@ -34,7 +34,11 @@
 
     
     // now inhereting from files
-    Navigation.prototype = _.extend({}, OCA.Files.Navigation.prototype, {
+    //Navigation.prototype = _.extend({}, OCA.Files.Navigation.prototype, {
+    /**
+     * @memberof OCA.Recover
+     */
+    Navigation.prototype = {
         /**
          * Currently selected item in the list
          */
@@ -61,11 +65,13 @@
             this._activeLink = this._items[0];
             this._activeLink.active = true; // still not grey 
             OC.Util.History.pushState(this._activeLink.id);
+            
+            // now again without files nav and its methods
             //OCA.Files.App.navigation.setActiveItem(this._activeLink.id, {silent: true});
             // does setActiveView help? this only calls setActiveItem from navigation class
             //OCA.Files.App.setActiveView(this._activeLink.id, {silent: true});
             //this.setActiveItem(this._activeLink.id, '{silent: true}');
-            this.setActiveItem(this._activeLink.id, {silent: true});
+            //this.setActiveItem(this._activeLink.id, {silent: true});
             //console.log("RECOVER nav init Active Link = " + this._activeLink.toSource());
         },
 
@@ -89,6 +95,8 @@
                 if (link.id === id) {
                     link.active = true;
                     self._activeLink = link;
+                    
+                    // now again without files nav!!!
                     // setActiveItem in Files Navigation for using Browser History
                     // OCA.Files.App.navigation.setActiveItem(id, {silent: true});
                     // from files app _onNavigationChanged
@@ -96,13 +104,13 @@
                     // in both cases OC.Util.History.pushState is called -> only using pushState
                     // OCA.Files.App._changeUrl(id);
                     
-                    //OC.Util.History.pushState(id);
+                    OC.Util.History.pushState(id);
                     
                     //OCA.Files.App.navigation.setActiveItem(id, '{silent: true}');
                     // this is undefined!?!?
                     //self.setActiveItem(id, '{silent: true}');
                     // options again undefined
-                    self.setActiveItem(id, {silent: true});
+                    //self.setActiveItem(id, {silent: true});
                 } else {
                     link.active = false;
                 }
@@ -171,9 +179,11 @@
             return this._items;
         },
         itemExists: function(itemId) {
+            console.log('RECOVER nav itemExists, $el.find... length = ' + this.$el.find('li[id=' + itemId + ']').length)
             return this.$el.find('li[id=' + itemId + ']').length;
         }
-    });
+
+    };
         
     OCA.Recover.Navigation = Navigation;    
 

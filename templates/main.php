@@ -54,6 +54,10 @@
     OCP\Util::addScript('files', 'jquery-visibility');
     OCP\Util::addScript('files', 'filesummary');
     OCP\Util::addScript('files', 'breadcrumb');
+    // among others actions will have to be adapted for the recovery of files from different sources
+    OCP\Util::addScript('files', 'fileactions');
+    OCP\Util::addScript('files', 'files');
+    OCP\Util::addScript('files', 'keyboardshortcuts');
     /* out due to initializing Files filelist two times, when out TypeError!
      * --> 	TypeError: OCA.Files.FileList is undefined myfilelist.js:44:1
      *		TypeError: OCA.Files.FileList is not a constructor app.js:67:19
