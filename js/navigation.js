@@ -124,9 +124,11 @@
          * Adapted from files app navigation, for compatibility with files nav
          *  keeping it always silent? 
          *
+         * back to setActiveItem here, since inheriting _onPopState from Files app
+         *
          * @param string itemId id of the navigation item to select
          * @param array options "silent" to not trigger event
-         
+         */
         setActiveItem: function(itemId, options) {
             //console.log('FILES nav setActiveItem');
             this.setActiveCounter++;
@@ -153,16 +155,21 @@
             this._activeItem = itemId;
             this.$el.find('li[data-id=' + itemId + ']').addClass('active');
             this.$currentContent = $('#app-content-' + itemId);
+            console.log('RECOVER nav setActiveItem, currentContent = ' + this.$currentContent);
             this.$currentContent.removeClass('hidden');
+            // check if forcing options silent helps, before getting options.silent working
+            // trigger show is not needing in my case. perhaps itemChange is needed...
             if (!options || !options.silent) {
-                console.log('RECOVER nav setActiveItem: !options or !options.silent');
+                console.log('RECOVER nav setActiveItem: !options or !options.silent - TRIGGERS DISABLED');
+                /*
                 this.$currentContent.trigger(jQuery.Event('show'));
                 this.$el.trigger(
                     new $.Event('itemChanged', {itemId: itemId, previousItemId: oldItemId})
                 );
+                */
             }
         },
-        */
+        
         /*
         setActiveLink: function (id) {
             //var self = this;
@@ -173,6 +180,26 @@
         getActiveLink: function () {
         	//console.log('in Links getActiveLink this._activeLink = ' + this._activeLink.toSource());
             return this._activeLink;
+        },
+
+        /**
+         * Returns the container of the currently active app.
+         *
+         * @return app container
+         */
+        getActiveContainer: function() {
+            console.log('RECOVER nav getActiveContainer, currentContent = ' + this.$currentContent);
+            return this.$currentContent;
+        },
+
+        /**
+         * Returns the currently active item
+         * Like the above, but for compatibility with Files App and Nav 
+         *
+         * @return item ID
+         */
+        getActiveItem: function() {
+            return this._activeLink.id;
         },
         
         getAll: function () {

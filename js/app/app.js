@@ -31,8 +31,8 @@
 	/**
 	 * @namespace OCA.Recover.App
 	 */
-	//OCA.Recover.App = _.extend({}, OCA.Files.App, {
-	OCA.Recover.App = {
+	OCA.Recover.App = _.extend({}, OCA.Files.App, {
+	//OCA.Recover.App = {
 		//_initialized: false,
 
 		/**
@@ -163,6 +163,7 @@
 		 * Setup events based on URL changes
 		 */
 		_setupEvents: function() {
+			OCA.Files.App._setupEvents.apply(this, arguments);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 			// detect when app changed their current directory
 			// -> still done by files App
@@ -172,15 +173,45 @@
 			// I guess obsolete, see below
 			//$('#app-navigation').on('itemChanged', _.bind(this._onNavigationChanged, this));
 		},
+		/**
+		 * Event handler for when the current navigation item has changed
+		 * ONLY triggered when user clicks on nav link
+		 * DO NOTHING, recover nav does it all, more or less only calling 
+		 * changeUrl (pushState) and triggering urlChanged-Event
+		 * 
+		 */
+		_onNavigationChanged: function(e) {
+			OCA.Files.App._onNavigationChanged.apply(this, arguments);
+			/*console.log('RECOVER app _onNavigationChanged, e = ' + e.toSource());
+			var params;
+			// active Container = 
+			//console.log('FILES app _onNavigationChanged, nav.getActiveContainer = ' + this.navigation.getActiveContainer().toSource());
+			// if not true -> not executed in RECOVER! -> no event triggered!
+			if (e && e.itemId) {
+				console.log('RECOVER app _onNavigationChanged in if');
+				params = {
+					view: e.itemId,
+					dir: '/'
+				};
+				// not triggered?
+				console.log('RECOVER _onNavigationChanged - params.view = ' + params.view + ', params.dir = ' + params.dir);
+				//debugger;
+				this._changeUrl(params.view, params.dir);
+				// Returns the container of the currently active app.
+				this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
 
+			}*/
+		},
 		/**
 		 * Event handler for when the URL changed (e.g. moving back and forth in history)
 		 * conflicting with files onPopState!
 		 */
 		_onPopState: function(itemId) {
+			//OCA.Files.App.prototype._onPopState: function(itemId) {
+			OCA.Files.App._onPopState.apply(this, arguments);
 			//console.log('RECOVER _onPopState anfangs itemId = ' + itemId);
 			// get last active ID, the one from history will be set active in here later
-			var lastId = this.navigation.getActiveLink().id;
+			var lastId = OCA.Recover.App.navigation.getActiveLink().id;
 			console.log('RECOVER app _onPopState, lastId = ' + lastId + ', current id = ' + itemId);
 			if (!this.navigation.itemExists(itemId)) {
 				console.log('RECOVER app _onPopState, if item does not exist, set itemId = "recently_deleted"');
@@ -189,11 +220,11 @@
 				//this.navigation.loadLink(itemId);
 			}
 			// set active
-			this.navigation.loadLink(itemId);
+			OCA.Recover.App.navigation.loadLink(itemId);
 			// rerender content
-			this.view.renderContent(itemId);
+			OCA.Recover.App.view.renderContent(itemId);
 			// rerender nav, why isn't that required when clicking on nav and loading new content and nav?
-			this.view.renderNavigation();
+			OCA.Recover.App.view.renderNavigation();
 		}
 
 	/* now recovernavigation.js
@@ -203,8 +234,8 @@
 		});
 	}
 	*/
-	};
-//});
+	//};
+});
 })();
 
 
