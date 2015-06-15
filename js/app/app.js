@@ -31,9 +31,12 @@
 	/**
 	 * @namespace OCA.Recover.App
 	 */
-	OCA.Recover.App = _.extend({}, OCA.Files.App, {
-	//OCA.Recover.App = {
-		//_initialized: false,
+	 // inherited from files
+	//OCA.Recover.App = _.extend({}, OCA.Files.App, {
+	// not inherited from files
+	OCA.Recover.App = {
+		// not inherited from files
+		_initialized: false,
 
 		/**
 		 * Navigation control
@@ -234,9 +237,13 @@
 		});
 	}
 	*/
-	//};
-});
+
+// not inherited from files	
+	};
 })();
+
+// inherited from files
+//})();
 
 
 // hack from files/js/app.js 

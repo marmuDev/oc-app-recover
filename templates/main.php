@@ -81,7 +81,8 @@
     // searchbox adapted from core search
     // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
     // search adapted from core files search
-    OCP\Util::addScript('recover', 'recoversearch');
+    //OCP\Util::addScript('recover', 'recoversearch');
+    OCP\Util::addScript('recover', 'search');
     // redundant but files/app depends on it and my nav is using it too!
     OCP\Util::addScript('files', 'navigation');
     OCP\Util::addScript('recover', 'navigation');
