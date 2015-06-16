@@ -149,14 +149,21 @@ class PageController extends Controller {
         $data['directory'] = $dir;
         //throw new \Exception( "PAGECONTROLLER vor data files" );
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
-        // add files from other source to array
-        array_push($filesFromJsonFile, $data['files']);
+        /* add files from other source to array
+         * Problem: filesFromJson is String, needs to be OC\Files\FileInfo
+         * thats seems a bit too much work for now
+         * trying to append JSON data to $data['files'], JSON is string!!
+         * 
+         */
+        //$data['files'] .= array_push($filesFromJsonFile['files'], $data['files']);
+        $mergedFiles = array_merge($data['files'], $filesFromJsonFile['files']);
+        $data['files'] = $mergedFiles;
         //return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in myfilelist.js!!!
         // Use a AppFramework JSONResponse instead!!!
         // http://api.owncloud.org/classes/OCP.JSON.html
         //return new DataResponse(array('data' => $data));
-        return new JSONResponse(array('data' => $data, "statusCode" => "200"));
+        return new JSONResponse(['data' => $data, "statusCode" => "200"]);
         
         // original trashbin/ajax/list.php
         // OCP\JSON::success(array('data' => $data));
