@@ -131,12 +131,26 @@ class PageController extends Controller {
             return $notFound;
             throw new \Exception("pagecontroller error in make filelist");
         }
+        // add JSON file source
+        try {
+            $filesFromJsonFile = \OCA\Recover\Helper::getJsonFiles('http://localhost/fileData.json');
+        } catch (Exception $e) {
+            // what about returning JSONResponse with "statusCode" => "500"
+            // how is result.status === error in original trashbin (filelist->reloadCallback)
+            // don't use the header method but return a Response with the Http::STATUS_NOT_FOUND
+            //header("HTTP/1.0 404 Not Found");
+            $notFound = new NotFoundResponse();
+            $notFound.setStatus(404);
+            return $notFound;
+            throw new \Exception("pagecontroller error in make filelist from JSON");
+        }    
         $encodedDir = \OCP\Util::encodePath($dir);
-        
         $data['permissions'] = 0;
         $data['directory'] = $dir;
         //throw new \Exception( "PAGECONTROLLER vor data files" );
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
+        // add files from other source to array
+        array_push($filesFromJsonFile, $data['files']);
         //return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in myfilelist.js!!!
         // Use a AppFramework JSONResponse instead!!!
