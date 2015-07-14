@@ -13,32 +13,32 @@
  * now loading most JS scripts in part.recent
  *
  */
-// this is for using ownCloud Templates
-//\OCP\Util::addScript('recover', 'script');
-//\OCP\Util::addStyle('recover', 'style');
+    // this is for using ownCloud Templates
+    //\OCP\Util::addScript('recover', 'script');
+    //\OCP\Util::addStyle('recover', 'style');
 
-// this is how to do it using Twig Templates
-//{{ script('public/app', 'appframework') }}
+    // this is how to do it using Twig Templates
+    //{{ script('public/app', 'appframework') }}
 
-// now trying with no angular at all!
-// back to angular for search stuff
-//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+    // now trying with no angular at all!
+    // back to angular for search stuff
+    //OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
-// load angular only in search template!!
-// angular is back for navigation...
-// now navi the files app way (\OCA\Files\App::getNavigationManager()->add)
-// and back to angular for search form... 
-//	-> fucks up DOM, find other solution
-//OCP\Util::addScript('recover', 'vendor/angular.min');
-// var app as angular module and further angular stuff
-//OCP\Util::addScript('recover', 'app/config');
-//OCP\Util::addScript('recover', 'app/run');
-//OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+    // load angular only in search template!!
+    // angular is back for navigation...
+    // now navi the files app way (\OCA\Files\App::getNavigationManager()->add)
+    // and back to angular for search form... 
+    //	-> fucks up DOM, find other solution
+    //OCP\Util::addScript('recover', 'vendor/angular.min');
+    // var app as angular module and further angular stuff
+    //OCP\Util::addScript('recover', 'app/config');
+    //OCP\Util::addScript('recover', 'app/run');
+    //OCP\Util::addScript('recover', 'app/controllers/mainctrl');
 
-//include appframework which helps to interact with the OC-server?
-// OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
-	// trashbin/recover and files stuff
-	OCP\Util::addStyle('files', 'files');
+    //include appframework which helps to interact with the OC-server?
+    // OC.x scheint durch function (...,OC,..) in script.js bereits verfügbar
+    // trashbin/recover and files stuff
+    OCP\Util::addStyle('files', 'files');
     OCP\Util::addStyle('files', 'upload');
     OCP\Util::addStyle('files', 'mobile');
     OCP\Util::addStyle('files_trashbin', 'trash');

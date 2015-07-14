@@ -14,9 +14,6 @@
 (function (OC, window, $, undefined) {
     'use strict';
 
-    // now constructing navigation in app.js
-    //$(document).ready(function () {
-
     // not implemented yet, just showing title in navigation
     var translations = {
         recentlyDeleted: $('#recently-deleted-string').text()
@@ -33,8 +30,6 @@
     };
 
     
-    // now inhereting from files
-    //Navigation.prototype = _.extend({}, OCA.Files.Navigation.prototype, {
     /**
      * @memberof OCA.Recover
      */
@@ -46,7 +41,6 @@
 
         // this links object holds all our links
         _items: [
-            //{id:"trashbin", title:"Recently Deleted", active:true},
             {id:"recently_deleted", title:"Recently Deleted", active:false},
             {id:"search", title:"Search", active:false},
             {id:"help", title:"Help", active:false}
@@ -54,39 +48,17 @@
         
         initialize: function($el) {
             this.$el = $el;
-            // AUCH SETZEN??? auf recently_deleted?
             this._activeItem = null;
             this.$currentContent = null;
-            // wie _setupEvents umgehen? siehe init von filelist, gleiches gilt dann für app?
-
+            
             // initially set recently_deleted as active Link
-            // even without this line it is grey (active) for a moment when loading, 
-            // but should stay grey until another link is clicked -> to solve
             this._activeLink = this._items[0];
             this._activeLink.active = true; // still not grey 
+            // push current link to browser history stack
             OC.Util.History.pushState(this._activeLink.id);
-            
-            // now again without files nav and its methods
-            //OCA.Files.App.navigation.setActiveItem(this._activeLink.id, {silent: true});
-            // does setActiveView help? this only calls setActiveItem from navigation class
-            //OCA.Files.App.setActiveView(this._activeLink.id, {silent: true});
-            //this.setActiveItem(this._activeLink.id, '{silent: true}');
-            //this.setActiveItem(this._activeLink.id, {silent: true});
             //console.log("RECOVER nav init Active Link = " + this._activeLink.toSource());
         },
 
-        /*
-        var Links = function (baseUrl) {
-            this._baseUrl = baseUrl;
-            this._items = [
-                //{id:"trashbin", title:"Recently Deleted", active:true},
-                {id:"recently_deleted", title:"Recently Deleted", active:false},
-                {id:"search", title:"Search", active:false},
-                {id:"help", title:"Help", active:false}
-            ];
-            this._activeLink = 'undefined';
-        };
-*/
         // go through links, set matched link active
         loadLink: function (id) {
             var self = this;
@@ -96,114 +68,25 @@
                     link.active = true;
                     self._activeLink = link;
                     
-                    // now again without files nav!!!
+                    // without files nav
                     // setActiveItem in Files Navigation for using Browser History
-                    // OCA.Files.App.navigation.setActiveItem(id, {silent: true});
+                    // -> OCA.Files.App.navigation.setActiveItem(id, {silent: true});
                     // from files app _onNavigationChanged
                     // possible only using one parameter? originally item and dir
                     // in both cases OC.Util.History.pushState is called -> only using pushState
                     // OCA.Files.App._changeUrl(id);
-                    
                     OC.Util.History.pushState(id);
-                    
-                    //OCA.Files.App.navigation.setActiveItem(id, '{silent: true}');
-                    // this is undefined!?!?
-                    //self.setActiveItem(id, '{silent: true}');
-                    // options again undefined
-                    //self.setActiveItem(id, {silent: true});
                 } else {
                     link.active = false;
                 }
             });
-            console.log('active link now = ' + this._activeLink.toSource());
-        },
-        /** FIRST CHECK IF getActiveContainer is responsible for wrong lastItemId
-         * Switch the currently selected item, mark it as selected and
-         * make the content container visible, if any.
-         *
-         * Adapted from files app navigation, for compatibility with files nav
-         *  keeping it always silent? 
-         *
-         * back to setActiveItem here, since inheriting _onPopState from Files app
-         * no inheritance any more, files app does history and events, 
-         * recover renders navigation and loads contents -> setActive useless for now
-         *
-         * @param string itemId id of the navigation item to select
-         * @param array options "silent" to not trigger event
-         */
-        setActiveItem: function(itemId, options) {
-            //console.log('FILES nav setActiveItem');
-            this.setActiveCounter++;
-            console.log('RECOVER nav setActiveItem counter = ' + this.setActiveCounter);
-            console.log('RECOVER nav setActiveItem, itemId = ' + itemId + ', oldItemId = ' + oldItemId + ', options.silent = ' + options.silent);
-            // to avoid options undefined error
-            // console.log('RECOVER nav setActiveItem, itemId = ' + itemId + ', oldItemId = ' + oldItemId);  
-            var oldItemId = this._activeItem;
-            if (itemId === this._activeItem) {
-                console.log('RECOVER nav setActiveItem, itemId === this._activeItem');
-                if (!options || !options.silent) {
-                    console.log('RECOVER nav setActiveItem: !options or !options.silent');
-                    this.$el.trigger(
-                        new $.Event('itemChanged', {itemId: itemId, previousItemId: oldItemId})
-                    );
-                }
-                return;
-            }
-            this.$el.find('li').removeClass('active');
-            if (this.$currentContent) {
-                this.$currentContent.addClass('hidden');
-                this.$currentContent.trigger(jQuery.Event('hide'));
-            }
-            this._activeItem = itemId;
-            this.$el.find('li[data-id=' + itemId + ']').addClass('active');
-            this.$currentContent = $('#app-content-' + itemId);
-            console.log('RECOVER nav setActiveItem, currentContent = ' + this.$currentContent);
-            this.$currentContent.removeClass('hidden');
-            // check if forcing options silent helps, before getting options.silent working
-            // trigger show is not needing in my case. perhaps itemChange is needed...
-            if (!options || !options.silent) {
-                console.log('RECOVER nav setActiveItem: !options or !options.silent - TRIGGERS DISABLED');
-                /*
-                this.$currentContent.trigger(jQuery.Event('show'));
-                this.$el.trigger(
-                    new $.Event('itemChanged', {itemId: itemId, previousItemId: oldItemId})
-                );
-                */
-            }
+            console.log('RECOVER load link, active link now = ' + this._activeLink.toSource());
         },
         
-        /*
-        setActiveLink: function (id) {
-            //var self = this;
-            //this._activeLink = this._items[id];
-            //this._activeLink.active = 'true';
-        },     
-*/
         getActiveLink: function () {
-        	//console.log('in Links getActiveLink this._activeLink = ' + this._activeLink.toSource());
+            //console.log('in Links getActiveLink this._activeLink = ' + this._activeLink.toSource());
             return this._activeLink;
         },
-
-        /**
-         * Returns the container of the currently active app.
-         *
-         * @return app container
-         */
-        getActiveContainer: function() {
-            console.log('RECOVER nav getActiveContainer, currentContent = ' + this.$currentContent);
-            return this.$currentContent;
-        },
-
-        /**
-         * Returns the currently active item
-         * Like the above, but for compatibility with Files App and Nav 
-         *
-         * @return item ID
-         */
-        getActiveItem: function() {
-            return this._activeLink.id;
-        },
-        
         getAll: function () {
             return this._items;
         },
@@ -333,21 +216,9 @@
                 // render content of clicked link
                 self.renderContent(id);
             });
-        },
-        /*
-        render: function (id) {
-            this.renderNavigation();
-            this.renderContent(id);
         }
-        */
     };
 
     OCA.Recover.View = View;    
     
-    /* moved to app.js
-    var navigation = new Navigation(OC.generateUrl('/apps/recover/'));
-    var view = new View(navigation);
-    view.renderNavigation();
-    */
-// });
 })(OC, window, jQuery);
