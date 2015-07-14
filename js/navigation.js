@@ -125,6 +125,8 @@
          *  keeping it always silent? 
          *
          * back to setActiveItem here, since inheriting _onPopState from Files app
+         * no inheritance any more, files app does history and events, 
+         * recover renders navigation and loads contents -> setActive useless for now
          *
          * @param string itemId id of the navigation item to select
          * @param array options "silent" to not trigger event

@@ -80,7 +80,7 @@
 			// -> no, did it the trashbin-way
 			// still ajax and reload/reloadCallback, but getAjaxUrl obsolete
 
-			this._setupEvents();
+			//this._setupEvents();
 			// what for? obsolete in my case?
 			//this._onPopState(urlParams);
 			//this._onPopState('({})');
@@ -166,7 +166,8 @@
 		 * Setup events based on URL changes
 		 */
 		_setupEvents: function() {
-			OCA.Files.App._setupEvents.apply(this, arguments);
+			//OCA.Files.App._setupEvents.apply(this, arguments);
+                        console.log('RECOVER app _setupEvents, onPopState only');
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 			// detect when app changed their current directory
 			// -> still done by files App
@@ -184,7 +185,7 @@
 		 * 
 		 */
 		_onNavigationChanged: function(e) {
-			OCA.Files.App._onNavigationChanged.apply(this, arguments);
+			//OCA.Files.App._onNavigationChanged.apply(this, arguments);
 			/*console.log('RECOVER app _onNavigationChanged, e = ' + e.toSource());
 			var params;
 			// active Container = 
