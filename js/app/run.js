@@ -8,16 +8,18 @@
  * @copyright Marcus Mundt 2015
  */
 //.run(function($rootScope, $http, BASE_URL, GetRecDelTrash){
-
-
 //(function(window, document, angular, $, OC, undefined){
-	//app.run(["$rootScope", function($rootScope){
-	//app.run(function($rootScope){
-	app.run(function {
-		'use strict';
-		// not marked active at start up!! -> now handlebars nav -> obsolete
-	    //$rootScope.linkNum = 1;
-	});
-	console.log('in run.js ende');
+    //app.run(["$rootScope", function($rootScope){
+    //app.run(function($rootScope){
+
+/*
+app.run(function ({
+    'use strict';
+    // not marked active at start up!! -> now handlebars nav -> obsolete
+    //$rootScope.linkNum = 1;
+    console.log('in run.js ende');
+});
+*/  
+    
 //})(window, document, angular, jQuery, OC, oc_requesttoken);
 //})(window, document, angular, $, OC, undefined);

@@ -92,8 +92,9 @@
     OCP\Util::addScript('files', 'keyboardshortcuts');
     
     // search template stuff
-   	OCP\Util::addScript('recover', 'vendor/angular.min');
+    OCP\Util::addScript('recover', 'vendor/angular.min');
     OCP\Util::addScript('recover', 'app/config');
+    // obsolete and syntax error
     //OCP\Util::addScript('recover', 'app/run');
     OCP\Util::addScript('recover', 'app/controllers/mainctrl');
     

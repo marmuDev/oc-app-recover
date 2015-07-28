@@ -101,9 +101,15 @@ class PageController extends Controller {
      * http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
      * raydiation: listTrashBin($dir='', $sort='name', $sortdirection=false)
      *  -> setting default parameter values
+     * 
+     * lists trashbin files for current directory!!!
+     * -> how will I get the directory structure of another source working?!
+     * ==> directory structure of avalable files muss be present at this time!
+     * 
      */
-    //public function listTrashBin() {
-    public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
+    public function listTrashBin($dir, $sort, $sortdirection) {
+    // trying to get parameters (dir, sort and sortdirection) working
+    //public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();
@@ -120,6 +126,7 @@ class PageController extends Controller {
         
         // make filelist
         try {
+            // this is OC\Files\FileInfo format
             $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
         } catch (Exception $e) {
             // what about returning JSONResponse with "statusCode" => "500"
@@ -131,34 +138,40 @@ class PageController extends Controller {
             return $notFound;
             throw new \Exception("pagecontroller error in make filelist");
         }
-        // add JSON file source
+        // add other file source | get files from webservice
         try {
-            $filesFromJsonFile = \OCA\Recover\Helper::getJsonFiles('http://localhost/fileData.json');
+            //$filesFromJsonFile = \OCA\Recover\Helper::getJsonFiles('http://localhost/fileData.json');
+            // maybe getFilesFromSources + Source(s) as parameter, 
+            // instead of calling a helper function for every source
+            // TO DO: build Url based on selected dir
+            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';
+            // getting json here, therefore decoding to array!
+            $filesFromSourceX = json_decode(\OCA\Recover\Helper::getTestWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {
-            // what about returning JSONResponse with "statusCode" => "500"
-            // how is result.status === error in original trashbin (filelist->reloadCallback)
-            // don't use the header method but return a Response with the Http::STATUS_NOT_FOUND
-            //header("HTTP/1.0 404 Not Found");
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
-            throw new \Exception("pagecontroller error in make filelist from JSON");
-        }    
+            throw new \Exception("pagecontroller error in make filelist from SourceX");
+        }  
         $encodedDir = \OCP\Util::encodePath($dir);
         $data['permissions'] = 0;
         $data['directory'] = $dir;
-        //throw new \Exception( "PAGECONTROLLER vor data files" );
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
+        
         /* add files from other source to array
          * Problem: filesFromJson is String, needs to be OC\Files\FileInfo
          * thats seems a bit too much work for now
          * trying to append JSON data to $data['files'], JSON is string!!
          * 
+         * other file info needs to be formated too in some kind of way!!!
+         * webservice will do that for each source, so in here only the correct format is available
+         * 
          */
         //$data['files'] .= array_push($filesFromJsonFile['files'], $data['files']);
-        $mergedFiles = array_merge($data['files'], $filesFromJsonFile['files']);
+        $mergedFiles = array_merge($data['files'], $filesFromSourceX['files']);
         $data['files'] = $mergedFiles;
-        //return new DataResponse($data); this was missing one layer 
+        
+        ////return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in myfilelist.js!!!
         // Use a AppFramework JSONResponse instead!!!
         // http://api.owncloud.org/classes/OCP.JSON.html
