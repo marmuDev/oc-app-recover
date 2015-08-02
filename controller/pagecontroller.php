@@ -119,12 +119,15 @@ class PageController extends Controller {
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
         // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
+        // params set via session vars through ajax call in filelist reload?
+        //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
+        // OC app framework way would be to pass those via the URL as params, does this work?
         $dir = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
         $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
         $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $data = array();
         
-        // make filelist
+        // make filelist - must be ommitted when files from external source are requested!
         try {
             // this is OC\Files\FileInfo format
             $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
@@ -138,13 +141,25 @@ class PageController extends Controller {
             return $notFound;
             throw new \Exception("pagecontroller error in make filelist");
         }
-        // add other file source | get files from webservice
+        
+        // add other file source | get files from webservice -> could become foreach loop with sources-array
+        // better: implement function which is called with source and dir as param
         try {
             //$filesFromJsonFile = \OCA\Recover\Helper::getJsonFiles('http://localhost/fileData.json');
             // maybe getFilesFromSources + Source(s) as parameter, 
             // instead of calling a helper function for every source
             // TO DO: build Url based on selected dir
-            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';
+            //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';
+            // testdir has to be replaced with root-folder of snapshots etc.
+            // hack to prepend slash in front of subdir, or list root dir!            
+            if ($dir !== '/') {
+                $dir = '%2F'.$dir;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir'.$dir;
+            } else {
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';
+            }
+            // ohne dir ok? JA!
+            
             // getting json here, therefore decoding to array!
             $filesFromSourceX = json_decode(\OCA\Recover\Helper::getTestWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {
@@ -153,6 +168,7 @@ class PageController extends Controller {
             return $notFound;
             throw new \Exception("pagecontroller error in make filelist from SourceX");
         }  
+         
         $encodedDir = \OCP\Util::encodePath($dir);
         $data['permissions'] = 0;
         $data['directory'] = $dir;

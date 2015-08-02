@@ -163,6 +163,8 @@
             this._reloadCall = $.ajax({
                 //url: 'http://localhost/core/index.php/apps/recover/trashlist', 
                 url : OC.generateUrl('/apps/recover/trashlist'),
+                // params should be put in URL for routes + pagecontroller to work!
+                // check if they can be accessed through session in pagecontroller
                 data : {
                     // problem when reloading trashbin, it should use root, not last folder?
                     dir : this.getCurrentDirectory(),
