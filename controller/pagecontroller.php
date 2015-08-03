@@ -91,12 +91,61 @@ class PageController extends Controller {
 
     /**
      * @NoAdminRequired
-     *   get trashbin from mySQL DB
+     *   get trashbin from mySQL DB - obsolete
      */
     public function getRecentlyDeleted() {
         return $this->trashBinMapper->find($this->userId);
     }
-
+    /*
+     * call functions to get backupped files depending on sources
+     * if no source is specified, we want all backed up files of user from any possible source
+     * route: ['name' => 'page#list_backups', 'url' => '/listbackups{dir}/-/{source}/{sort}/{sortdirection}', 'verb' => 'GET'],
+     * @param String $dir directory to be listed
+     * @param String $sort attribut to sort files by
+     * @param String $sortdirection asc | desc (ascending or descending)
+     * @param String $source source of backup files octrash| ext4 | gpfsss (oc trashbin, local ext4 files or GPFS Snapshots)
+     * @return JSONResponse $data inclunding permissions, directory, files and source within files
+     */
+    public function listBackups($dir, $sort, $sortdirection, $source) {
+        // if I want to use $GET vars I need to get them here -> trying the new URL approach
+        switch ($source) {
+            case 'octrash':
+                $data = listTrashBin($dir, $sort, $sortdirection);
+                break;
+            /* add files from other source to array
+            * Problem: filesFromJson is String, needs to be OC\Files\FileInfo
+            * thats seems a bit too much work for now
+            * trying to append JSON data to $data['files'], JSON is string!!
+            * 
+            * other file info needs to be formated too in some kind of way!!!
+            * webservice will do that for each source, so in here only the correct format is available
+            * 
+            */
+            //$data['files'] .= array_push($filesFromJsonFile['files'], $data['files']);
+            case 'ext4':
+                $filesFromExt4 = listExt4($dir);
+                break;
+            case 'gpfsss':
+                $filesFromGpfsSs = listGpfsSs($dir);
+                break;
+            // list files of root directory -> collect data from all sources
+            default:
+                $data = listTrashBin($dir, $sort, $sortdirection);
+                $filesFromExt4 = listExt4($dir);
+                // not yet implemented
+                // $filesFromGpfsSs = listGpfsSs($dir);
+                // merge arrays from all sources
+                $mergedFiles = array_merge($data['files'], $filesFromSources['files']);
+                $data['files'] = $mergedFiles;
+        }
+        ////return new DataResponse($data); this was missing one layer 
+        // gotta be result.data.files in myfilelist.js!!!
+        // Use a AppFramework JSONResponse instead!!!
+        // http://api.owncloud.org/classes/OCP.JSON.html
+        //return new DataResponse(array('data' => $data));
+        return new JSONResponse(['data' => $data, "statusCode" => "200"]);
+    }
+    
     /** adapted from files_trashbin/ajax/list
      * http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
      * raydiation: listTrashBin($dir='', $sort='name', $sortdirection=false)
@@ -106,10 +155,15 @@ class PageController extends Controller {
      * -> how will I get the directory structure of another source working?!
      * ==> directory structure of avalable files muss be present at this time!
      * 
+     * @param String $dir directory to be listed
+     * @param String $sort attribut to sort files by
+     * @param String $sortdirection asc | desc (ascending or descending)
+     * @return Array $data with inclunding permissions, directory, files and source within files
+     * 
      */
     public function listTrashBin($dir, $sort, $sortdirection) {
-    // trying to get parameters (dir, sort and sortdirection) working
-    //public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
+        // trying to get parameters (dir, sort and sortdirection) working
+        //public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();
@@ -141,7 +195,25 @@ class PageController extends Controller {
             return $notFound;
             throw new \Exception("pagecontroller error in make filelist");
         }
+                 
+        $encodedDir = \OCP\Util::encodePath($dir);
+        $data['permissions'] = 0;
+        $data['directory'] = $dir;
+        $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
         
+        return $data;
+        
+        // original trashbin/ajax/list.php
+        // OCP\JSON::success(array('data' => $data));
+        //return true;
+      
+    }
+    /*
+     * list EXT4 files via webservice4recover
+     * @param String $dir directory to get contents of
+     * @return Array $filesFromExt4['files'] contents of given directory
+     */
+    public function listExt4($dir) {
         // add other file source | get files from webservice -> could become foreach loop with sources-array
         // better: implement function which is called with source and dir as param
         try {
@@ -161,46 +233,17 @@ class PageController extends Controller {
             // ohne dir ok? JA!
             
             // getting json here, therefore decoding to array!
-            $filesFromSourceX = json_decode(\OCA\Recover\Helper::getTestWebserviceFiles($serviceUrl), true);
+            $filesFromSourceExt4 = json_decode(\OCA\Recover\Helper::getTestWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
             throw new \Exception("pagecontroller error in make filelist from SourceX");
-        }  
-         
-        $encodedDir = \OCP\Util::encodePath($dir);
-        $data['permissions'] = 0;
-        $data['directory'] = $dir;
-        $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
-        
-        /* add files from other source to array
-         * Problem: filesFromJson is String, needs to be OC\Files\FileInfo
-         * thats seems a bit too much work for now
-         * trying to append JSON data to $data['files'], JSON is string!!
-         * 
-         * other file info needs to be formated too in some kind of way!!!
-         * webservice will do that for each source, so in here only the correct format is available
-         * 
-         */
-        //$data['files'] .= array_push($filesFromJsonFile['files'], $data['files']);
-        $mergedFiles = array_merge($data['files'], $filesFromSourceX['files']);
-        $data['files'] = $mergedFiles;
-        
-        ////return new DataResponse($data); this was missing one layer 
-        // gotta be result.data.files in myfilelist.js!!!
-        // Use a AppFramework JSONResponse instead!!!
-        // http://api.owncloud.org/classes/OCP.JSON.html
-        //return new DataResponse(array('data' => $data));
-        return new JSONResponse(['data' => $data, "statusCode" => "200"]);
-        
-        // original trashbin/ajax/list.php
-        // OCP\JSON::success(array('data' => $data));
-        //return true;
-      
+        }
+        return $filesFromSourceExt4;
     }
 
-    // adapted from files_trashbin/ajax/undelete
+        // adapted from files_trashbin/ajax/undelete
     // http post: http://localhost/core/index.php/apps/files_trashbin/ajax/undelete.php
     // => http://localhost/core/index.php/apps/recover/recover
     public function recover() {

@@ -20,31 +20,30 @@ return ['routes' => [
 namespace OCA\Recover\AppInfo;
 
 $application = new Recover();
-$application->registerRoutes($this, array(
-    'routes' => array(
-        // NAVIGATION
-        // init
-        array('name' => 'page#index', 'url' => '/', 'verb' => 'GET'),
+$application->registerRoutes($this, ['routes' => [
+        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         // another route for the same function, 
         // but triggered when clicking again on recently deleted in nav -> returning 'blank' template
-        array('name' => 'page#recently', 'url' => '/recently_deleted', 'verb' => 'GET'),
+        ['name' => 'page#recently', 'url' => '/recently_deleted', 'verb' => 'GET'],
         
-        array('name' => 'page#search', 'url' => '/search', 'verb' => 'GET'),
+        ['name' => 'page#search', 'url' => '/search', 'verb' => 'GET'],
         // how to: http://localhost/core/index.php/apps/recover/?search
-        array('name' => 'page#search', 'url' => '/{search}', 'verb' => 'GET',
-                'requirements' => array('search' => 'search')),
+        ['name' => 'page#search', 'url' => '/{search}', 'verb' => 'GET',
+                'requirements' => ['search' => 'search']],
         
-        array('name' => 'page#help', 'url' => '/help', 'verb' => 'GET'),
+            ['name' => 'page#help', 'url' => '/help', 'verb' => 'GET'],
         // hack for pushed history state
-        array('name' => 'page#help', 'url' => '/{help}', 'verb' => 'GET',
-                'requirements' => array('help' => 'help')),
+        ['name' => 'page#help', 'url' => '/{help}', 'verb' => 'GET',
+                'requirements' => ['help' => 'help']],
         
         // functions to get and post data
-        array('name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET'),
-        array('name' => 'page#list_trash_bin', 'url' => '/trashlist{dir}', 'verb' => 'GET',
-        		'requirements' => array('dir' => '.+')),
-        array('name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST'),
-        array('name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST')
-    )
-));
+        ['name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET'],
+        // old, now via listBackups
+        //array('name' => 'page#list_trash_bin', 'url' => '/trashlist{dir}', 'verb' => 'GET',
+        //		'requirements' => array('dir' => '.+')),
+        ['name' => 'page#list_backups', 'url' => '/listbackups{dir}/-/{source}/{sort}/{sortdirection}', 'verb' => 'GET'],
+        ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST'],
+        ['name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST']
+]
+]);
 

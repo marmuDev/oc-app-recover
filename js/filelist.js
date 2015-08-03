@@ -145,6 +145,10 @@
          */
 
         reload: function() {
+            var dir = this.getCurrentDirectory();
+            var sort = this._sort;
+            var sortdirection = this._sortDirection;
+            var source = this.getSource();
             //debugger;
             //console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
             this._selectedFiles = {};
@@ -162,17 +166,20 @@
             // call this directly for reloading trash list? no
             this._reloadCall = $.ajax({
                 //url: 'http://localhost/core/index.php/apps/recover/trashlist', 
-                url : OC.generateUrl('/apps/recover/trashlist'),
+                //url : OC.generateUrl('/apps/recover/trashlist'),
+                url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/-/' + source + '/' + sort + '/' + sortdirection),
                 // params should be put in URL for routes + pagecontroller to work!
-                // check if they can be accessed through session in pagecontroller
+                // instead of being accessed via PHP $_GET vars
+                // route url: '/listbackups{dir}/-/{source}/{sort}/{sortdirection}'
                 data : {
                     // problem when reloading trashbin, it should use root, not last folder?
-                    dir : this.getCurrentDirectory(),
-                    sort: this._sort,
-                    sortdirection: this._sortDirection
+                    // kept for now, but should use params via URL
+                    dir : dir,
+                    sort: sort,
+                    sortdirection: sortdirection
                 }
             });
-            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection);
+            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
@@ -424,7 +431,7 @@
         },
 
         /*
-        PERHAPS I WILL ENABLE DOWNLAODS? USEFUL?
+        PERHAPS I WILL ENABLE DOWNLOADS? USEFUL?
         */
         getDownloadUrl: function() {
             // no downloads
@@ -449,8 +456,16 @@
 
         isSelectedDeletable: function() {
             return true;
+        },
+        getSource: function() {
+            if (typeof OCA.Recover.FileList.files !== 'undefined') { 
+                var fileListJSON = OCA.Recover.FileList.files.toSource();
+                var pattern = /source:"[.+]/;
+                var source = pattern.exec(fileListJSON);
+                console.log('source = ' + source);
+                return source;
+            }
         }
-
     });
     OCA.Recover.FileList = FileList;
 })();
