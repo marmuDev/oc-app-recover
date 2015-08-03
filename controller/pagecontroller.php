@@ -97,7 +97,7 @@ class PageController extends Controller {
         return $this->trashBinMapper->find($this->userId);
     }
     /*
-     * call functions to get backupped files depending on sources
+     * call functions to get backed up files depending on sources
      * if no source is specified, we want all backed up files of user from any possible source
      * route: ['name' => 'page#list_backups', 'url' => '/listbackups{dir}/-/{source}/{sort}/{sortdirection}', 'verb' => 'GET'],
      * @param String $dir directory to be listed
@@ -106,13 +106,21 @@ class PageController extends Controller {
      * @param String $source source of backup files octrash| ext4 | gpfsss (oc trashbin, local ext4 files or GPFS Snapshots)
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
      */
-    public function listBackups($dir, $sort, $sortdirection, $source) {
-        // if I want to use $GET vars I need to get them here -> trying the new URL approach
-        switch ($source) {
+    
+    public function listBackups($dir = '/', $source = 'octrash', $sort = 'name', $sortdirection = 'asc') {
+        //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
+        // OC app framework way would be to pass those via the URL as params
+        $dirGet = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
+        $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
+        $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
+        $sourceGet = isset( $_GET['source'] ) ? $_GET['source'] : '';
+         
+        // a clicked dir can only have one source -> list contents of dir from source
+        switch ($sourceGet) {
             case 'octrash':
-                $data = listTrashBin($dir, $sort, $sortdirection);
+                $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
                 break;
-            /* add files from other source to array
+            /* add files from other sources 
             * Problem: filesFromJson is String, needs to be OC\Files\FileInfo
             * thats seems a bit too much work for now
             * trying to append JSON data to $data['files'], JSON is string!!
@@ -121,21 +129,20 @@ class PageController extends Controller {
             * webservice will do that for each source, so in here only the correct format is available
             * 
             */
-            //$data['files'] .= array_push($filesFromJsonFile['files'], $data['files']);
             case 'ext4':
-                $filesFromExt4 = listExt4($dir);
+                $filesFromExt4 = $this->listExt4($dirGet);
                 break;
             case 'gpfsss':
-                $filesFromGpfsSs = listGpfsSs($dir);
+                $filesFromGpfsSs = $this->listGpfsSs($dirGet);
                 break;
             // list files of root directory -> collect data from all sources
             default:
-                $data = listTrashBin($dir, $sort, $sortdirection);
-                $filesFromExt4 = listExt4($dir);
+                $data = $this->listTrashBin($dir, $sort, $sortdirection);
+                $filesFromExt4 = $this->listExt4($dir);
                 // not yet implemented
-                // $filesFromGpfsSs = listGpfsSs($dir);
+                // $filesFromGpfsSs = $this->listGpfsSs($dir);
                 // merge arrays from all sources
-                $mergedFiles = array_merge($data['files'], $filesFromSources['files']);
+                $mergedFiles = array_merge($data['files'], $filesFromExt4['files']);
                 $data['files'] = $mergedFiles;
         }
         ////return new DataResponse($data); this was missing one layer 
@@ -161,9 +168,8 @@ class PageController extends Controller {
      * @return Array $data with inclunding permissions, directory, files and source within files
      * 
      */
-    public function listTrashBin($dir, $sort, $sortdirection) {
-        // trying to get parameters (dir, sort and sortdirection) working
-        //public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
+    public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
+    //public function listTrashBin($dir, $sort, $sortdirection) {
         // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();
@@ -173,18 +179,12 @@ class PageController extends Controller {
         // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
         // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
-        // params set via session vars through ajax call in filelist reload?
-        //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
-        // OC app framework way would be to pass those via the URL as params, does this work?
-        $dir = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
-        $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
-        $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $data = array();
         
         // make filelist - must be ommitted when files from external source are requested!
         try {
             // this is OC\Files\FileInfo format
-            $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
+            $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sort, $sortdirection);
         } catch (Exception $e) {
             // what about returning JSONResponse with "statusCode" => "500"
             // how is result.status === error in original trashbin (filelist->reloadCallback)
@@ -193,7 +193,6 @@ class PageController extends Controller {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
-            throw new \Exception("pagecontroller error in make filelist");
         }
                  
         $encodedDir = \OCP\Util::encodePath($dir);
@@ -213,7 +212,7 @@ class PageController extends Controller {
      * @param String $dir directory to get contents of
      * @return Array $filesFromExt4['files'] contents of given directory
      */
-    public function listExt4($dir) {
+    function listExt4($dir) {
         // add other file source | get files from webservice -> could become foreach loop with sources-array
         // better: implement function which is called with source and dir as param
         try {
@@ -238,11 +237,10 @@ class PageController extends Controller {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
-            throw new \Exception("pagecontroller error in make filelist from SourceX");
         }
         return $filesFromSourceExt4;
     }
-
+    
         // adapted from files_trashbin/ajax/undelete
     // http post: http://localhost/core/index.php/apps/files_trashbin/ajax/undelete.php
     // => http://localhost/core/index.php/apps/recover/recover

@@ -92,7 +92,8 @@
             if (baseDir !== '') {
                     this.setPageTitle(getDeletedFileName(baseDir));
             }
-            // never printed!
+            
+            // never printed! since this runs Files FileList!
             //console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
         },
         // all files still exist / ok here
@@ -145,10 +146,18 @@
          */
 
         reload: function() {
-            var dir = this.getCurrentDirectory();
+            // source muss vorher geholt werden, also beim vorheringen laden der filelist vermerkt werden!
+            var source = this.getSource();
+            if (typeof source == 'undefined') {
+                var dir = this.getCurrentDirectory();
+            } else {
+                var dir = this.getCurrentDirectory();
+                var pattern = /[.+].d\d+/;
+                dir = pattern.exec(dir);
+            }
             var sort = this._sort;
             var sortdirection = this._sortDirection;
-            var source = this.getSource();
+            
             //debugger;
             //console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
             this._selectedFiles = {};
@@ -167,19 +176,25 @@
             this._reloadCall = $.ajax({
                 //url: 'http://localhost/core/index.php/apps/recover/trashlist', 
                 //url : OC.generateUrl('/apps/recover/trashlist'),
-                url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/-/' + source + '/' + sort + '/' + sortdirection),
+                // wieder mit data und $_GET vars
+                //url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/' + source + '/' + sort + '/' + sortdirection),
+                url : OC.generateUrl('/apps/recover/listbackups'),
                 // params should be put in URL for routes + pagecontroller to work!
                 // instead of being accessed via PHP $_GET vars
                 // route url: '/listbackups{dir}/-/{source}/{sort}/{sortdirection}'
                 data : {
                     // problem when reloading trashbin, it should use root, not last folder?
                     // kept for now, but should use params via URL
-                    dir : dir,
-                    sort: sort,
-                    sortdirection: sortdirection
+                    'dir': dir,
+                    'source': source,
+                    'sort': sort,
+                    'sortdirection': sortdirection
+                    
                 }
+               
             });
-            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
+            //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
+            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', source = ' + this.source + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
@@ -462,7 +477,7 @@
                 var fileListJSON = OCA.Recover.FileList.files.toSource();
                 var pattern = /source:"[.+]/;
                 var source = pattern.exec(fileListJSON);
-                console.log('source = ' + source);
+                console.log('RECOVER filelist getSource source = ' + source);
                 return source;
             }
         }

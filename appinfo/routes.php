@@ -20,7 +20,8 @@ return ['routes' => [
 namespace OCA\Recover\AppInfo;
 
 $application = new Recover();
-$application->registerRoutes($this, ['routes' => [
+$application->registerRoutes($this,
+    ['routes' => [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         // another route for the same function, 
         // but triggered when clicking again on recently deleted in nav -> returning 'blank' template
@@ -30,9 +31,8 @@ $application->registerRoutes($this, ['routes' => [
         // how to: http://localhost/core/index.php/apps/recover/?search
         ['name' => 'page#search', 'url' => '/{search}', 'verb' => 'GET',
                 'requirements' => ['search' => 'search']],
-        
-            ['name' => 'page#help', 'url' => '/help', 'verb' => 'GET'],
-        // hack for pushed history state
+        ['name' => 'page#help', 'url' => '/help', 'verb' => 'GET'],
+        // hack for pushed history state - see search above
         ['name' => 'page#help', 'url' => '/{help}', 'verb' => 'GET',
                 'requirements' => ['help' => 'help']],
         
@@ -41,9 +41,26 @@ $application->registerRoutes($this, ['routes' => [
         // old, now via listBackups
         //array('name' => 'page#list_trash_bin', 'url' => '/trashlist{dir}', 'verb' => 'GET',
         //		'requirements' => array('dir' => '.+')),
-        ['name' => 'page#list_backups', 'url' => '/listbackups{dir}/-/{source}/{sort}/{sortdirection}', 'verb' => 'GET'],
+        ['name' => 'page#list_backups', 'url' => '/listbackups', 'verb' => 'GET'],//,
+            //'requirements' => [
+              //  'dir' => '.+'
+          //  ],
+
+        /*
+        ['name' => 'page#list_backups', 'url' => '/listbackups/{dir}/{source}/{sort}/{sortdirection}', 'verb' => 'GET', 
+            'requirements' => [
+                //'dir' => '.+'
+                'dir' => '[.+]/'
+            ],
+            'defaults' => [
+                'dir' => '/',
+                'source' => '',
+                'sort' => 'name',
+                'sortdirection' => 'asc'
+            ]
+],*/
         ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST'],
         ['name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST']
-]
+    ]
 ]);
 
