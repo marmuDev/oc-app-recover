@@ -46,7 +46,11 @@
         /** @lends OCA.Recover.FileList.prototype */ {
         id: 'recover',
         appName: 'Recover',
-
+        /**
+        * Current source of filelist
+        * @type String
+        */
+        _currentSource: null,
         /**
          * @private
          */
@@ -95,6 +99,15 @@
             
             // never printed! since this runs Files FileList!
             //console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
+        },
+        _setCurrentSource: function(source) {
+            this._currentSource = source;
+        },
+        getCurrentSource: function() {
+            //example currentDir from files filelist
+            //var currentDir = this._currentDirectory || this.$el.find('#dir').val() || '/';
+            //return currentDir;
+            return this._currentSource;
         },
         // all files still exist / ok here
         _createRow: function() {
@@ -146,18 +159,25 @@
          */
 
         reload: function() {
-            // only defined if not initial load! reinit only after click on nav? or also when clicking folder?
-           /* if (this._initialized) {
+            console.log('RECOVER filelist reload anfang!');
+            /* only defined if not initial load! 
+            // reinit only after click on nav? or also when clicking folder?
+            // seems to be uninitialized when clickin on folder!
+            // how to check here? file info in filelist needs to be upgrade to have info on source
+            // but this info won't be available at this time... puh
+            if (this._initialized) {
                 console.log('RECOVER filelist INITIALIZED!');
                 var source = this.fileActions.getCurrentMimeType();
             } else {
                 console.log('RECOVER filelist NOT INITIALIZED!');
                 var source = '';
-            }*/
+            }
+            */
             // hier keine anpassung von dir, das stimmt dank changeDirectory, 
             // only set source in AJAX data carrectly!
             // just to have it defined
-            var source = '';
+            var dir = this.getCurrentDirectory();
+            var source = this.getCurrentSource;
             
             var sort = this._sort;
             var sortdirection = this._sortDirection;
@@ -175,18 +195,17 @@
             if (this._reloadCall) {
                     this._reloadCall.abort();
             }
-
             // call this directly for reloading trash list? no
             this._reloadCall = $.ajax({
                 //url: 'http://localhost/core/index.php/apps/recover/trashlist', 
                 //url : OC.generateUrl('/apps/recover/trashlist'),
                 // wieder mit data und $_GET vars
                 //url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/' + source + '/' + sort + '/' + sortdirection),
-                url : OC.generateUrl('/apps/recover/listbackups'),
+                url: OC.generateUrl('/apps/recover/listbackups'),
                 // params should be put in URL for routes + pagecontroller to work!
                 // instead of being accessed via PHP $_GET vars
                 // route url: '/listbackups{dir}/-/{source}/{sort}/{sortdirection}'
-                data : {
+                data: {
                     // problem when reloading trashbin, it should use root, not last folder?
                     // kept for now, but should use params via URL
                     'dir': dir,
@@ -198,7 +217,8 @@
                
             });
             //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
-            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', source = ' + source + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
+            // nochmal ohne source
+            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
@@ -505,32 +525,33 @@
         * @param {boolean} force set to true to force changing directory
         */
        changeDirectory: function(targetDir, changeUrl, force) {
-               var self = this;
-               var currentDir = this.getCurrentDirectory();
-               targetDir = targetDir || '/';
-               if (!force && currentDir === targetDir) {
+                var self = this;
+                var currentDir = this.getCurrentDirectory();
+                targetDir = targetDir || '/';
+                if (!force && currentDir === targetDir) {
                        console.log('RECOVER filelist changeDirectory, !force && currentDir === targetDir');
                        console.log('RECOVER filelist changeDirectory, currentDir = ' + currentDir + ' targetDir = ' + targetDir);
                        return;
-               }
-               // get source -> undefined won't work
-               //var source = this.getSource();
-               var source = '';
-                console.log('RECOVER changeDirectory source (explicitly set empty) = ' + source);
+                }
+                // get source -> undefined won't work
+                //var source = this.getSource();
+                var source = this.fileActions.getCurrentMimeType();
+                this._setCurrentSource(source);
                 // edit targetDir: if from external source, remove last 12 chars .d1437995265 (mtime)
-               if (source === 'ext4' || 'gpfsss') {
-                    // das war schon ok!
+                console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
+                if ((source === 'ext4') || (source === 'gpfsss')) {
+                    console.log('RECOVER filelist changeDir, source = ext4 || gpfsss -> edit targetDir');
                     targetDir = targetDir.substr(1, targetDir.length - 13);
-               }
-               this._setCurrentDir(targetDir, changeUrl);
-               this.reload().then(function(success){
-                       if (!success) {
-                               console.log('RECOVER filelist changeDirectory, this.reload no success -> changeDirectory(currentDir, true), currentDir = ' + currentDir);
-                               self.changeDirectory(currentDir, true);
-                       }
-                       console.log('RECOVER filelist changeDirectory, this.reload success');
-               });
-               console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir)
+                }
+                this._setCurrentDir(targetDir, changeUrl);
+                this.reload().then(function(success){
+                    if (!success) {
+                        console.log('RECOVER filelist changeDirectory, this.reload no success -> changeDirectory(currentDir, true), currentDir = ' + currentDir);
+                        self.changeDirectory(currentDir, true);
+                    }
+                    console.log('RECOVER filelist changeDirectory, this.reload success');
+                });
+               console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir + ' USES getCurrentMimeType for SOURCE!');
        },
         // further source now in mimetype, would be better to use "source:" and this function
         // this won't find specific source, just first occurence!!
