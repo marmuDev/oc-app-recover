@@ -146,15 +146,19 @@
          */
 
         reload: function() {
-            // source muss vorher geholt werden, also beim vorheringen laden der filelist vermerkt werden!
-            var source = this.getSource();
-            if (typeof source == 'undefined') {
-                var dir = this.getCurrentDirectory();
+            // only defined if not initial load! reinit only after click on nav? or also when clicking folder?
+           /* if (this._initialized) {
+                console.log('RECOVER filelist INITIALIZED!');
+                var source = this.fileActions.getCurrentMimeType();
             } else {
-                var dir = this.getCurrentDirectory();
-                var pattern = /[.+].d\d+/;
-                dir = pattern.exec(dir);
-            }
+                console.log('RECOVER filelist NOT INITIALIZED!');
+                var source = '';
+            }*/
+            // hier keine anpassung von dir, das stimmt dank changeDirectory, 
+            // only set source in AJAX data carrectly!
+            // just to have it defined
+            var source = '';
+            
             var sort = this._sort;
             var sortdirection = this._sortDirection;
             
@@ -194,7 +198,7 @@
                
             });
             //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
-            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', source = ' + this.source + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
+            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', source = ' + source + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
@@ -431,10 +435,32 @@
         },
 
         _onClickFile: function(event) {
-            console.log('RECOVER _onClickFile');
+            // need to get source of dir, if clicked file is dir
+            //var type = this.fileActions.getCurrentType();
+            // immer alter wert! hängt nen click hinter her!
+            //console.log('RECOVER filelist _onClick this.fileActions.getCurrentType() = ' + this.fileActions.getCurrentType());
+            var $tr = $(event.target).closest('tr');
+            this.fileActions.currentFile = $tr.find('td');
+            //console.log('current file/dir = ' +this.fileActions.currentFile.toString());
+            var type = this.fileActions.getCurrentType();
+            //console.log('RECOVER _onClickFile type = ' + type);
+            if (type == 'dir') {
+                console.log('RECOVER filelist _onClickFile type = dir' );
+            }
+            
             var mime = $(this).parent().parent().data('mime');
+            // trying this in reload above!
+            var mimeType = this.fileActions.getCurrentMimeType();
+            
+            if (mimeType == 'ext4' | 'gpfsss') {
+                console.log('RECOVER _onClickFile mimeType = ' + mimeType);
+                    
+            }
+            // keep, but never seems to be the case
             if (mime !== 'httpd/unix-directory') {
-                    event.preventDefault();
+                // deprecated? there was something in the JS console,     
+                // getPreventDefault() sollte nicht mehr verwendet werden. Verwenden Sie stattdessen defaultPrevented. jquery.min.js:5:0
+                event.preventDefault();
             }
             return OCA.Files.FileList.prototype._onClickFile.apply(this, arguments);
         },
@@ -472,13 +498,52 @@
         isSelectedDeletable: function() {
             return true;
         },
+        /**
+        * @brief Changes the current directory and reload the file list.
+        * @param targetDir target directory (non URL encoded)
+        * @param changeUrl false if the URL must not be changed (defaults to true)
+        * @param {boolean} force set to true to force changing directory
+        */
+       changeDirectory: function(targetDir, changeUrl, force) {
+               var self = this;
+               var currentDir = this.getCurrentDirectory();
+               targetDir = targetDir || '/';
+               if (!force && currentDir === targetDir) {
+                       console.log('RECOVER filelist changeDirectory, !force && currentDir === targetDir');
+                       console.log('RECOVER filelist changeDirectory, currentDir = ' + currentDir + ' targetDir = ' + targetDir);
+                       return;
+               }
+               // get source -> undefined won't work
+               //var source = this.getSource();
+               var source = '';
+                console.log('RECOVER changeDirectory source (explicitly set empty) = ' + source);
+                // edit targetDir: if from external source, remove last 12 chars .d1437995265 (mtime)
+               if (source === 'ext4' || 'gpfsss') {
+                    // das war schon ok!
+                    targetDir = targetDir.substr(1, targetDir.length - 13);
+               }
+               this._setCurrentDir(targetDir, changeUrl);
+               this.reload().then(function(success){
+                       if (!success) {
+                               console.log('RECOVER filelist changeDirectory, this.reload no success -> changeDirectory(currentDir, true), currentDir = ' + currentDir);
+                               self.changeDirectory(currentDir, true);
+                       }
+                       console.log('RECOVER filelist changeDirectory, this.reload success');
+               });
+               console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir)
+       },
+        // further source now in mimetype, would be better to use "source:" and this function
+        // this won't find specific source, just first occurence!!
         getSource: function() {
-            if (typeof OCA.Recover.FileList.files !== 'undefined') { 
-                var fileListJSON = OCA.Recover.FileList.files.toSource();
+            console.log('RECOVER in getSource!');
+            if (OCA.Recover.App.fileList.initialized) { 
+                var fileListJSON = OCA.Recover.App.fileList.files.toSource();
                 var pattern = /source:"[.+]/;
                 var source = pattern.exec(fileListJSON);
                 console.log('RECOVER filelist getSource source = ' + source);
                 return source;
+            } else {
+                console.log('RECOVER filelist getSource: OCA.Recover.App.fileList.files is undefined!')
             }
         }
     });
