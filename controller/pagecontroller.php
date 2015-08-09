@@ -107,11 +107,11 @@ class PageController extends Controller {
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
      */
     
-    public function listBackups($dir = '/', $source = 'octrash', $sort = 'name', $sortdirection = 'asc') {
+    public function listBackups($dir = '/', $source = 'octrash', $sort = 'mtime', $sortdirection = 'desc') {
         //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
         // OC app framework way would be to pass those via the URL as params
         $dirGet = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
-        $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'name';
+        $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'mtime';
         $sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $sourceGet = isset( $_GET['source'] ) ? $_GET['source'] : '';
          
@@ -230,6 +230,7 @@ class PageController extends Controller {
             // hack to prepend slash in front of subdir, or list root dir!            
             if ($dir !== '/') {
                 $dir = '%2F'.$dir;
+                $dir = \str_replace('/', '%2F', $dir);
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir'.$dir;
             } else {
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';

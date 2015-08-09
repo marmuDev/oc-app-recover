@@ -180,7 +180,9 @@
             // only set source in AJAX data carrectly!
             // just to have it defined
             var dir = this.getCurrentDirectory();
-            var source = this.getCurrentSource();
+            if (dir !== '/') {
+                var source = this.getCurrentSource();
+            }
             var sort = this._sort;
             var sortdirection = this._sortDirection;
             
@@ -537,6 +539,7 @@
                 }
                 // get source -> undefined won't work
                 //var source = this.getSource();
+                // using MimeType in data.files to note (external) source
                 var source = this.fileActions.getCurrentMimeType();
                 // future proof (long-term reliability)???
                 if (source === "application/octet-stream") {
@@ -544,13 +547,21 @@
                 } else {
                     this._setCurrentSource(source);
                 }
-                    
-                // edit targetDir: if from external source, remove last 12 chars .d1437995265 (mtime)
-                //console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + this.getCurrentSource());
-                if ((source === 'ext4') || (source === 'gpfsss')) {
-                    console.log('RECOVER filelist changeDir, source = ext4 || gpfsss -> edit targetDir');
-                    targetDir = targetDir.substr(1, targetDir.length - 13);
+                source = this.getCurrentSource();    
+                // edit targetDir: if ".d1437995265" and files from external source requested, remove last 12 chars .d1437995265 (mtime)
+                console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
+                //if ((source === 'ext4' || source === 'gpfsss') && lastSource !== this.getCurrentSource()) {
+                var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
+                //if ((source !== 'octrash') && (pattern.test(targetDir))) {
+                if (source !== 'octrash') {
+                    console.log('source !== octrash');
+                    if (pattern.test(targetDir)) {
+                        console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
+                        targetDir = targetDir.substr(1, targetDir.length - 13);
+                    }
                 }
+                    
+                
                 this._setCurrentDir(targetDir, changeUrl);
                 this.reload().then(function(success){
                     if (!success) {
