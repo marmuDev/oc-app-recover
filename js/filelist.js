@@ -48,9 +48,10 @@
         appName: 'Recover',
         /**
         * Current source of filelist
+        * now in Recover App
         * @type String
         */
-        _currentSource: null,
+        //_currentSource: null,
         /**
          * @private
          */
@@ -101,13 +102,15 @@
             //console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
         },
         _setCurrentSource: function(source) {
-            this._currentSource = source;
+            console.log('RECOVER filelist setCurrentSource = ' + source);
+            OCA.Recover.App._currentSource = source;
         },
         getCurrentSource: function() {
-            //example currentDir from files filelist
-            //var currentDir = this._currentDirectory || this.$el.find('#dir').val() || '/';
-            //return currentDir;
-            return this._currentSource;
+            // this is undefined! at this point in time! same problem as before
+            // -> put in app class!
+            // should not reinit a new filelist, but clear and reload?
+            //      only creating new filelist after clicking nav, right?
+            return OCA.Recover.App._currentSource;
         },
         // all files still exist / ok here
         _createRow: function() {
@@ -177,8 +180,7 @@
             // only set source in AJAX data carrectly!
             // just to have it defined
             var dir = this.getCurrentDirectory();
-            var source = this.getCurrentSource;
-            
+            var source = this.getCurrentSource();
             var sort = this._sort;
             var sortdirection = this._sortDirection;
             
@@ -216,9 +218,9 @@
                 }
                
             });
-            //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
+            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
             // nochmal ohne source
-            console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
+            //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
@@ -536,9 +538,15 @@
                 // get source -> undefined won't work
                 //var source = this.getSource();
                 var source = this.fileActions.getCurrentMimeType();
-                this._setCurrentSource(source);
+                // future proof (long-term reliability)???
+                if (source === "application/octet-stream") {
+                    this._setCurrentSource('octrash');
+                } else {
+                    this._setCurrentSource(source);
+                }
+                    
                 // edit targetDir: if from external source, remove last 12 chars .d1437995265 (mtime)
-                console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
+                //console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + this.getCurrentSource());
                 if ((source === 'ext4') || (source === 'gpfsss')) {
                     console.log('RECOVER filelist changeDir, source = ext4 || gpfsss -> edit targetDir');
                     targetDir = targetDir.substr(1, targetDir.length - 13);
@@ -553,8 +561,9 @@
                 });
                console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir + ' USES getCurrentMimeType for SOURCE!');
        },
-        // further source now in mimetype, would be better to use "source:" and this function
-        // this won't find specific source, just first occurence!!
+        /* further source now in mimetype, would be better to use "source:" and this function
+         this won't find specific source, just first occurence!!
+            -> introduce new var _currentSource + set/get Methods
         getSource: function() {
             console.log('RECOVER in getSource!');
             if (OCA.Recover.App.fileList.initialized) { 
@@ -567,6 +576,7 @@
                 console.log('RECOVER filelist getSource: OCA.Recover.App.fileList.files is undefined!')
             }
         }
+        */
     });
     OCA.Recover.FileList = FileList;
 })();

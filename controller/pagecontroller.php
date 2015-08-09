@@ -129,16 +129,21 @@ class PageController extends Controller {
             * webservice will do that for each source, so in here only the correct format is available
             * 
             */
+            // work around for testing purposes - but omits default listing of all sources!
+            //case 'undefined':
+            //    $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
+            //    break;
             case 'ext4':
-                $filesFromExt4 = $this->listExt4($dirGet);
+                //$filesFromExt4 = $this->listExt4($dirGet);
+                $data = $this->listExt4($dirGet);
                 break;
-            case 'gpfsss':
-                $filesFromGpfsSs = $this->listGpfsSs($dirGet);
-                break;
+            //case 'gpfsss':
+            //    $filesFromGpfsSs = $this->listGpfsSs($dirGet);
+            //    break;
             // list files of root directory -> collect data from all sources
             default:
-                $data = $this->listTrashBin($dir, $sort, $sortdirection);
-                $filesFromExt4 = $this->listExt4($dir);
+                $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
+                $filesFromExt4 = $this->listExt4($dirGet);
                 // not yet implemented
                 // $filesFromGpfsSs = $this->listGpfsSs($dir);
                 // merge arrays from all sources

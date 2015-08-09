@@ -51,6 +51,12 @@
          * @member {OCA.Files.FileList}
          */
         fileList: null,
+        
+        /**
+        * Current source of filelist
+        * @type String
+        */
+        _currentSource: null,
 
         initialize: function($el) {
             //console.log('in init from OCA.Recover.App - will init this.fileList = new OCA.Recover.FileList');
