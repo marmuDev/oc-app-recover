@@ -134,18 +134,19 @@ class PageController extends Controller {
             //    $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
             //    break;
             case 'ext4':
-                //$filesFromExt4 = $this->listExt4($dirGet);
-                $data = $this->listExt4($dirGet);
+                //$filesFromExt4 = $this->listTestdir($dirGet);
+                $data = $this->listTestdir($dirGet, $sourceGet);
                 break;
-            //case 'gpfsss':
-            //    $filesFromGpfsSs = $this->listGpfsSs($dirGet);
-            //    break;
+            case 'gpfsss':
+                $filesFromGpfsSs = $this->listGpfsSs($dirGet, $sourceGet);
+                break;
             // list files of root directory -> collect data from all sources
+            // initial no source available, set manually!
             default:
                 $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
-                $filesFromExt4 = $this->listExt4($dirGet);
+                $filesFromExt4 = $this->listTestdir($dirGet, 'ext4');
                 // not yet implemented
-                // $filesFromGpfsSs = $this->listGpfsSs($dir);
+                //$filesFromGpfsSs = $this->listGpfsSs($dir, 'gpfsss');
                 // merge arrays from all sources
                 $mergedFiles = array_merge($data['files'], $filesFromExt4['files']);
                 $data['files'] = $mergedFiles;
@@ -217,7 +218,7 @@ class PageController extends Controller {
      * @param String $dir directory to get contents of
      * @return Array $filesFromExt4['files'] contents of given directory
      */
-    function listExt4($dir) {
+    function listTestdir($dir, $sourceGet) {
         // add other file source | get files from webservice -> could become foreach loop with sources-array
         // better: implement function which is called with source and dir as param
         try {
@@ -225,18 +226,18 @@ class PageController extends Controller {
             // maybe getFilesFromSources + Source(s) as parameter, 
             // instead of calling a helper function for every source
             // TO DO: build Url based on selected dir
-            //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';
+            //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir';
             // testdir has to be replaced with root-folder of snapshots etc.
             // hack to prepend slash in front of subdir, or list root dir!            
             if ($dir !== '/') {
                 $dir = '%2F'.$dir;
-                $dir = \str_replace('/', '%2F', $dir);
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir'.$dir;
+                $dir = \str_replace('/', '%2F', $dir); // -> hier %2F nicht unten in serviceUrl!
+                //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir'.$dir;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet;
             } else {
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listExt4/testdir';
+                //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir';
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.'/'.$sourceGet;
             }
-            // ohne dir ok? JA!
-            
             // getting json here, therefore decoding to array!
             $filesFromSourceExt4 = json_decode(\OCA\Recover\Helper::getTestWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {
@@ -245,6 +246,31 @@ class PageController extends Controller {
             return $notFound;
         }
         return $filesFromSourceExt4;
+    }
+    
+    /*
+     * list GPFS Snapshot files via webservice4recover
+     * @param String $dir directory to get contents of
+     * @return Array $filesFromSourceGpfsSs contents of given directory
+     */
+    function listGpfsSs($dir) {
+        try {
+            // hack to prepend slash in front of subdir, or list root dir!            
+            if ($dir !== '/') {
+                $dir = '%2F'.$dir;
+                $dir = \str_replace('/', '%2F', $dir);
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listGpfsSs/'.$dir.'/'.$sourceGet;
+            } else {
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listGpfsSs/'.'/'.$sourceGet;
+            }
+            // getting json here, therefore decoding to array!
+            $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::getTestWebserviceFiles($serviceUrl), true);
+        } catch (Exception $e) {
+            $notFound = new NotFoundResponse();
+            $notFound.setStatus(404);
+            return $notFound;
+        }
+        return $filesFromSourceGpfsSs;
     }
     
         // adapted from files_trashbin/ajax/undelete
