@@ -476,7 +476,7 @@
             // trying this in reload above!
             var mimeType = this.fileActions.getCurrentMimeType();
             
-            if (mimeType == 'ext4' | 'gpfsss') {
+            if (mimeType === 'ext4' || 'gpfsss') {
                 console.log('RECOVER _onClickFile mimeType = ' + mimeType);
                     
             }

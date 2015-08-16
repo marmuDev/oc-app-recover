@@ -25,7 +25,6 @@
 namespace OCA\Recover;
 use OC\Files\FileInfo;
 class Helper {
-    // some private vars
     /**
      * Retrieves the contents of a JSON file
      *
@@ -50,11 +49,10 @@ class Helper {
     }
     /*
      * Get JSON data from webservice
-     * @param $serviceUrl: URL of webservice, testdir = path of files to be listed
-     *  temporarily http://localhost/webservice4recover/index.php/files/listExt4/testdir'
+     * @param $serviceUrl: URL of webservice, defines directory to be listed, source and sorting parameters
      * @return $files: Files and Folders of path in JSON
      */
-    public static function getTestWebserviceFiles($serviceUrl) {
+    public static function getWebserviceFiles($serviceUrl) {
 /*
 * allow_url_fopen can be used to retrieve data from remote servers or websites. 
 * However, if incorrectly used, this function can compromise the security of your site.
@@ -82,10 +80,8 @@ class Helper {
 
         return $files;
     }
-    public static function getGpfsSnapshotFiles($gpfsPath){
-
-    }
-    /*
+    
+    /* not used for now, maybe obsolete or implement later if needed
      * format file dates to "right" format, see 
      * http://fossies.org/dox/owncloud-8.1.0/classOC_1_1DateTimeFormatter.html#a94300c31995ffdc60920f5fa0509ee66
      */
