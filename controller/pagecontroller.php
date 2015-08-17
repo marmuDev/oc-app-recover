@@ -135,20 +135,23 @@ class PageController extends Controller {
             //    $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
             //    break;
             case 'ext4':
-                $data = $this->listTestdir($dirGet, $sourceGet, $sortAttribute, $sortDirection);
+                $data = $this->listTestdir($dirGet, $sourceGet);
                 break;
             case 'gpfsss':
-                $data = $this->listGpfsSs($dirGet, $sourceGet, $sortAttribute, $sortDirection);
+                $data = $this->listGpfsSs($dirGet, $sourceGet);
                 break;
             // list files of root directory -> collect data from all sources
             // initial no source available, set manually!
             default:
                 $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
-                $filesFromExt4 = $this->listTestdir($dirGet, 'ext4', $sortAttribute, $sortDirection);
-                $filesFromGpfsSs = $this->listGpfsSs($dirGet, 'gpfsss', $sortAttribute, $sortDirection);
+                $filesFromExt4 = $this->listTestdir($dirGet, 'ext4');
+                $filesFromGpfsSs = $this->listGpfsSs($dirGet, 'gpfsss');
                 // merge arrays from all sources
                 $mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files']);
-                $data['files'] = $mergedFiles;
+                // sort Files
+                $sortedFiles = $this->sortFilesArray($mergedFiles, $sortAttribute, $sortDirection);
+                //$data['files'] = $mergedFiles;
+                $data['files'] = $sortedFiles;
         }
         ////return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in myfilelist.js!!!
@@ -218,7 +221,7 @@ class PageController extends Controller {
      * @param String $dir directory to get contents of
      * @return Array $filesFromExt4['files'] contents of given directory
      */
-    function listTestdir($dir, $sourceGet, $sortAttribute, $sortDirection) {
+    function listTestdir($dir, $sourceGet) {
         // add other file source | get files from webservice -> could become foreach loop with sources-array
         // better: implement function which is called with source and dir as param
         try {
@@ -233,10 +236,10 @@ class PageController extends Controller {
                 $dir = '%2F'.$dir;
                 $dir = \str_replace('/', '%2F', $dir); // -> hier %2F nicht unten in serviceUrl!
                 //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir'.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet.'/'.$sortAttribute.'/'.$sortDirection;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet;
             } else {
                 //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir';
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.$sourceGet.'/'.$sortAttribute.'/'.$sortDirection;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
             $filesFromSourceExt4 = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
@@ -253,7 +256,7 @@ class PageController extends Controller {
      * @param String $dir directory to get contents of
      * @return Array $filesFromSourceGpfsSs contents of given directory
      */
-    function listGpfsSs($dir, $sourceGet, $sortAttribute, $sortDirection) {
+    function listGpfsSs($dir, $sourceGet) {
         $baseDir = '/gpfs%2F.snapshots';
         try {
             // hack to prepend slash in front of subdir, or list root dir!            
@@ -261,10 +264,10 @@ class PageController extends Controller {
                 $dir = '%2F'.$dir;
                 $dir = \str_replace('/', '%2F', $dir);
                 $dir = $baseDir.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet.'/'.$sortAttribute.'/'.$sortDirection;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             } else {
                 $dir = $baseDir.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.$sourceGet.'/'.$sortAttribute.'/'.$sortDirection;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
             $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
@@ -423,5 +426,31 @@ class PageController extends Controller {
         }
     }
 
+    /* Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
+     * need to reindex Array, filelist seems to be dependent on fileIDs. 
+     * -> it isn't but now IDs correct
+     * @param Array $files all files ($mergedFiles)
+     * @param String $sortAttribute sort by mtime or name
+     * @param String $sortDirection sort desc or asc
+     * @return Array sorted $files
+     */
+    public function sortFilesArray($files, $sortAttribute, $sortDirection) {
+        $hash = array();
+    
+        foreach($files as $key => $file) {
+            $hash[$file[$sortAttribute].$key] = $file;
+        }
+        // sort by generated hash-keys (sortAttribute)
+        ($sortDirection === 'desc')? krsort($hash) : ksort($hash);
+
+        $files = array();
+        $idCounter = 0;
+        foreach($hash as $file) {
+            $file['id'] = $idCounter;
+            $files []= $file;
+            $idCounter++;
+        }
+        return $files;
+    }
     
 }
