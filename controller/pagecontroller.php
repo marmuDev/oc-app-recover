@@ -148,8 +148,11 @@ class PageController extends Controller {
                 $filesFromGpfsSs = $this->listGpfsSs($dirGet, 'gpfsss');
                 // merge arrays from all sources
                 $mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files']);
-                // sort Files
+                // sort Files 
                 $sortedFiles = $this->sortFilesArray($mergedFiles, $sortAttribute, $sortDirection);
+                // is already run for OC trashbin by listTrashbin: \OCA\Files_Trashbin\Helper::getTrashFiles 
+                // trying to sort with OC Files helper Class -> only works with FileInfo-Objects!!!
+                //$sortedFiles = \OCA\Files\Helper::sortFiles($mergedFiles, $sortAttribute, $sortDirection);
                 //$data['files'] = $mergedFiles;
                 $data['files'] = $sortedFiles;
         }
@@ -436,13 +439,16 @@ class PageController extends Controller {
      */
     public function sortFilesArray($files, $sortAttribute, $sortDirection) {
         $hash = array();
-    
         foreach($files as $key => $file) {
-            $hash[$file[$sortAttribute].$key] = $file;
+            //$hash[$file[$sortAttribute].$key] = $file;
+            $hash[$file[$sortAttribute]] = $file;
         }
         // sort by generated hash-keys (sortAttribute)
-        ($sortDirection === 'desc')? krsort($hash) : ksort($hash);
-
+        if ($sortAttribute === 'name'){
+            ($sortDirection === 'desc')? krsort($hash, SORT_STRING | SORT_FLAG_CASE) : ksort($hash, SORT_STRING | SORT_FLAG_CASE);
+        } elseif ($sortAttribute === 'mtime') {
+            ($sortDirection === 'desc')? krsort($hash, SORT_NUMERIC) : ksort($hash, SORT_NUMERIC);
+        }
         $files = array();
         $idCounter = 0;
         foreach($hash as $file) {
