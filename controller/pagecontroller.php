@@ -134,11 +134,18 @@ class PageController extends Controller {
             //case 'undefined':
             //    $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
             //    break;
+            // TO DO: sorting still missing in cases!
             case 'ext4':
                 $data = $this->listTestdir($dirGet, $sourceGet);
                 break;
             case 'gpfsss':
                 $data = $this->listGpfsSs($dirGet, $sourceGet);
+                break;
+            case 'tubfsss':
+                // need to iterate through snapshots 0-5 -> loop
+                // /tubfs/.snapshots/snap_0/owncloud/data/<user>/files/ (snap_0 - snap_5)
+                // just snap_0 for now, how to handle snap_0 - snap_5
+                $data = $this->listTubfsSs($dirGet, $sourceGet);
                 break;
             // list files of root directory -> collect data from all sources
             // initial no source available, set manually!
@@ -146,8 +153,22 @@ class PageController extends Controller {
                 $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
                 $filesFromExt4 = $this->listTestdir($dirGet, 'ext4');
                 $filesFromGpfsSs = $this->listGpfsSs($dirGet, 'gpfsss');
-                // merge arrays from all sources
-                $mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files']);
+                // need to iterate through snapshots 0-5
+                $filesFromTubfsSs = array();
+                for ($snapCount = 0; $snapCount<6; $snapCount++) {
+                    $tmpTubfs = $this->listTubfsSs("/snap_".$snapCount."/owncloud/data/".\OCP\User::getUser()."/files".$dirGet, 'tubfsss');
+                    //array_push($filesFromTubfsSs['files'][], $tmpTubfs['files']);
+                    $filesFromTubfsSs = array_merge($filesFromTubfsSs, $tmpTubfs['files']);
+                }
+                // hack to merge (push), I guess this could be done better above
+                //$filesFromTubfsSsMerged = array();
+                //for ($snapCount = 0; $snapCount<6; $snapCount++) {
+                //    array_push($filesFromTubfsSsMerged, $filesFromTubfsSs[$snapcount]);
+                //}
+                // merge arrays from all sources - only if array is not empty?!
+                //if(!empty($arr))
+                $mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files'], $filesFromTubfsSs);
+                
                 // sort Files 
                 $sortedFiles = $this->sortFilesArray($mergedFiles, $sortAttribute, $sortDirection);
                 // is already run for OC trashbin by listTrashbin: \OCA\Files_Trashbin\Helper::getTrashFiles 
@@ -218,6 +239,37 @@ class PageController extends Controller {
         //return true;
       
     }
+    /*
+     * /tubfs/.snapshots/snap_0/owncloud/data/<user>/files/ (snap_0 - snap_5)
+     */
+    function listTubfsSs($dir, $sourceGet) {
+        $baseDir = '/tubfs%2F.snapshots';
+        try {
+            // obsolete?!?!? just list given directory in this case?
+            // if not root dir, hack to prepend slash in front of subdir, else list root dir!      
+            //if ($dir !== '/snap_0/owncloud/data/admin/files/') {
+            if (!preg_match("/\/snap_[0-9]\/owncloud\/data\/[a-z]+\/files\//", $dir)) {
+                $dir = '%2F'.$dir;
+                $dir = \str_replace('/', '%2F', $dir);
+                // how to get /snap_0/owncloud/data/admin/files/ appended in front?
+                // problem mit snap_x -> snap_x intern behandeln aber transparent für user!
+                $dir = $baseDir."%2Fsnap_0%2Fowncloud%2Fdata%2Fadmin%2Ffiles%2F".$dir;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
+            } else {
+                $dir = \str_replace('/', '%2F', $dir);
+                $dir = $baseDir.$dir;
+                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
+            }
+            // getting json here, therefore decoding to array!
+            $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
+        } catch (Exception $e) {
+            $notFound = new NotFoundResponse();
+            $notFound.setStatus(404);
+            return $notFound;
+        }
+        return $filesFromSourceGpfsSs;
+    }
+    
     /* I guess all sources could have one function in the future
      * list EXT4 files via webservice4recover
      * To do: implement one function for all external sources?
@@ -440,8 +492,7 @@ class PageController extends Controller {
     public function sortFilesArray($files, $sortAttribute, $sortDirection) {
         $hash = array();
         foreach($files as $key => $file) {
-            //$hash[$file[$sortAttribute].$key] = $file;
-            $hash[$file[$sortAttribute]] = $file;
+            $hash[$file[$sortAttribute].$key] = $file;
         }
         // sort by generated hash-keys (sortAttribute)
         if ($sortAttribute === 'name'){
