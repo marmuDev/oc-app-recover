@@ -115,6 +115,7 @@ class PageController extends Controller {
         //$sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
         $sortDirection = isset( $_GET['sortdirection'] ) ? $_GET['sortdirection'] : 'desc';
         $sourceGet = isset( $_GET['source'] ) ? $_GET['source'] : '';
+        $snapshotGet = isset( $_GET['snapshot'] ) ? $_GET['snapshot'] : '';
          
         // a clicked dir can only have one source -> list contents of dir from source
         switch ($sourceGet) {
@@ -142,10 +143,7 @@ class PageController extends Controller {
                 $data = $this->listGpfsSs($dirGet, $sourceGet);
                 break;
             case 'tubfsss':
-                // need to iterate through snapshots 0-5 -> loop
-                // /tubfs/.snapshots/snap_0/owncloud/data/<user>/files/ (snap_0 - snap_5)
-                // just snap_0 for now, how to handle snap_0 - snap_5
-                $data = $this->listTubfsSs($dirGet, $sourceGet);
+                $data = $this->listTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
                 break;
             // list files of root directory -> collect data from all sources
             // initial no source available, set manually!
@@ -248,18 +246,18 @@ class PageController extends Controller {
             // obsolete?!?!? just list given directory in this case?
             // if not root dir, hack to prepend slash in front of subdir, else list root dir!      
             //if ($dir !== '/snap_0/owncloud/data/admin/files/') {
-            if (!preg_match("/\/snap_[0-9]\/owncloud\/data\/[a-z]+\/files\//", $dir)) {
+            /*if (!preg_match("/\/snap_[0-9]\/owncloud\/data\/[a-z]+\/files\//", $dir)) {
                 $dir = '%2F'.$dir;
                 $dir = \str_replace('/', '%2F', $dir);
                 // how to get /snap_0/owncloud/data/admin/files/ appended in front?
                 // problem mit snap_x -> snap_x intern behandeln aber transparent für user!
                 $dir = $baseDir."%2Fsnap_0%2Fowncloud%2Fdata%2Fadmin%2Ffiles%2F".$dir;
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-            } else {
+            } else {*/
                 $dir = \str_replace('/', '%2F', $dir);
                 $dir = $baseDir.$dir;
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-            }
+            //}
             // getting json here, therefore decoding to array!
             $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {

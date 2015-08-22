@@ -101,6 +101,8 @@
             // never printed! since this runs Files FileList!
             //console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
         },
+        // putting source and snapshot in App, since they won't be available in
+        // filelist when reloading it
         _setCurrentSource: function(source) {
             console.log('RECOVER filelist setCurrentSource = ' + source);
             OCA.Recover.App._currentSource = source;
@@ -111,6 +113,17 @@
             // should not reinit a new filelist, but clear and reload?
             //      only creating new filelist after clicking nav, right?
             return OCA.Recover.App._currentSource;
+        },
+        _setCurrentSnapshot: function(snapshot) {
+            console.log('RECOVER filelist setCurrentSnapshot = ' + snapshot);
+            OCA.Recover.App._currentSnapshot = snapshot;
+        },
+        getCurrentSnapshot: function() {
+            // this is undefined! at this point in time! same problem as before
+            // -> put in app class!
+            // should not reinit a new filelist, but clear and reload?
+            //      only creating new filelist after clicking nav, right?
+            return OCA.Recover.App._currentSnapshot;
         },
         // all files still exist / ok here
         _createRow: function() {
@@ -177,11 +190,12 @@
             }
             */
             // hier keine anpassung von dir, das stimmt dank changeDirectory, 
-            // only set source in AJAX data carrectly!
+            // only set source in AJAX data correctly!
             // just to have it defined
             var dir = this.getCurrentDirectory();
             if (dir !== '/') {
                 var source = this.getCurrentSource();
+                var snapshot = this.getCurrentSnapshot();
             }
             var sort = this._sort;
             var sortdirection = this._sortDirection;
@@ -215,8 +229,8 @@
                     'dir': dir,
                     'source': source,
                     'sort': sort,
-                    'sortdirection': sortdirection
-                    
+                    'sortdirection': sortdirection,
+                    'snapshot': snapshot
                 }
                
             });
@@ -468,19 +482,24 @@
             //console.log('current file/dir = ' +this.fileActions.currentFile.toString());
             var type = this.fileActions.getCurrentType();
             //console.log('RECOVER _onClickFile type = ' + type);
-            if (type == 'dir') {
+            if (type === 'dir') {
                 console.log('RECOVER filelist _onClickFile type = dir' );
             }
-            
             var mime = $(this).parent().parent().data('mime');
-            // trying this in reload above!
+            // trying this in reload above! 
+            // -> source important here and in changeDir, set parentId (snapshot) only in here
             var mimeType = this.fileActions.getCurrentMimeType();
-            
-            if (mimeType === 'ext4' || 'gpfsss') {
-                console.log('RECOVER _onClickFile mimeType = ' + mimeType);
-                    
+            if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
+                console.log('RECOVER filelist _onClickFile mimeType = ' + mimeType);
+                // look at mime above, would this be possible for source too??! 
+                // this.fileActions.currentFile.parent().data('mime')
+                //var parentId = this.fileActions.getCurrentSnapshot();
+                //console.log('RECOVER filelist _onClickFile: parentId = ' + parentId);
+                var snapshot = this.fileActions.currentFile.parent().attr('data-etag');
+                this._setCurrentSnapshot(snapshot);
             }
-            // keep, but never seems to be the case
+            
+            // if not clicking on dir? (keep, but never seems to be the case)
             if (mime !== 'httpd/unix-directory') {
                 // deprecated? there was something in the JS console,     
                 // getPreventDefault() sollte nicht mehr verwendet werden. Verwenden Sie stattdessen defaultPrevented. jquery.min.js:5:0
@@ -547,7 +566,7 @@
                 } else {
                     this._setCurrentSource(source);
                 }
-                source = this.getCurrentSource();    
+                source = this.getCurrentSource();  
                 // edit targetDir: if ".d1437995265" and files from external source requested, remove last 12 chars .d1437995265 (mtime)
                 console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
                 //if ((source === 'ext4' || source === 'gpfsss') && lastSource !== this.getCurrentSource()) {
@@ -560,8 +579,6 @@
                         targetDir = targetDir.substr(1, targetDir.length - 13);
                     }
                 }
-                    
-                
                 this._setCurrentDir(targetDir, changeUrl);
                 this.reload().then(function(success){
                     if (!success) {

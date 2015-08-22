@@ -57,6 +57,11 @@
         * @type String
         */
         _currentSource: null,
+        /**
+        * Current snapshot of tubfs filelist
+        * @type String
+        */
+        _currentSnapshot: null,
 
         initialize: function($el) {
             //console.log('in init from OCA.Recover.App - will init this.fileList = new OCA.Recover.FileList');
