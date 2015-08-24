@@ -135,15 +135,17 @@ class PageController extends Controller {
             //case 'undefined':
             //    $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
             //    break;
-            // TO DO: sorting still missing in cases!
             case 'ext4':
-                $data = $this->listTestdir($dirGet, $sourceGet);
+                $files = $this->listTestdir($dirGet, $sourceGet);
+                $data = $this->sortFilesArray($files, $sortAttribute, $sortDirection);
                 break;
             case 'gpfsss':
-                $data = $this->listGpfsSs($dirGet, $sourceGet);
+                $files = $this->listGpfsSs($dirGet, $sourceGet);
+                $data = $this->sortFilesArray($files, $sortAttribute, $sortDirection);
                 break;
             case 'tubfsss':
-                $data = $this->listTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
+                $files = $this->listTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
+                $data = $this->sortFilesArray($files, $sortAttribute, $sortDirection);
                 break;
             // list files of root directory -> collect data from all sources
             // initial no source available, set manually!
@@ -488,21 +490,35 @@ class PageController extends Controller {
      * @return Array sorted $files
      */
     public function sortFilesArray($files, $sortAttribute, $sortDirection) {
-        $hash = array();
-        foreach($files as $key => $file) {
-            $hash[$file[$sortAttribute].$key] = $file;
-        }
-        // sort by generated hash-keys (sortAttribute)
         if ($sortAttribute === 'name'){
-            ($sortDirection === 'desc')? krsort($hash, SORT_STRING | SORT_FLAG_CASE) : ksort($hash, SORT_STRING | SORT_FLAG_CASE);
+            //($sortDirection === 'desc')? rsort($hash, SORT_STRING | SORT_FLAG_CASE) : sort($hash, SORT_STRING | SORT_FLAG_CASE);
+            if ($sortDirection === 'desc') {
+                usort($files, function($a, $b) { 
+                    return strcasecmp( $b['name'], $a['name'] );
+                });
+            }
+            else {
+                usort($files, function($a, $b) { 
+                    return strcasecmp( $a['name'], $b['name'] );
+                });
+            }
         } elseif ($sortAttribute === 'mtime') {
-            ($sortDirection === 'desc')? krsort($hash, SORT_NUMERIC) : ksort($hash, SORT_NUMERIC);
+            //($sortDirection === 'desc')? rsort($hash, SORT_NUMERIC) : sort($hash, SORT_NUMERIC);
+            if ($sortDirection === 'desc') {
+                usort($files, function($a, $b) { 
+                    return $b['mtime'] - $a['mtime']; 
+                });
+            }
+            else {
+                usort($files, function($a, $b) { 
+                    return $a['mtime'] - $b['mtime']; 
+                });
+            }
         }
-        $files = array();
+        // just putting new ID in after sorting
         $idCounter = 0;
-        foreach($hash as $file) {
+        foreach($files as $file) {
             $file['id'] = $idCounter;
-            $files []= $file;
             $idCounter++;
         }
         return $files;
