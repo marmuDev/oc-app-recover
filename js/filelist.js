@@ -150,24 +150,6 @@
             return OCA.Files.FileList.prototype._renderRow.call(this, fileData, options);
         },
 
-        // called by reload in /apps/files/js/filelist.js,
-        // "list" is hardcoded as action! 
-        // obsolete, since triggering route in reload
-        // => override with own reload and reloadCallback methods
-        /*
-        getAjaxUrl: function(action, params) {
-            var q = '';
-            if (params) {
-                    q = '?' + OC.buildQueryString(params);
-            }
-            console.log('in get ajax '); 
-            return OC.filePath('recover', 'ajax', action + '.php') + q;
-
-            //alert(OC.filePath('recover', action) + q);
-            //return OC.filePath('recover', action) + q;
-        },
-        */
-
         /**
          * Reloads the file list
          *
@@ -283,7 +265,7 @@
             // original -> sends files-array to files/js/filelist.js
             // set files seems ok
             this.setFiles(result.data.files);
-            console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
+            //console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
             return true;
         },
 
@@ -347,14 +329,24 @@
             this.$el.find('#filestable th').toggleClass('hidden', !exists);
         },
 
-        /**  is only used when deleting entries from the list **/
+        /**  is only used when deleting entries from the list, i.e. recovering files **/
         _removeCallback: function(result) {
-            //console.log('RESULT in _removeCallback = ' + result.toSource());
-            // result.status is undefined! WHY?????
+            //copied from _onClickFile + setSource
+            var mimeType = this.fileActions.getCurrentMimeType();
+            if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
+                // look at mime above, would this be possible for source too??! 
+                // this.fileActions.currentFile.parent().data('mime')
+                //var parentId = this.fileActions.getCurrentSnapshot();
+                //console.log('RECOVER filelist _onClickFile: parentId = ' + parentId);
+                var snapshot = this.fileActions.currentFile.parent().attr('data-etag');
+                this._setCurrentSnapshot(snapshot);
+                this._setCurrentSource(mimeType);
+            }
             //if (result.status !== 'success') {
             if (result.statusCode !== '200') {
-                    console.log('Error RECOVER myfilelist _removeCallback result.statusCode = ' + result.statusCode);
+                    console.log('RECOVER filelist _removeCallback result.statusCode = ' + result.statusCode);
                     // triggers "unnecessary" Error Message...
+                    // t not useable since transiflex translation not implemented?
                     OC.dialogs.alert(result.data.message, t('recover', 'Error'));
             }
 
@@ -369,7 +361,7 @@
             this.updateEmptyContent();
             this.enableActions();
         },
-
+           // won't log at all in here! - how to get source of clicked file?
         _onClickRestoreSelected: function(event) {
             event.preventDefault();
             var self = this;
@@ -392,8 +384,12 @@
                 }
                 params = {
                     files: JSON.stringify(files),
-                    dir: this.getCurrentDirectory()
+                    dir: this.getCurrentDirectory(),
+                    source: this.getCurrentSource()
                 };
+                // won't log in here! -> in removeCallback
+                console.log('RECOVER filelist RestoreSelected currentDir = ' + this.getCurrentDirectory());
+                console.log('RECOVER filelist RestoreSelected currentSource = ' + this.getCurrentSource());
             }
 
             //$.post(OC.filePath('recover', 'ajax', 'undelete.php'),

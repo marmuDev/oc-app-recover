@@ -145,7 +145,7 @@ class PageController extends Controller {
                 break;
             case 'tubfsss':
                 $files = $this->listTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
-                $data = $this->sortFilesArray($files, $sortAttribute, $sortDirection);
+                 $data['files'] = $this->sortFilesArray($files['files'], $sortAttribute, $sortDirection);
                 break;
             // list files of root directory -> collect data from all sources
             // initial no source available, set manually!
@@ -344,6 +344,10 @@ class PageController extends Controller {
         if (isset($_POST['dir'])) {
             $dir = rtrim($_POST['dir'], '/'). '/';
         }
+        // Undefined index: source!?! -> if isset
+        if (isset($_POST['source'])) {
+            $source = $_POST['source'];
+        }
         $allFiles = false;
         if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
             $allFiles = true;
@@ -377,19 +381,34 @@ class PageController extends Controller {
                 $filename = $path_parts['basename'];
                 $timestamp = null;
             }
-            if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
-                $error[] = $filename;
-                // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
-                // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
-                // dev manual says to use... for debugging, 
-                //but exceptions make app crash, since they are exceptions...
-                throw new \Exception( "recover can't restore \$filename = $filename" );
-                // maybe OC_LOG is used for OC.dialogs.alert
-                //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
-            } else {
-                $success[$i]['filename'] = $file;
-                $success[$i]['timestamp'] = $timestamp;
-                $i++;
+            switch ($source) {
+                case 'octrash':
+                    if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
+                        $error[] = $filename;
+                        // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
+                        // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
+                        // dev manual says to use... for debugging, 
+                        //but exceptions make app crash, since they are exceptions...
+                        throw new \Exception( "recover can't restore \$filename = $filename" );
+                        // maybe OC_LOG is used for OC.dialogs.alert
+                        //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
+                    } else {
+                        $success[$i]['filename'] = $file;
+                        $success[$i]['timestamp'] = $timestamp;
+                        $i++;
+                    }
+                    break;
+                case 'ext4':
+                    $error[] = $filename;
+                    break;
+                case 'gpfsss':
+                    $error[] = $filename;
+                    break;
+                case 'tubfsss':
+                    $error[] = $filename;
+                    break;
+                default:
+                    $error[] = $filename;
             }
         }
         if ( $error ) {
@@ -398,9 +417,12 @@ class PageController extends Controller {
                 $filelist .= $e.', ';
             }
             //$l = OC::$server->getL10N('files_trashbin');
-            // ?
-            $l = OC::$server->getL10N('recover');
-            $message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
+            // translation via transiflex, ignore for now -> TO DO
+            //$l = OC::$server->getL10N('recover');
+            //$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
+            // Unsupported operand types!?!
+            //$message = "Couldn't restore " + array(rtrim($filelist, ', ')).toString();
+            $message = "Couldn't restore file";
             // port to App Framework
             //OCP\JSON::error(array("data" => array("message" => $message,
             //                                    "success" => $success, "error" => $error)));

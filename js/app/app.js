@@ -96,6 +96,7 @@
 
         // adapt according to file source and coresponding functions etc.
         _createFileActions: function() {
+            console.log('APP createFileActions beginning');
             var fileActions = new OCA.Files.FileActions();
             //console.log('_createFileAction fileActions = ' +fileActions.actions);
             fileActions.register('dir', 'Open', OC.PERMISSION_READ, '', function (filename, context) {
@@ -107,10 +108,10 @@
             });
 
             fileActions.setDefault('dir', 'Open');
-            // register wird nicht ausgführt!!
+            // register wird nicht ausgeführt!!
             fileActions.register('all', 'Recover', OC.PERMISSION_READ, OC.imagePath('core', 'actions/history'), function(filename, context) {
                     var fileList = context.fileList;
-                    console.log('_createFileAction fileList = ' +fileList);
+                    //console.log('_createFileAction fileList = ' +fileList);
                     var tr = fileList.findFileEl(filename);
                     var deleteAction = tr.children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
@@ -119,7 +120,9 @@
                     //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
                     $.post(OC.generateUrl('/apps/recover/recover'), {
                                     files: JSON.stringify([filename]),
-                                    dir: fileList.getCurrentDirectory()
+                                    dir: fileList.getCurrentDirectory(),
+                                    //source: this._currentSource
+                                    source: fileList.getCurrentSource()
                             },
                             _.bind(fileList._removeCallback, fileList)
                     );
