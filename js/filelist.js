@@ -378,7 +378,14 @@
             }
             else {
                 files = _.pluck(this.getSelectedFiles(), 'name');
+                // checking for every file 
+                //  good: files cn be from different sources
+                //  bad: costs performance, when only one source has to be recovered
                 for (var i = 0; i < files.length; i++) {
+                    // use for post params in recover()
+                    if (this.getCurrentSource !== 'octrash') {
+                        files[i] = OCA.Recover.App.removeMtime(files[i]);
+                    }
                     var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
                 }
@@ -565,15 +572,9 @@
                 source = this.getCurrentSource();  
                 // edit targetDir: if ".d1437995265" and files from external source requested, remove last 12 chars .d1437995265 (mtime)
                 console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
-                //if ((source === 'ext4' || source === 'gpfsss') && lastSource !== this.getCurrentSource()) {
-                var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
-                //if ((source !== 'octrash') && (pattern.test(targetDir))) {
                 if (source !== 'octrash') {
-                    console.log('source !== octrash');
-                    if (pattern.test(targetDir)) {
-                        console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
-                        targetDir = targetDir.substr(1, targetDir.length - 13);
-                    }
+                    // exernal source -> edit targetDir
+                    targetDir = OCA.Recover.App.removeMtime(targetDir);
                 }
                 this._setCurrentDir(targetDir, changeUrl);
                 this.reload().then(function(success){
@@ -584,7 +585,7 @@
                     console.log('RECOVER filelist changeDirectory, this.reload success');
                 });
                console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir + ' USES getCurrentMimeType for SOURCE!');
-       },
+       }
         /* further source now in mimetype, would be better to use "source:" and this function
          this won't find specific source, just first occurence!!
             -> introduce new var _currentSource + set/get Methods

@@ -48,6 +48,7 @@ class Helper {
         return $files;
     }
     /*
+     * MAKE GENERIC FUNCTION for calling service and return result?! ->callWebservice below
      * Get JSON data from webservice
      * @param $serviceUrl: URL of webservice, defines directory to be listed, source and sorting parameters
      * @return $files: Files and Folders of path in JSON
@@ -79,6 +80,22 @@ class Helper {
         //$filesTest=formatFilesDates($files);
 
         return $files;
+    }
+    
+    public static function callWebservice($serviceUrl) {
+        $ch = curl_init();
+        // Disable SSL verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // Will return the response, if false it print the response
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Set the url
+        curl_setopt($ch, CURLOPT_URL,$serviceUrl);
+        // Execute
+        $files=curl_exec($ch);
+        // Closing
+        curl_close($ch);
+        
+        return $result;
     }
     
     /* not used for now, maybe obsolete or implement later if needed

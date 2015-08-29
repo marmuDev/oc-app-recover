@@ -116,6 +116,9 @@
                     var deleteAction = tr.children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
                     fileList.disableActions();
+                    if (fileList.getCurrentSource() !== 'octrash') {
+                        filename = OCA.Recover.App.removeMtime(filename);
+                    }
                     // AJAX path for PHP!!! => now trigger route + controller
                     //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
                     $.post(OC.generateUrl('/apps/recover/recover'), {
@@ -195,6 +198,14 @@
             OCA.Recover.App.view.renderContent(itemId);
             // rerender nav, why isn't that required when clicking on nav and loading new content and nav?
             OCA.Recover.App.view.renderNavigation();
+        },
+        removeMtime: function(name) {
+           var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
+           if (pattern.test(name)) {
+                //console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
+                name = name.substr(1, name.length - 13);
+                return name;
+            }
         }
     };
 })();

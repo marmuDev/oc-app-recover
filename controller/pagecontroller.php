@@ -405,7 +405,10 @@ class PageController extends Controller {
                     $error[] = $filename;
                     break;
                 case 'tubfsss':
+                    //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
+                    $result = $this->recoverTubfsSs($file, 'tubfsss');
                     $error[] = $filename;
+                    return $result;
                     break;
                 default:
                     $error[] = $filename;
@@ -439,6 +442,16 @@ class PageController extends Controller {
             // funzt auch, aber View nicht aktualisiert!
             //return new JSONResponse(array("success" => $success));
         }
+    }
+    // distinguish recovery of file and folder at some place! - how does trashbin solve that?
+    public function recoverTubfsSs($file, $source) {
+        try {
+            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source;
+            $result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
+        } catch (Exception $ex) {
+
+        }
+        return $result;
     }
 
     public function delete() {
