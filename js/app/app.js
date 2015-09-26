@@ -116,9 +116,12 @@
                     var deleteAction = tr.children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
                     fileList.disableActions();
+                    /* not required, filename is ok
                     if (fileList.getCurrentSource() !== 'octrash') {
                         filename = OCA.Recover.App.removeMtime(filename);
+                        console.log('APP register recover, filename = ' + filename);
                     }
+                    */
                     // AJAX path for PHP!!! => now trigger route + controller
                     //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
                     $.post(OC.generateUrl('/apps/recover/recover'), {
@@ -202,8 +205,16 @@
         removeMtime: function(name) {
            var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
            if (pattern.test(name)) {
+                //console.log("name in removeMtime = " + name);
                 //console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
-                name = name.substr(1, name.length - 13);
+                // dirs start with "/" -> 1, files without -> 0
+                if (name.charAt(0) === '/') {
+                    name = name.substr(1, name.length - 13);
+                }
+                else {
+                    name = name.substr(0, name.length - 13);
+                }
+                //console.log("name in removeMtime = " + name);
                 return name;
             }
         }

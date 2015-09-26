@@ -95,7 +95,8 @@ class Helper {
         // Closing
         curl_close($ch);
         
-        return $result;
+        //return $result;
+        return true;
     }
     
     /* not used for now, maybe obsolete or implement later if needed

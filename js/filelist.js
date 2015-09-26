@@ -361,7 +361,8 @@
             this.updateEmptyContent();
             this.enableActions();
         },
-           // won't log at all in here! - how to get source of clicked file?
+           // only used, when (multiple) files have been selected 
+           // NOT when directly clicking 'recover'!
         _onClickRestoreSelected: function(event) {
             event.preventDefault();
             var self = this;
@@ -378,14 +379,15 @@
             }
             else {
                 files = _.pluck(this.getSelectedFiles(), 'name');
+                console.log('filelist restore selected, files = ' + files.toString());
                 // checking for every file 
-                //  good: files cn be from different sources
+                //  good: files may be from different sources
                 //  bad: costs performance, when only one source has to be recovered
                 for (var i = 0; i < files.length; i++) {
-                    // use for post params in recover()
-                    if (this.getCurrentSource !== 'octrash') {
-                        files[i] = OCA.Recover.App.removeMtime(files[i]);
-                    }
+                    // used for post params in recover() - not need!
+                    //if (this.getCurrentSource !== 'octrash') {
+                    //    files[i] = OCA.Recover.App.removeMtime(files[i]);
+                    //}
                     var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
                 }
@@ -394,7 +396,6 @@
                     dir: this.getCurrentDirectory(),
                     source: this.getCurrentSource()
                 };
-                // won't log in here! -> in removeCallback
                 console.log('RECOVER filelist RestoreSelected currentDir = ' + this.getCurrentDirectory());
                 console.log('RECOVER filelist RestoreSelected currentSource = ' + this.getCurrentSource());
             }

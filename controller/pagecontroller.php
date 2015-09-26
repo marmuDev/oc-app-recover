@@ -406,9 +406,16 @@ class PageController extends Controller {
                     break;
                 case 'tubfsss':
                     //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
-                    $result = $this->recoverTubfsSs($file, 'tubfsss');
-                    $error[] = $filename;
-                    return $result;
+                    //$result = $this->recoverTubfsSs($file, 'tubfsss');
+                    if (!$this->recoverTubfsSs($file, 'tubfsss')) {
+                        $error[] = $filename;                    
+                        throw new \Exception( "recover can't restore \$filename = $filename" );
+                    }
+                    else {
+                        $success[$i]['filename'] = $file;
+                        $success[$i]['timestamp'] = $timestamp;
+                        $i++;
+                    }
                     break;
                 default:
                     $error[] = $filename;
@@ -443,7 +450,8 @@ class PageController extends Controller {
             //return new JSONResponse(array("success" => $success));
         }
     }
-    // distinguish recovery of file and folder at some place! - how does trashbin solve that?
+    // distinguish recovery of file and folder at some place!? - how does trashbin solve that?
+    // what if files and folders?!?!
     public function recoverTubfsSs($file, $source) {
         try {
             $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source;
@@ -451,7 +459,7 @@ class PageController extends Controller {
         } catch (Exception $ex) {
 
         }
-        return $result;
+        return true;
     }
 
     public function delete() {
