@@ -457,8 +457,10 @@ class PageController extends Controller {
     // what if files and folders?!?!
     // file/folder source path important, destination path depends on source path
     public function recoverTubfsSs($dir, $file, $source, $snapshotId) {
+        // attention: dir = "snap_3_folder_1/"
         try {
-            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().$snapshotId;
+            //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().$snapshotId;
+            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.\OCP\User::getUser().'/'.$snapshotId;
             $result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
         } catch (Exception $ex) {
 
