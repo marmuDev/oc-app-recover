@@ -348,6 +348,9 @@ class PageController extends Controller {
         if (isset($_POST['source'])) {
             $source = $_POST['source'];
         }
+        if (isset($_POST['snapshotId'])) {
+            $snapshotId = $_POST['snapshotId'];
+        }
         $allFiles = false;
         if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
             $allFiles = true;
@@ -407,7 +410,7 @@ class PageController extends Controller {
                 case 'tubfsss':
                     //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
                     //$result = $this->recoverTubfsSs($file, 'tubfsss');
-                    if (!$this->recoverTubfsSs($file, 'tubfsss')) {
+                    if (!$this->recoverTubfsSs($dir, $file, 'tubfsss', $snapshotId)) {
                         $error[] = $filename;                    
                         throw new \Exception( "recover can't restore \$filename = $filename" );
                     }
@@ -452,9 +455,10 @@ class PageController extends Controller {
     }
     // distinguish recovery of file and folder at some place!? - how does trashbin solve that?
     // what if files and folders?!?!
-    public function recoverTubfsSs($file, $source) {
+    // file/folder source path important, destination path depends on source path
+    public function recoverTubfsSs($dir, $file, $source, $snapshotId) {
         try {
-            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source;
+            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().$snapshotId;
             $result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
         } catch (Exception $ex) {
 

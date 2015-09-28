@@ -394,7 +394,8 @@
                 params = {
                     files: JSON.stringify(files),
                     dir: this.getCurrentDirectory(),
-                    source: this.getCurrentSource()
+                    source: this.getCurrentSource(),
+                    snapshotId: this.getCurrentSnapshot()
                 };
                 console.log('RECOVER filelist RestoreSelected currentDir = ' + this.getCurrentDirectory());
                 console.log('RECOVER filelist RestoreSelected currentSource = ' + this.getCurrentSource());
