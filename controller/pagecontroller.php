@@ -344,12 +344,11 @@ class PageController extends Controller {
         if (isset($_POST['dir'])) {
             $dir = rtrim($_POST['dir'], '/'). '/';
         }
-        // Undefined index: source!?! -> if isset
-        if (isset($_POST['source'])) {
-            $source = $_POST['source'];
+        if (isset($_POST['sources'])) {
+            $source = $_POST['sources'];
         }
-        if (isset($_POST['snapshotId'])) {
-            $snapshotId = $_POST['snapshotId'];
+        if (isset($_POST['snapshotIds'])) {
+            $snapshotIds = $_POST['snapshotId'];
         }
         $allFiles = false;
         if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {

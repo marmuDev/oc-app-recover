@@ -123,6 +123,7 @@
             // -> put in app class!
             // should not reinit a new filelist, but clear and reload?
             //      only creating new filelist after clicking nav, right?
+            console.log('RECOVER filelist getCurrentSnapshot = ' + OCA.Recover.App._currentSnapshot);
             return OCA.Recover.App._currentSnapshot;
         },
         // all files still exist / ok here
@@ -331,6 +332,7 @@
 
         /**  is only used when deleting entries from the list, i.e. recovering files **/
         _removeCallback: function(result) {
+            console.log("RECOVER removeCallback oben");
             //copied from _onClickFile + setSource
             var mimeType = this.fileActions.getCurrentMimeType();
             if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
@@ -361,44 +363,80 @@
             this.updateEmptyContent();
             this.enableActions();
         },
-           // only used, when (multiple) files have been selected 
-           // NOT when directly clicking 'recover'!
+        /* only used, when (multiple) files have been selected 
+         * NOT when directly clicking 'recover'!
+         * When clicking on recover ==> App: fileActions.register "recover"
+         */
         _onClickRestoreSelected: function(event) {
             event.preventDefault();
             var self = this;
             var allFiles = this.$el.find('.select-all').is(':checked');
             var files = [];
+            var dir = this.getCurrentDirectory();
+            var sources = [];
+            var snapshotIds = [];
             var params = {};
             this.disableActions();
+            // NUR WENN dir = /
+            // auch bei all files muss eine schleife für jeden file source und ggf snapshot ermitteln
+            // --> entfällt ggf
             if (allFiles) {
                 this.showMask();
                 params = {
                     allfiles: true,
-                    dir: this.getCurrentDirectory()
+                    dir: dir
                 };
             }
             else {
                 files = _.pluck(this.getSelectedFiles(), 'name');
-                console.log('filelist restore selected, files = ' + files.toString());
+                //console.log('filelist RestoreSelected, files = ' + files.toString());
                 // checking for every file 
                 //  good: files may be from different sources
                 //  bad: costs performance, when only one source has to be recovered
                 for (var i = 0; i < files.length; i++) {
-                    // used for post params in recover() - not need!
+                    // planned for post params in recover() - not needed!!!
                     //if (this.getCurrentSource !== 'octrash') {
                     //    files[i] = OCA.Recover.App.removeMtime(files[i]);
                     //}
                     var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
+                    // if dir = /, push current file's source and snapshot in array
+                    // further: only if source isn't oc-trash bin
+                    // otherwise source and snapshot are the same within a directory
+                    // data-etag = snapshot, data-mime=source
+                    // OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478")
+                    // Returns the tr element for a given file name
+                    // -> OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478").attr("data-etag")
+                    if (dir === "/") {
+                        if (this.findFileEl(files[i]).attr("data-mime") === 'tubfsss'){
+                            console.log('filelist RestoreSelected, current file = ' + files[i].toString());
+                            sources.push(this.findFileEl(files[i]).attr("data-mime"));
+                            snapshotIds.push(this.findFileEl(files[i]).attr("data-etag"));
+                        }
+                    }
+                    
                 }
-                params = {
-                    files: JSON.stringify(files),
-                    dir: this.getCurrentDirectory(),
-                    source: this.getCurrentSource(),
-                    snapshotId: this.getCurrentSnapshot()
-                };
-                console.log('RECOVER filelist RestoreSelected currentDir = ' + this.getCurrentDirectory());
-                console.log('RECOVER filelist RestoreSelected currentSource = ' + this.getCurrentSource());
+                if (dir === "/") {
+                    params = {
+                        files: JSON.stringify(files),
+                        dir: dir,
+                        //source: this.getCurrentSource(),
+                        sources: JSON.stringify(sources),
+                        snapshotIds: JSON.stringify(snapshotIds)
+                    };
+                }
+                else {
+                    params = {
+                        files: JSON.stringify(files),
+                        dir: dir,
+                        //source: this.getCurrentSource(),
+                        sources: this.getCurrentSource(),
+                        snapshotIds: this.getCurrentSnapshot()
+                    };
+                }
+                //console.log('RECOVER filelist RestoreSelected currentDir = ' + this.getCurrentDirectory());
+                console.log('RECOVER filelist RestoreSelected Sources = ' + sources.toString());
+                console.log('RECOVER filelist RestoreSelected Snapshots = ' + snapshotIds.toString());
             }
 
             //$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
@@ -519,9 +557,6 @@
             return OC.generateUrl('/apps/recover/ajax/preview.php?') + $.param(urlSpec);
         },
 
-        /*
-        PERHAPS I WILL ENABLE DOWNLOADS? USEFUL?
-        */
         getDownloadUrl: function() {
             // no downloads
             return '#';

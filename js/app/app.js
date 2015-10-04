@@ -128,7 +128,8 @@
                                     files: JSON.stringify([filename]),
                                     dir: fileList.getCurrentDirectory(),
                                     //source: this._currentSource
-                                    source: fileList.getCurrentSource()
+                                    source: fileList.getCurrentSource(),
+                                    snapshotId: fileList.getCurrentSnapshot()
                             },
                             _.bind(fileList._removeCallback, fileList)
                     );
