@@ -112,6 +112,7 @@
             // -> put in app class!
             // should not reinit a new filelist, but clear and reload?
             //      only creating new filelist after clicking nav, right?
+            //console.log('RECOVER filelist getCurrentSource = ' + OCA.Recover.App._currentSource);
             return OCA.Recover.App._currentSource;
         },
         _setCurrentSnapshot: function(snapshot) {
@@ -123,7 +124,7 @@
             // -> put in app class!
             // should not reinit a new filelist, but clear and reload?
             //      only creating new filelist after clicking nav, right?
-            console.log('RECOVER filelist getCurrentSnapshot = ' + OCA.Recover.App._currentSnapshot);
+            //console.log('RECOVER filelist getCurrentSnapshot = ' + OCA.Recover.App._currentSnapshot);
             return OCA.Recover.App._currentSnapshot;
         },
         // all files still exist / ok here
@@ -420,7 +421,6 @@
                     params = {
                         files: JSON.stringify(files),
                         dir: dir,
-                        //source: this.getCurrentSource(),
                         sources: JSON.stringify(sources),
                         snapshotIds: JSON.stringify(snapshotIds)
                     };
@@ -429,14 +429,13 @@
                     params = {
                         files: JSON.stringify(files),
                         dir: dir,
-                        //source: this.getCurrentSource(),
                         sources: this.getCurrentSource(),
                         snapshotIds: this.getCurrentSnapshot()
                     };
                 }
-                //console.log('RECOVER filelist RestoreSelected currentDir = ' + this.getCurrentDirectory());
-                console.log('RECOVER filelist RestoreSelected Sources = ' + sources.toString());
-                console.log('RECOVER filelist RestoreSelected Snapshots = ' + snapshotIds.toString());
+                console.log('RECOVER filelist RestoreSelected currentDir = ' + dir);
+                console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
+                console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
             }
 
             //$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
@@ -456,7 +455,7 @@
                     }
                     else {
                         // isn't run when recovering a file by clicking recover
-                        //console.log('in Recover myfilelist _onClickRestoreSelected before _removeCallback result = ' + result);
+                        console.log('in Recover myfilelist _onClickRestoreSelected before _removeCallback result = ' + result);
                         self._removeCallback(result);
                     }
                 }

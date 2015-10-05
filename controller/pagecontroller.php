@@ -338,19 +338,34 @@ class PageController extends Controller {
     // http post: http://localhost/core/index.php/apps/files_trashbin/ajax/undelete.php
     // => http://localhost/core/index.php/apps/recover/recover
     public function recover() {
-        \OC::$server->getSession()->close();
+        //\OC::$server->getSession()->close(); -> obsolete, see above
         $files = $_POST['files'];
         $dir = '/';
         if (isset($_POST['dir'])) {
             $dir = rtrim($_POST['dir'], '/'). '/';
         }
+        $sources = 'init';
+        $snapshotIds = 'init';
+        // create array from comma separated (JSON) String 
+        // with files this happens later, seem below
+        // -> json_decode only works with one element when without option "true"
         if (isset($_POST['sources'])) {
-            $source = $_POST['sources'];
+            //$sources = json_decode($_POST['sources'], true);
+            $sources = json_decode($_POST['sources']);
+        }
+        elseif (isset($_REQUEST['sources'])) {
+            //$sources = json_decode($_POST['sources'], true);
+            $sources = json_decode($_REQUEST['sources']);
+        }
+        elseif (isset ($GLOBALS['sources'])) {
+            $sources = json_decode($GLOBALS['sources']);
         }
         if (isset($_POST['snapshotIds'])) {
-            $snapshotIds = $_POST['snapshotId'];
+            $snapshotIds = json_decode($_POST['snapshotIds']);
         }
         $allFiles = false;
+        // only implemented for trashbin!!! -> check for source
+        //if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
         if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
             $allFiles = true;
             $list = array();
@@ -358,6 +373,7 @@ class PageController extends Controller {
             if ($dir === '' || $dir === '/') {
                 $dirListing = false;
             }
+            // really for all files in trash bin!!!
             foreach (\OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser()) as $file) {
                 $fileName = $file['name'];
                 if (!$dirListing) {
@@ -370,6 +386,7 @@ class PageController extends Controller {
         }
         $error = array();
         $success = array();
+        // counter only increases on success, might be problematic!
         $i = 0;
         foreach ($list as $file) {
             $path = $dir . '/' . $file;
@@ -383,7 +400,8 @@ class PageController extends Controller {
                 $filename = $path_parts['basename'];
                 $timestamp = null;
             }
-            switch ($source) {
+            // use sources[$i] for each file
+            switch ($sources[$i]) {
                 case 'octrash':
                     if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
                         $error[] = $filename;
@@ -409,7 +427,8 @@ class PageController extends Controller {
                 case 'tubfsss':
                     //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
                     //$result = $this->recoverTubfsSs($file, 'tubfsss');
-                    if (!$this->recoverTubfsSs($dir, $file, 'tubfsss', $snapshotId)) {
+                    // use shapshotIds[i] for each file
+                    if (!$this->recoverTubfsSs($dir, $file, 'tubfsss', $snapshotIds[$i])) {
                         $error[] = $filename;                    
                         throw new \Exception( "recover can't restore \$filename = $filename" );
                     }
