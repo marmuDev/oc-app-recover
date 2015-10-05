@@ -426,6 +426,9 @@
                     };
                 }
                 else {
+                    // alternative: like above only using first array element
+                    //sources.push(this.findFileEl(files[0]).attr("data-mime"));
+                    //snapshotIds.push(this.findFileEl(files[0]).attr("data-etag"));
                     params = {
                         files: JSON.stringify(files),
                         dir: dir,

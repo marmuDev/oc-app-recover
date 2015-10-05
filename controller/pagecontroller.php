@@ -344,24 +344,27 @@ class PageController extends Controller {
         if (isset($_POST['dir'])) {
             $dir = rtrim($_POST['dir'], '/'). '/';
         }
-        $sources = 'init';
-        $snapshotIds = 'init';
         // create array from comma separated (JSON) String 
         // with files this happens later, seem below
         // -> json_decode only works with one element when without option "true"
+        
+        // work around needed, otherwise sources is empty! need array below
+        // when dir != "/" there is only one source and snapshot
         if (isset($_POST['sources'])) {
-            //$sources = json_decode($_POST['sources'], true);
-            $sources = json_decode($_POST['sources']);
-        }
-        elseif (isset($_REQUEST['sources'])) {
-            //$sources = json_decode($_POST['sources'], true);
-            $sources = json_decode($_REQUEST['sources']);
-        }
-        elseif (isset ($GLOBALS['sources'])) {
-            $sources = json_decode($GLOBALS['sources']);
+            if ($dir == '/') {
+                $sources = json_decode($_POST['sources']);
+            }
+            else {
+                $sources[0] = $_POST['sources'];
+            }
         }
         if (isset($_POST['snapshotIds'])) {
-            $snapshotIds = json_decode($_POST['snapshotIds']);
+            if ($dir == '/') {
+                $snapshotIds = json_decode($_POST['snapshotIds']);
+            }
+            else {
+                $snapshotIds[0] = $_POST['snapshotIds'];
+            }
         }
         $allFiles = false;
         // only implemented for trashbin!!! -> check for source
@@ -400,8 +403,15 @@ class PageController extends Controller {
                 $filename = $path_parts['basename'];
                 $timestamp = null;
             }
-            // use sources[$i] for each file
-            switch ($sources[$i]) {
+            // use sources[$i] for each file, when files from different sources,
+            //  but sources[0] when same source 
+            if (count($sources)> 1){
+                $nextSource = $sources[$i];
+            } 
+            else {
+                $nextSource = $sources[0];
+            }
+            switch ($nextSource) {
                 case 'octrash':
                     if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
                         $error[] = $filename;
@@ -427,8 +437,14 @@ class PageController extends Controller {
                 case 'tubfsss':
                     //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
                     //$result = $this->recoverTubfsSs($file, 'tubfsss');
-                    // use shapshotIds[i] for each file
-                    if (!$this->recoverTubfsSs($dir, $file, 'tubfsss', $snapshotIds[$i])) {
+                    // use shapshotIds[i] for each file, but [0] if same snapshot!
+                    if (count($snapshotIds)> 1){
+                        $nextSnapshotId = $snapshotIds[$i];
+                    } 
+                    else {
+                        $nextSnapshotId = $snapshotIds[0];
+                    }
+                    if (!$this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId)) {
                         $error[] = $filename;                    
                         throw new \Exception( "recover can't restore \$filename = $filename" );
                     }
@@ -474,16 +490,22 @@ class PageController extends Controller {
     // distinguish recovery of file and folder at some place!? - how does trashbin solve that?
     // what if files and folders?!?!
     // file/folder source path important, destination path depends on source path
-    public function recoverTubfsSs($dir, $file, $source, $snapshotId) {
-        // attention: dir = "snap_3_folder_1/"
+    public function recoverTubfsSs($dir, $filename, $source, $snapshotId) {
+        // attention: dir = "snap_3_folder_1/" if not root -> remove last char
+        if ($dir != '/') {
+            $dir = substr($dir, 0, -1);
+        }
+        $dir = \str_replace('/', '%2F', $dir);
         try {
             //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().$snapshotId;
-            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.\OCP\User::getUser().'/'.$snapshotId;
-            $result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
+            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
+            //$result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
+            $result = \OCA\Recover\Helper::callWebservice($serviceUrl);
         } catch (Exception $ex) {
 
         }
-        return true;
+        //return true;
+        return $result;
     }
 
     public function delete() {
