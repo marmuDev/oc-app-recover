@@ -108,31 +108,52 @@
             });
 
             fileActions.setDefault('dir', 'Open');
-            // register wird nicht ausgeführt!!
             fileActions.register('all', 'Recover', OC.PERMISSION_READ, OC.imagePath('core', 'actions/history'), function(filename, context) {
-                    var fileList = context.fileList;
-                    //console.log('_createFileAction fileList = ' +fileList);
-                    var tr = fileList.findFileEl(filename);
-                    var deleteAction = tr.children("td.date").children(".action.delete");
-                    deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-                    fileList.disableActions();
-                    /* not required, filename is ok
-                    if (fileList.getCurrentSource() !== 'octrash') {
-                        filename = OCA.Recover.App.removeMtime(filename);
-                        console.log('APP register recover, filename = ' + filename);
-                    }
-                    */
-                    // AJAX path for PHP!!! => now trigger route + controller
-                    //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {
-                    $.post(OC.generateUrl('/apps/recover/recover'), {
-                                    files: JSON.stringify([filename]),
-                                    dir: fileList.getCurrentDirectory(),
-                                    //source: this._currentSource
-                                    source: fileList.getCurrentSource(),
-                                    snapshotId: fileList.getCurrentSnapshot()
-                            },
-                            _.bind(fileList._removeCallback, fileList)
-                    );
+                var fileList = context.fileList;
+                console.log('_createFileAction recover, filename = ' + filename);
+                var dir = fileList.getCurrentDirectory();
+                var tr = fileList.findFileEl(filename);
+                var deleteAction = tr.children("td.date").children(".action.delete");
+                deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
+                fileList.disableActions();
+                /* not required, filename is ok
+                if (fileList.getCurrentSource() !== 'octrash') {
+                    filename = OCA.Recover.App.removeMtime(filename);
+                    console.log('APP register recover, filename = ' + filename);
+                }
+                */
+                // if root-dir do similar to filelist onClickRestoreSelected
+                var params = {};
+                var sources = [];
+                var snapshotIds = [];
+                if (dir === "/") { 
+                    sources = tr.attr("data-mime");
+                    console.log('APP register recover, source = ' + sources);
+                    snapshotIds = tr.attr("data-etag");
+                    console.log('APP register recover, snapshot = ' + snapshotIds);
+                    params = {
+                        files: JSON.stringify([filename]),
+                        dir: dir,
+                        sources: sources,
+                        snapshotIds: snapshotIds
+                    };
+                }
+                else {
+                    params = {
+                        files: JSON.stringify([filename]),
+                        dir: dir,
+                        sources: this._currentSource,
+                        snapshotIds: this._currentSnapshot
+                    };
+                }
+                // AJAX path for PHP!!! => now trigger route + controller
+                //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {    
+                $.post(OC.generateUrl('/apps/recover/recover'), 
+                    params,
+                    _.bind(fileList._removeCallback, fileList)
+                );
+                console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
+                console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
             }, t('recover', 'Recover'));
 
             fileActions.registerAction({

@@ -331,10 +331,14 @@
             this.$el.find('#filestable th').toggleClass('hidden', !exists);
         },
 
-        /**  is only used when deleting entries from the list, i.e. recovering files **/
+        /**  used when deleting entries from the list, delete and recover **/
         _removeCallback: function(result) {
             console.log("RECOVER removeCallback oben");
             //copied from _onClickFile + setSource
+            
+            // why was that needed in here again??
+            // after recovery of file this sets wrong source and snapshot!!
+            /*
             var mimeType = this.fileActions.getCurrentMimeType();
             if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
                 // look at mime above, would this be possible for source too??! 
@@ -345,6 +349,7 @@
                 this._setCurrentSnapshot(snapshot);
                 this._setCurrentSource(mimeType);
             }
+            */
             //if (result.status !== 'success') {
             if (result.statusCode !== '200') {
                     console.log('RECOVER filelist _removeCallback result.statusCode = ' + result.statusCode);
@@ -352,7 +357,9 @@
                     // t not useable since transiflex translation not implemented?
                     OC.dialogs.alert(result.data.message, t('recover', 'Error'));
             }
-
+            else {
+                OC.dialogs.alert(result.data.message, t('recover', 'Info'));
+            }
             var files = result.data.success;
             //console.log(' _removeCallback files = result.data.success[0].filename = ' + result.data.success[0].filename);
             var $el;
@@ -378,77 +385,78 @@
             var snapshotIds = [];
             var params = {};
             this.disableActions();
-            // NUR WENN dir = /
             // auch bei all files muss eine schleife für jeden file source und ggf snapshot ermitteln
-            // --> entfällt ggf
-            if (allFiles) {
+            // --> allfiles entfällt
+            /*if (allFiles) {
                 this.showMask();
                 params = {
                     allfiles: true,
                     dir: dir
                 };
             }
-            else {
-                files = _.pluck(this.getSelectedFiles(), 'name');
-                //console.log('filelist RestoreSelected, files = ' + files.toString());
-                // checking for every file 
-                //  good: files may be from different sources
-                //  bad: costs performance, when only one source has to be recovered
-                for (var i = 0; i < files.length; i++) {
-                    // planned for post params in recover() - not needed!!!
-                    //if (this.getCurrentSource !== 'octrash') {
-                    //    files[i] = OCA.Recover.App.removeMtime(files[i]);
-                    //}
-                    var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
-                    deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-                    // if dir = /, push current file's source and snapshot in array
-                    // further: only if source isn't oc-trash bin
-                    // otherwise source and snapshot are the same within a directory
-                    // data-etag = snapshot, data-mime=source
-                    // OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478")
-                    // Returns the tr element for a given file name
-                    // -> OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478").attr("data-etag")
-                    if (dir === "/") {
-                        if (this.findFileEl(files[i]).attr("data-mime") === 'tubfsss'){
-                            console.log('filelist RestoreSelected, current file = ' + files[i].toString());
-                            sources.push(this.findFileEl(files[i]).attr("data-mime"));
-                            snapshotIds.push(this.findFileEl(files[i]).attr("data-etag"));
-                        }
-                    }
-                    
-                }
+            else {*/
+            files = _.pluck(this.getSelectedFiles(), 'name');
+            //console.log('filelist RestoreSelected, files = ' + files.toString());
+            // checking for every file 
+            //  good: files may be from different sources
+            //  bad: costs performance, when only one source has to be recovered
+            for (var i = 0; i < files.length; i++) {
+                // planned for post params in recover() - not needed!!!
+                //if (this.getCurrentSource !== 'octrash') {
+                //    files[i] = OCA.Recover.App.removeMtime(files[i]);
+                //}
+                var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
+                deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
+                // if dir = /, push current file's source and snapshot in array
+                // further: only if source isn't oc-trash bin
+                // otherwise source and snapshot are the same within a directory
+                // data-etag = snapshot, data-mime=source
+                // OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478")
+                // Returns the tr element for a given file name
+                // -> OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478").attr("data-etag")
                 if (dir === "/") {
-                    params = {
-                        files: JSON.stringify(files),
-                        dir: dir,
-                        sources: JSON.stringify(sources),
-                        snapshotIds: JSON.stringify(snapshotIds)
-                    };
+                    if (this.findFileEl(files[i]).attr("data-mime") === 'tubfsss'){
+                        sources.push(this.findFileEl(files[i]).attr("data-mime"));
+                        snapshotIds.push(this.findFileEl(files[i]).attr("data-etag"));
+                    }
                 }
-                else {
-                    // alternative: like above only using first array element
-                    //sources.push(this.findFileEl(files[0]).attr("data-mime"));
-                    //snapshotIds.push(this.findFileEl(files[0]).attr("data-etag"));
-                    params = {
-                        files: JSON.stringify(files),
-                        dir: dir,
-                        sources: this.getCurrentSource(),
-                        snapshotIds: this.getCurrentSnapshot()
-                    };
-                }
-                console.log('RECOVER filelist RestoreSelected currentDir = ' + dir);
-                console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
-                console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
+
             }
+            if (dir === "/") {
+                params = {
+                    files: JSON.stringify(files),
+                    dir: dir,
+                    sources: JSON.stringify(sources),
+                    snapshotIds: JSON.stringify(snapshotIds)
+                };
+            }
+            else {
+                // alternative: like above only using first array element
+                //sources.push(this.findFileEl(files[0]).attr("data-mime"));
+                //snapshotIds.push(this.findFileEl(files[0]).attr("data-etag"));
+                params = {
+                    files: JSON.stringify(files),
+                    dir: dir,
+                    sources: this.getCurrentSource(),
+                    snapshotIds: this.getCurrentSnapshot()
+                };
+            }
+            console.log('RECOVER filelist RestoreSelected currentDir = ' + dir);
+            console.log('RECOVER filelist RestoreSelected files = ' + files);
+            console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
+            console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
+            //} if allfiles!
 
             //$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
             $.post(OC.generateUrl('/apps/recover/recover'), 
                 params,
                 function(result) {
+                    // allfiles obsolete, was only implemented for oc trash bin
+                    // now never true
                     if (allFiles) {
                         //if (result.status !== 'success') {
                         if (result.statusCode !== '200') {
-                                console.log('in Recover myfilelist _onClickRestoreSelected result.statusCode = ' + result.statusCode);
+                                console.log('RECOVER filelist _onClickRestoreSelected result.statusCode = ' + result.statusCode);
                                 OC.dialogs.alert(result.data.message, t('recover', 'Error'));
                         }
                         self.hideMask();
@@ -457,8 +465,10 @@
                         self.enableActions();
                     }
                     else {
-                        // isn't run when recovering a file by clicking recover
-                        console.log('in Recover myfilelist _onClickRestoreSelected before _removeCallback result = ' + result);
+                        // show message after successful recovery of file(s)
+                        if (result.statusCode == '200') {
+                            OC.dialogs.alert(result.data.message, t('recover', 'Info'));
+                        }
                         self._removeCallback(result);
                     }
                 }

@@ -103,7 +103,7 @@ class PageController extends Controller {
      * @param String $dir directory to be listed
      * @param String $sort attribut to sort files by
      * @param String $sortdirection asc | desc (ascending or descending)
-     * @param String $source source of backup files octrash| ext4 | gpfsss (oc trashbin, local ext4 files or GPFS Snapshots)
+     * @param String $source source of backup files octrash | ext4 | gpfsss | tubfss (oc trashbin, local ext4 files or GPFS/TUBFS Snapshots)
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
      */
     
@@ -145,7 +145,7 @@ class PageController extends Controller {
                 break;
             case 'tubfsss':
                 $files = $this->listTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
-                 $data['files'] = $this->sortFilesArray($files['files'], $sortAttribute, $sortDirection);
+                $data['files'] = $this->sortFilesArray($files['files'], $sortAttribute, $sortDirection);
                 break;
             // list files of root directory -> collect data from all sources
             // initial no source available, set manually!
@@ -351,7 +351,7 @@ class PageController extends Controller {
         // work around needed, otherwise sources is empty! need array below
         // when dir != "/" there is only one source and snapshot
         if (isset($_POST['sources'])) {
-            if ($dir == '/') {
+            if ($dir == '/' && count($_POST['sources'])>1) {
                 $sources = json_decode($_POST['sources']);
             }
             else {
@@ -359,15 +359,16 @@ class PageController extends Controller {
             }
         }
         if (isset($_POST['snapshotIds'])) {
-            if ($dir == '/') {
+            if ($dir == '/' && count($_POST['snapshotIds'])>1) {
                 $snapshotIds = json_decode($_POST['snapshotIds']);
             }
             else {
                 $snapshotIds[0] = $_POST['snapshotIds'];
             }
         }
-        $allFiles = false;
-        // only implemented for trashbin!!! -> check for source
+        /*$allFiles = false;
+        // only implemented for trashbin!!! -> check for source, obsolete, 
+        // just never pass allfiles true as poaram from filelist.js
         //if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
         if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
             $allFiles = true;
@@ -385,8 +386,10 @@ class PageController extends Controller {
                 $list[] = $fileName;
             }
         } else {
-            $list = json_decode($files);
-        }
+         * 
+         */
+        $list = json_decode($files);
+        //}
         $error = array();
         $success = array();
         // counter only increases on success, might be problematic!
@@ -469,7 +472,8 @@ class PageController extends Controller {
             //$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             // Unsupported operand types!?!
             //$message = "Couldn't restore " + array(rtrim($filelist, ', ')).toString();
-            $message = "Couldn't restore file";
+            $message = "Couldn't recover ".substr($filelist, 0, -2);
+            ////$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             // port to App Framework
             //OCP\JSON::error(array("data" => array("message" => $message,
             //                                    "success" => $success, "error" => $error)));
@@ -478,13 +482,12 @@ class PageController extends Controller {
                                         "success" => $success, "error" => $error), "statusCode" => "500"));
         } else {
             //OCP\JSON::success(array("data" => array("success" => $success)));
-            // how to better imitate a JSON success message?
             // Use a AppFramework JSONResponse instead!!
             //return new DataResponse(array('data' => array("success" => $success)));
-            //return new JSONResponse(array("data" => array("success" => $success)), "200");
-            return new JSONResponse(array("data" => array("success" => $success), "statusCode" => "200"));
-            // funzt auch, aber View nicht aktualisiert!
-            //return new JSONResponse(array("success" => $success));
+            $message = "Success! The file(s) have been moved to your home directory (/home/".\OCP\User::getUser()."/recovered).";
+            return new JSONResponse(array("data" => array
+                                        ("message" => $message,
+                                        "success" => $success), "statusCode" => "200"));
         }
     }
     // distinguish recovery of file and folder at some place!? - how does trashbin solve that?
@@ -571,7 +574,7 @@ class PageController extends Controller {
     }
 
     /* Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
-     * need to reindex Array, filelist seems to be dependent on fileIDs. 
+     * need to reindex Array, although filelist seems to be dependent on fileIDs. 
      * -> it isn't but now IDs correct
      * @param Array $files all files ($mergedFiles)
      * @param String $sortAttribute sort by mtime or name
