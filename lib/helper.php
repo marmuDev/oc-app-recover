@@ -86,10 +86,10 @@ class Helper {
         $ch = curl_init();
         // Disable SSL verification
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        // Will return the respons. If false, it prints the response
+        // Will return the response. If false, it prints the response
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         // Set the url
-        curl_setopt($ch, CURLOPT_URL,$serviceUrl);
+        curl_setopt($ch, CURLOPT_URL, $serviceUrl);
         // Execute
         $result=curl_exec($ch);
         // Closing

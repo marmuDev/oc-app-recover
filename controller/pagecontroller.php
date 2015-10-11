@@ -358,7 +358,7 @@ class PageController extends Controller {
             }
         }
         if (isset($_POST['snapshotIds'])) {
-            $snapshotCount = count($_POST['snapshotIds']);
+            $snapshotCount = count(json_decode($_POST['snapshotIds']));
             if ($snapshotCount > 1) {
                 $snapshotIds = json_decode($_POST['snapshotIds']);
             }
@@ -399,7 +399,7 @@ class PageController extends Controller {
                         // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
                         // dev manual says to use... for debugging, 
                         //but exceptions make app crash, since they are exceptions...
-                        throw new \Exception( "recover can't restore \$filename = $filename" );
+                        //throw new \Exception( "recover can't restore \$filename = $filename" );
                         // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
                         //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
                     } else {
@@ -424,9 +424,13 @@ class PageController extends Controller {
                     else {
                         $nextSnapshotId = $snapshotIds;
                     }
-                    $result = json_decode($this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId));
-                    if (!$result['success'] == 1) {
+                    $jsonResult = $this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId);
+                    // of course only works with valid json! not valid, then have output of service in jsonResult for later usage
+                    $result = json_decode($jsonResult, true);
+                    if (($result === null) || ($result['statusCode'] !== 200)) {
                         $error[] = $filename;                    
+                        // exceptions suck, since execution is stopped, but I (the user) want(s) to see the message
+                        // // different behavior when not in debug mode?
                         //throw new \Exception( "recover can't restore \$filename = $filename" );
                     }
                     else {
@@ -450,7 +454,12 @@ class PageController extends Controller {
             //$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             // Unsupported operand types!?!
             //$message = "Couldn't restore " + array(rtrim($filelist, ', ')).toString();
-            $message = "Couldn't recover ".substr($filelist, 0, -2)." Webservice says: ".$result['message'];
+            if (isset($result['message'])) {
+                $message = "Couldn't recover ".substr($filelist, 0, -2).". Webservice says: ".$result['message'];   
+            }
+            else {
+                $message = "Couldn't recover ".substr($filelist, 0, -2).". Webservice says: ".$jsonResult;
+            }
             ////$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             // port to App Framework
             //OCP\JSON::error(array("data" => array("message" => $message,
@@ -473,6 +482,7 @@ class PageController extends Controller {
     // file/folder source path important, destination path depends on source path
     public function recoverTubfsSs($dir, $filename, $source, $snapshotId) {
         // attention: dir = "snap_3_folder_1/" if not root -> remove last char
+        // does not work for recovering folders in root! -> adapt service source_dir
         if ($dir != '/') {
             $dir = substr($dir, 0, -1);
         }
