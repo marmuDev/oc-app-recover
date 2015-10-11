@@ -142,8 +142,11 @@
                     params = {
                         files: JSON.stringify([filename]),
                         dir: dir,
-                        sources: this._currentSource,
-                        snapshotIds: this._currentSnapshot
+                        // why doesn't "this.fileList... or this._currentX work here?
+                        //sources: OCA.Recover.App.fileList.getCurrentSource(),
+                        sources: OCA.Recover.App._currentSource,
+                        //snapshotIds: OCA.Recover.App.fileList.getCurrentSnapshot()
+                        snapshotIds: OCA.Recover.App._currentSnapshot
                     };
                 }
                 // AJAX path for PHP!!! => now trigger route + controller

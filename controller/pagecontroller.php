@@ -334,9 +334,11 @@ class PageController extends Controller {
         return $filesFromSourceGpfsSs;
     }
     
-        // adapted from files_trashbin/ajax/undelete
-    // http post: http://localhost/core/index.php/apps/files_trashbin/ajax/undelete.php
-    // => http://localhost/core/index.php/apps/recover/recover
+    /*
+     * 
+     * => http://localhost/core/index.php/apps/recover/recover
+     * 
+     */
     public function recover() {
         //\OC::$server->getSession()->close(); -> obsolete, see above
         $files = $_POST['files'];
@@ -344,52 +346,29 @@ class PageController extends Controller {
         if (isset($_POST['dir'])) {
             $dir = rtrim($_POST['dir'], '/'). '/';
         }
-        // create array from comma separated (JSON) String 
-        // with files this happens later, seem below
-        // -> json_decode only works with one element when without option "true"
-        
         // work around needed, otherwise sources is empty! need array below
         // when dir != "/" there is only one source and snapshot
         if (isset($_POST['sources'])) {
-            if ($dir == '/' && count($_POST['sources'])>1) {
+            $sourcesCount = count(json_decode($_POST['sources']));
+            if ($sourcesCount > 1) { 
                 $sources = json_decode($_POST['sources']);
             }
             else {
-                $sources[0] = $_POST['sources'];
+                $sources = $_POST['sources'];
             }
         }
         if (isset($_POST['snapshotIds'])) {
-            if ($dir == '/' && count($_POST['snapshotIds'])>1) {
+            $snapshotCount = count($_POST['snapshotIds']);
+            if ($snapshotCount > 1) {
                 $snapshotIds = json_decode($_POST['snapshotIds']);
             }
             else {
-                $snapshotIds[0] = $_POST['snapshotIds'];
+                $snapshotIds = $_POST['snapshotIds'];
             }
         }
-        /*$allFiles = false;
-        // only implemented for trashbin!!! -> check for source, obsolete, 
-        // just never pass allfiles true as poaram from filelist.js
-        //if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
-        if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true') {
-            $allFiles = true;
-            $list = array();
-            $dirListing = true;
-            if ($dir === '' || $dir === '/') {
-                $dirListing = false;
-            }
-            // really for all files in trash bin!!!
-            foreach (\OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser()) as $file) {
-                $fileName = $file['name'];
-                if (!$dirListing) {
-                    $fileName .= '.d' . $file['mtime'];
-                }
-                $list[] = $fileName;
-            }
-        } else {
-         * 
-         */
+        
         $list = json_decode($files);
-        //}
+       
         $error = array();
         $success = array();
         // counter only increases on success, might be problematic!
@@ -407,23 +386,21 @@ class PageController extends Controller {
                 $timestamp = null;
             }
             // use sources[$i] for each file, when files from different sources,
-            //  but sources[0] when same source 
-            if (count($sources)> 1){
+            if ($sourcesCount > 1){
                 $nextSource = $sources[$i];
             } 
             else {
-                $nextSource = $sources[0];
+                $nextSource = $sources;
             }
             switch ($nextSource) {
                 case 'octrash':
                     if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
                         $error[] = $filename;
-                        // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
                         // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
                         // dev manual says to use... for debugging, 
                         //but exceptions make app crash, since they are exceptions...
                         throw new \Exception( "recover can't restore \$filename = $filename" );
-                        // maybe OC_LOG is used for OC.dialogs.alert
+                        // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
                         //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
                     } else {
                         $success[$i]['filename'] = $file;
@@ -441,15 +418,16 @@ class PageController extends Controller {
                     //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
                     //$result = $this->recoverTubfsSs($file, 'tubfsss');
                     // use shapshotIds[i] for each file, but [0] if same snapshot!
-                    if (count($snapshotIds)> 1){
+                    if ($snapshotCount > 1){
                         $nextSnapshotId = $snapshotIds[$i];
                     } 
                     else {
-                        $nextSnapshotId = $snapshotIds[0];
+                        $nextSnapshotId = $snapshotIds;
                     }
-                    if (!$this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId)) {
+                    $result = json_decode($this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId));
+                    if (!$result['success'] == 1) {
                         $error[] = $filename;                    
-                        throw new \Exception( "recover can't restore \$filename = $filename" );
+                        //throw new \Exception( "recover can't restore \$filename = $filename" );
                     }
                     else {
                         $success[$i]['filename'] = $file;
@@ -472,7 +450,7 @@ class PageController extends Controller {
             //$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             // Unsupported operand types!?!
             //$message = "Couldn't restore " + array(rtrim($filelist, ', ')).toString();
-            $message = "Couldn't recover ".substr($filelist, 0, -2);
+            $message = "Couldn't recover ".substr($filelist, 0, -2)." Webservice says: ".$result['message'];
             ////$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
             // port to App Framework
             //OCP\JSON::error(array("data" => array("message" => $message,

@@ -469,6 +469,9 @@
                         if (result.statusCode == '200') {
                             OC.dialogs.alert(result.data.message, t('recover', 'Info'));
                         }
+                        else {
+                            OC.dialogs.alert(result.data.message, t('recover', 'Error'));
+                        }
                         self._removeCallback(result);
                     }
                 }

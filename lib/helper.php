@@ -91,12 +91,11 @@ class Helper {
         // Set the url
         curl_setopt($ch, CURLOPT_URL,$serviceUrl);
         // Execute
-        $files=curl_exec($ch);
+        $result=curl_exec($ch);
         // Closing
         curl_close($ch);
         
-        //return $result;
-        return true;
+        return $result;
     }
     
     /* not used for now, maybe obsolete or implement later if needed
