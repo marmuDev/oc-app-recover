@@ -354,7 +354,7 @@ class PageController extends Controller {
                 $sources = json_decode($_POST['sources']);
             }
             else {
-                $sources = $_POST['sources'];
+                $sources = json_decode($_POST['sources']);
             }
         }
         if (isset($_POST['snapshotIds'])) {
@@ -363,7 +363,7 @@ class PageController extends Controller {
                 $snapshotIds = json_decode($_POST['snapshotIds']);
             }
             else {
-                $snapshotIds = $_POST['snapshotIds'];
+                $snapshotIds = json_decode($_POST['snapshotIds']);
             }
         }
         
@@ -390,7 +390,7 @@ class PageController extends Controller {
                 $nextSource = $sources[$i];
             } 
             else {
-                $nextSource = $sources;
+                $nextSource = $sources[0];
             }
             switch ($nextSource) {
                 case 'octrash':
@@ -422,7 +422,7 @@ class PageController extends Controller {
                         $nextSnapshotId = $snapshotIds[$i];
                     } 
                     else {
-                        $nextSnapshotId = $snapshotIds;
+                        $nextSnapshotId = $snapshotIds[0];
                     }
                     $jsonResult = $this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId);
                     // of course only works with valid json! not valid, then have output of service in jsonResult for later usage

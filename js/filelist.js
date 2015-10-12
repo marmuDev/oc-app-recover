@@ -368,48 +368,45 @@
             // checking for every file 
             //  good: files may be from different sources
             //  bad: costs performance, when only one source has to be recovered
-            for (var i = 0; i < files.length; i++) {
-                var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
-                deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-                // if dir = /, push current file's source and snapshot in array
-                // further: only if source isn't oc-trash bin
-                // otherwise source and snapshot are the same within a directory
-                // data-etag = snapshot, data-mime=source
-                
-                // Returns the tr element for a given file name
-                // -> OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478").attr("data-etag")
-                if (dir === "/") {
+                        
+            // only if dir = '/' and files.lenght > 1 
+            //  -> only in this case several sources and snapshots are possible
+            if (dir === '/' && files.length > 1) {
+                for (var i = 0; i < files.length; i++) {
+                    // delete stuff may be obsolete
+                    var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
+                    deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
+                    // if dir = /, push current file's source and snapshot in array
+                    // further: only if source isn't oc-trash bin
+                    // otherwise source and snapshot are the same within a directory
+                    // data-etag = snapshot, data-mime=source
+
+                    // Returns the tr element for a given file name
+                    // -> OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478").attr("data-etag")
+                    // if source tubfssss, push source, get snapshotId
                     if (this.findFileEl(files[i]).attr("data-mime") === 'tubfsss'){
+                        console.log('RECOVER filelist onClickRestoreSelected, tubfssss, ')
                         sources.push(this.findFileEl(files[i]).attr("data-mime"));
                         snapshotIds.push(this.findFileEl(files[i]).attr("data-etag"));
                     }
                 }
-            }
-            if (dir === "/") {
-                params = {
-                    files: JSON.stringify(files),
-                    dir: dir,
-                    sources: JSON.stringify(sources),
-                    snapshotIds: JSON.stringify(snapshotIds)
-                };
+                
             }
             else {
-                // alternative: like above only using first array element
-                //sources.push(this.findFileEl(files[0]).attr("data-mime"));
-                //snapshotIds.push(this.findFileEl(files[0]).attr("data-etag"));
-                params = {
-                    files: JSON.stringify(files),
-                    dir: dir,
-                    sources: this.getCurrentSource(),
-                    snapshotIds: this.getCurrentSnapshot()
-                };
+                sources.push(this.findFileEl(files[0]).attr("data-mime"));
+                snapshotIds.push(this.findFileEl(files[0]).attr("data-etag"));
             }
-            /*
+            params = {
+                files: JSON.stringify(files),
+                dir: dir,
+                sources: JSON.stringify(sources),
+                snapshotIds: JSON.stringify(snapshotIds)
+            };
             console.log('RECOVER filelist RestoreSelected currentDir = ' + dir);
             console.log('RECOVER filelist RestoreSelected files = ' + files);
             console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
             console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
-            */
+            
             $.post(OC.generateUrl('/apps/recover/recover'), 
                 params,
                 function(result) {

@@ -126,6 +126,7 @@
                 var params = {};
                 var sources = [];
                 var snapshotIds = [];
+                /*
                 if (dir === "/") { 
                     sources = tr.attr("data-mime");
                     console.log('APP register recover, source = ' + sources);
@@ -144,11 +145,21 @@
                         dir: dir,
                         // why doesn't "this.fileList... or this._currentX work here?
                         //sources: OCA.Recover.App.fileList.getCurrentSource(),
+                        //sources: JSON.stringify(OCA.Recover.App._currentSource),
                         sources: OCA.Recover.App._currentSource,
                         //snapshotIds: OCA.Recover.App.fileList.getCurrentSnapshot()
                         snapshotIds: OCA.Recover.App._currentSnapshot
                     };
                 }
+                */
+                sources.push(tr.attr("data-mime"));
+                snapshotIds.push(  tr.attr("data-etag"));  
+                params = {
+                    files: JSON.stringify([filename]),
+                    dir: dir,
+                    sources: JSON.stringify(sources),
+                    snapshotIds: JSON.stringify(snapshotIds)
+                };
                 // AJAX path for PHP!!! => now trigger route + controller
                 //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {    
                 $.post(OC.generateUrl('/apps/recover/recover'), 
@@ -158,7 +169,7 @@
                 console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
                 console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
             }, t('recover', 'Recover'));
-
+            /* deactivated, not implemented, commented out!
             fileActions.registerAction({
                     name: 'Delete',
                     displayName: '',
@@ -191,7 +202,7 @@
                                     _.bind(fileList._removeCallback, fileList)
                             );
                     }
-            });
+            });*/
             return fileActions;
         },
 
