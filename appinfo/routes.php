@@ -24,8 +24,8 @@ $application->registerRoutes($this,
     ['routes' => [
         ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
         // another route for the same function, 
-        // but triggered when clicking again on recently deleted in nav -> returning 'blank' template
-        ['name' => 'page#recently', 'url' => '/recently_deleted', 'verb' => 'GET'],
+        // but triggered when clicking again on recently backed up in nav -> returning 'blank' template
+        ['name' => 'page#recently', 'url' => '/recently_backed_up', 'verb' => 'GET'],
         
         ['name' => 'page#search', 'url' => '/search', 'verb' => 'GET'],
         // how to: http://localhost/core/index.php/apps/recover/?search
@@ -59,8 +59,8 @@ $application->registerRoutes($this,
                 'sortdirection' => 'asc'
             ]
 ],*/
-        ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST'],
-        ['name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST']
+        ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST']
+       // ['name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST']
     ]
 ]);
 

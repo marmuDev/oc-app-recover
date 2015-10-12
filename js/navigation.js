@@ -16,7 +16,7 @@
 
     // not implemented yet, just showing title in navigation
     var translations = {
-        recentlyDeleted: $('#recently-deleted-string').text()
+        recentlyBackedUp: $('#recently-backed-up-string').text()
     };
 
     /**
@@ -41,7 +41,7 @@
 
         // this links object holds all our links
         _items: [
-            {id:"recently_deleted", title:"Recently Deleted", active:false},
+            {id:"recently_backed_up", title:"Recently Backed Up", active:false},
             {id:"search", title:"Search", active:false},
             {id:"help", title:"Help", active:false}
         ],
@@ -51,7 +51,7 @@
             this._activeItem = null;
             this.$currentContent = null;
             
-            // initially set recently_deleted as active Link
+            // initially set recently_backed_up as active Link
             this._activeLink = this._items[0];
             this._activeLink.active = true; // still not grey 
             // push current link to browser history stack
@@ -127,9 +127,9 @@
             //var data = 'init';
             switch(id) {
                 //case "0":
-                case "recently_deleted":
+                case "recently_backed_up":
                     $.ajax({
-                        url: OC.generateUrl('/apps/recover/recently_deleted')
+                        url: OC.generateUrl('/apps/recover/recently_backed_up')
                         /* only used in myfilelist!!!
                             JUST GETTING BLANK TEMPLATE HERE!
                         data : {
@@ -182,7 +182,7 @@
                     break;                    
                 default:
                     $.ajax({
-                        url: OC.generateUrl('/apps/recover/recently_deleted'),
+                        url: OC.generateUrl('/apps/recover/recently_backed_up'),
                         data : {
                             dir : OCA.Recover.App.fileList.getCurrentDirectory(),
                             sort: OCA.Recover.App.fileList._sort,

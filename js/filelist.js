@@ -61,6 +61,7 @@
                     return;
             }
             var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
+            // recover text/icon after selecting file(s)
             this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
             this.setSort('mtime', 'desc');
             // adaption to set path
@@ -97,12 +98,12 @@
             if (baseDir !== '') {
                     this.setPageTitle(getDeletedFileName(baseDir));
             }
-            
             // never printed! since this runs Files FileList!
             //console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
         },
         // putting source and snapshot in App, since they won't be available in
         // filelist when reloading it
+        // source saved in mimetype, would be better to use "source:" 
         _setCurrentSource: function(source) {
             console.log('RECOVER filelist setCurrentSource = ' + source);
             OCA.Recover.App._currentSource = source;
@@ -111,7 +112,7 @@
             // this is undefined! at this point in time! same problem as before
             // -> put in app class!
             // should not reinit a new filelist, but clear and reload?
-            //      only creating new filelist after clicking nav, right?
+            //      only creating new filelist after clicking nav, reload when clicking folder
             //console.log('RECOVER filelist getCurrentSource = ' + OCA.Recover.App._currentSource);
             return OCA.Recover.App._currentSource;
         },
@@ -121,10 +122,7 @@
         },
         getCurrentSnapshot: function() {
             // this is undefined! at this point in time! same problem as before
-            // -> put in app class!
-            // should not reinit a new filelist, but clear and reload?
-            //      only creating new filelist after clicking nav, right?
-            //console.log('RECOVER filelist getCurrentSnapshot = ' + OCA.Recover.App._currentSnapshot);
+            // -> put in app class! see above
             return OCA.Recover.App._currentSnapshot;
         },
         // all files still exist / ok here
@@ -161,17 +159,11 @@
         reload: function() {
             console.log('RECOVER filelist reload anfang!');
             /* only defined if not initial load! 
-            // reinit only after click on nav? or also when clicking folder?
-            // seems to be uninitialized when clickin on folder!
-            // how to check here? file info in filelist needs to be upgrade to have info on source
-            // but this info won't be available at this time... puh
-            if (this._initialized) {
-                console.log('RECOVER filelist INITIALIZED!');
-                var source = this.fileActions.getCurrentMimeType();
-            } else {
-                console.log('RECOVER filelist NOT INITIALIZED!');
-                var source = '';
-            }
+            // reinit only after click on nav
+            // is uninitialized when clickin on folder!
+            // how to check here? file info in filelist needs to be updated to have info on source
+            // but this info won't be available at this time -> app.js
+            
             */
             // hier keine anpassung von dir, das stimmt dank changeDirectory, 
             // only set source in AJAX data correctly!
@@ -385,33 +377,21 @@
             var snapshotIds = [];
             var params = {};
             this.disableActions();
-            // auch bei all files muss eine schleife für jeden file source und ggf snapshot ermitteln
-            // --> allfiles entfällt
-            /*if (allFiles) {
-                this.showMask();
-                params = {
-                    allfiles: true,
-                    dir: dir
-                };
-            }
-            else {*/
+            // loop has to get source and snapshot of file, when all files are selected
+            // --> allfiles obsolete
             files = _.pluck(this.getSelectedFiles(), 'name');
-            //console.log('filelist RestoreSelected, files = ' + files.toString());
+            
             // checking for every file 
             //  good: files may be from different sources
             //  bad: costs performance, when only one source has to be recovered
             for (var i = 0; i < files.length; i++) {
-                // planned for post params in recover() - not needed!!!
-                //if (this.getCurrentSource !== 'octrash') {
-                //    files[i] = OCA.Recover.App.removeMtime(files[i]);
-                //}
                 var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
                 deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
                 // if dir = /, push current file's source and snapshot in array
                 // further: only if source isn't oc-trash bin
                 // otherwise source and snapshot are the same within a directory
                 // data-etag = snapshot, data-mime=source
-                // OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478")
+                
                 // Returns the tr element for a given file name
                 // -> OCA.Recover.App.fileList.findFileEl("snap_3_file3.d1443271478").attr("data-etag")
                 if (dir === "/") {
@@ -420,7 +400,6 @@
                         snapshotIds.push(this.findFileEl(files[i]).attr("data-etag"));
                     }
                 }
-
             }
             if (dir === "/") {
                 params = {
@@ -441,43 +420,28 @@
                     snapshotIds: this.getCurrentSnapshot()
                 };
             }
+            /*
             console.log('RECOVER filelist RestoreSelected currentDir = ' + dir);
             console.log('RECOVER filelist RestoreSelected files = ' + files);
             console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
             console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
-            //} if allfiles!
-
-            //$.post(OC.filePath('recover', 'ajax', 'undelete.php'),
+            */
             $.post(OC.generateUrl('/apps/recover/recover'), 
                 params,
                 function(result) {
                     // allfiles obsolete, was only implemented for oc trash bin
-                    // now never true
-                    if (allFiles) {
-                        //if (result.status !== 'success') {
-                        if (result.statusCode !== '200') {
-                                console.log('RECOVER filelist _onClickRestoreSelected result.statusCode = ' + result.statusCode);
-                                OC.dialogs.alert(result.data.message, t('recover', 'Error'));
-                        }
-                        self.hideMask();
-                        // simply remove all files
-                        self.setFiles([]);
-                        self.enableActions();
+                    // show message after successful recovery of file(s)
+                    if (result.statusCode == '200') {
+                        OC.dialogs.alert(result.data.message, t('recover', 'Info'));
                     }
                     else {
-                        // show message after successful recovery of file(s)
-                        if (result.statusCode == '200') {
-                            OC.dialogs.alert(result.data.message, t('recover', 'Info'));
-                        }
-                        else {
-                            OC.dialogs.alert(result.data.message, t('recover', 'Error'));
-                        }
-                        self._removeCallback(result);
+                        OC.dialogs.alert(result.data.message, t('recover', 'Error'));
                     }
+                    self._removeCallback(result);
                 }
             );
         },
-
+        /* delete not implemented, just deactivate
         _onClickDeleteSelected: function(event) {
             event.preventDefault();
             var self = this;
@@ -529,7 +493,7 @@
                 }
             );
         },
-
+        */
         _onClickFile: function(event) {
             // need to get source of dir, if clicked file is dir
             //var type = this.fileActions.getCurrentType();
@@ -638,22 +602,6 @@
                 });
                console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir + ' USES getCurrentMimeType for SOURCE!');
        }
-        /* further source now in mimetype, would be better to use "source:" and this function
-         this won't find specific source, just first occurence!!
-            -> introduce new var _currentSource + set/get Methods
-        getSource: function() {
-            console.log('RECOVER in getSource!');
-            if (OCA.Recover.App.fileList.initialized) { 
-                var fileListJSON = OCA.Recover.App.fileList.files.toSource();
-                var pattern = /source:"[.+]/;
-                var source = pattern.exec(fileListJSON);
-                console.log('RECOVER filelist getSource source = ' + source);
-                return source;
-            } else {
-                console.log('RECOVER filelist getSource: OCA.Recover.App.fileList.files is undefined!')
-            }
-        }
-        */
     });
     OCA.Recover.FileList = FileList;
 })();

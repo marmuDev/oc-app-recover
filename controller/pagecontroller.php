@@ -109,7 +109,7 @@ class PageController extends Controller {
     
     public function listBackups($dir = '/', $source = '', $sort = 'mtime', $sortdirection = 'desc') {
         //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
-        // OC app framework way would be to pass those via the URL as params
+        // OC app framework way would be to pass those via the URL as params(?)
         $dirGet = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
         $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'mtime';
         //$sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
@@ -169,7 +169,7 @@ class PageController extends Controller {
                 //if(!empty($arr))
                 $mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files'], $filesFromTubfsSs);
                 
-                // sort Files 
+                // sort Files and update ID
                 $sortedFiles = $this->sortFilesArray($mergedFiles, $sortAttribute, $sortDirection);
                 // is already run for OC trashbin by listTrashbin: \OCA\Files_Trashbin\Helper::getTrashFiles 
                 // trying to sort with OC Files helper Class -> only works with FileInfo-Objects!!!
@@ -261,13 +261,13 @@ class PageController extends Controller {
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             //}
             // getting json here, therefore decoding to array!
-            $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
+            $filesFromSourceTubfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
         }
-        return $filesFromSourceGpfsSs;
+        return $filesFromSourceTubfsSs;
     }
     
     /* I guess all sources could have one function in the future
@@ -498,7 +498,7 @@ class PageController extends Controller {
         //return true;
         return $result;
     }
-
+    // left over from oc trash bin, not implemented for other sources yet, commented out in filelist.js
     public function delete() {
         \OC::$server->getSession()->close();
         $folder = isset($_POST['dir']) ? $_POST['dir'] : '/';
@@ -563,7 +563,7 @@ class PageController extends Controller {
 
     /* Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
      * need to reindex Array, although filelist seems to be dependent on fileIDs. 
-     * -> it isn't but now IDs correct
+     * IDs important for file selection
      * @param Array $files all files ($mergedFiles)
      * @param String $sortAttribute sort by mtime or name
      * @param String $sortDirection sort desc or asc
@@ -595,10 +595,11 @@ class PageController extends Controller {
                 });
             }
         }
-        // just putting new ID in after sorting
+        // putting new ID in after sorting
         $idCounter = 0;
         foreach($files as $file) {
             $file['id'] = $idCounter;
+            $files[$idCounter] = $file;
             $idCounter++;
         }
         return $files;
