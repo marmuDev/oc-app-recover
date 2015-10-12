@@ -230,8 +230,8 @@
         removeMtime: function(name) {
            var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
            if (pattern.test(name)) {
-                //console.log("name in removeMtime = " + name);
-                //console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
+                console.log("name in removeMtime = " + name);
+                console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
                 // dirs start with "/" -> 1, files without -> 0
                 if (name.charAt(0) === '/') {
                     name = name.substr(1, name.length - 13);
@@ -239,9 +239,10 @@
                 else {
                     name = name.substr(0, name.length - 13);
                 }
-                //console.log("name in removeMtime = " + name);
+               console.log("name in removeMtime = " + name);
                 return name;
             }
+            //return name;
         }
     };
 })();

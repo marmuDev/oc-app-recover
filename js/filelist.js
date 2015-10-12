@@ -326,22 +326,6 @@
         /**  used when deleting entries from the list, delete and recover **/
         _removeCallback: function(result) {
             console.log("RECOVER removeCallback oben");
-            //copied from _onClickFile + setSource
-            
-            // why was that needed in here again??
-            // after recovery of file this sets wrong source and snapshot!!
-            /*
-            var mimeType = this.fileActions.getCurrentMimeType();
-            if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
-                // look at mime above, would this be possible for source too??! 
-                // this.fileActions.currentFile.parent().data('mime')
-                //var parentId = this.fileActions.getCurrentSnapshot();
-                //console.log('RECOVER filelist _onClickFile: parentId = ' + parentId);
-                var snapshot = this.fileActions.currentFile.parent().attr('data-etag');
-                this._setCurrentSnapshot(snapshot);
-                this._setCurrentSource(mimeType);
-            }
-            */
             //if (result.status !== 'success') {
             if (result.statusCode !== '200') {
                     console.log('RECOVER filelist _removeCallback result.statusCode = ' + result.statusCode);
@@ -430,13 +414,8 @@
                 params,
                 function(result) {
                     // allfiles obsolete, was only implemented for oc trash bin
-                    // show message after successful recovery of file(s)
-                    if (result.statusCode == '200') {
-                        OC.dialogs.alert(result.data.message, t('recover', 'Info'));
-                    }
-                    else {
-                        OC.dialogs.alert(result.data.message, t('recover', 'Error'));
-                    }
+                    // show message after successful recovery of file(s) 
+                    // now only in removeCallback, since allfiles was removed
                     self._removeCallback(result);
                 }
             );
@@ -567,7 +546,8 @@
         * @param {boolean} force set to true to force changing directory
         */
        changeDirectory: function(targetDir, changeUrl, force) {
-                var self = this;
+           console.log('RECOVER filelist changeDirectory, targetDir = ' + targetDir);     
+           var self = this;
                 var currentDir = this.getCurrentDirectory();
                 targetDir = targetDir || '/';
                 if (!force && currentDir === targetDir) {
@@ -588,7 +568,9 @@
                 source = this.getCurrentSource();  
                 // edit targetDir: if ".d1437995265" and files from external source requested, remove last 12 chars .d1437995265 (mtime)
                 console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
-                if (source !== 'octrash') {
+                // if in root, directories got .dmtime at the end of dir name
+                // To do: check would be obsolete, if that never is the case
+                if (source !== 'octrash' && currentDir === '/') {
                     // exernal source -> edit targetDir
                     targetDir = OCA.Recover.App.removeMtime(targetDir);
                 }
