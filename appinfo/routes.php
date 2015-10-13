@@ -1,21 +1,23 @@
 <?php
 /**
- * ownCloud - recover
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * ownCloud - Recover
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
-/** the news app way
-return ['routes' => [
-	['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-	['name' => 'page#get_recently_deleted', 'url' => '/recently', 'verb' => 'GET']
-	['name' => 'page#list_trash_bin', 'url' => '/listtrash', 'verb' => 'GET']
-]];
-*/
 
 namespace OCA\Recover\AppInfo;
 
@@ -41,26 +43,8 @@ $application->registerRoutes($this,
         // old, now via listBackups
         //array('name' => 'page#list_trash_bin', 'url' => '/trashlist{dir}', 'verb' => 'GET',
         //		'requirements' => array('dir' => '.+')),
-        ['name' => 'page#list_backups', 'url' => '/listbackups', 'verb' => 'GET'],//,
-            //'requirements' => [
-              //  'dir' => '.+'
-          //  ],
-
-        /*
-        ['name' => 'page#list_backups', 'url' => '/listbackups/{dir}/{source}/{sort}/{sortdirection}', 'verb' => 'GET', 
-            'requirements' => [
-                //'dir' => '.+'
-                'dir' => '[.+]/'
-            ],
-            'defaults' => [
-                'dir' => '/',
-                'source' => '',
-                'sort' => 'name',
-                'sortdirection' => 'asc'
-            ]
-],*/
+        ['name' => 'page#list_backups', 'url' => '/listbackups', 'verb' => 'GET'],
         ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST']
-       // ['name' => 'page#delete', 'url' => '/delete', 'verb' => 'POST']
     ]
 ]);
 

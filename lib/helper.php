@@ -1,7 +1,8 @@
 <?php
 /**
- * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
+ * ownCloud - Recover
  *
+ * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
  * @license AGPL-3.0
  *
@@ -15,12 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
- * 
- * needs more params, check files-app lib/helper and trashbin lib/helper:
- * ($dir, \OCP\User::getUser(), $sortAttribute, $sortDirection);
- * 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 namespace OCA\Recover;
 use OC\Files\FileInfo;
@@ -81,7 +77,10 @@ class Helper {
 
         return $files;
     }
-    
+     /* Get JSON data from webservice
+     * @param $serviceUrl URL of webservice, defines directory to be listed, source and sorting parameters
+     * @return $files Files and Folders of path in JSON
+     */
     public static function callWebservice($serviceUrl) {
         $ch = curl_init();
         // Disable SSL verification

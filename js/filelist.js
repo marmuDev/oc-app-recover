@@ -1,12 +1,22 @@
 /**
- * ownCloud - recover - filelist
- *	adapted from OC Core files_trashbin and files filelist.js 
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * ownCloud - Recover - filelist
+ * adapted from OC Core files_trashbin and files filelist.js 
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 (function() {
     'use strict';
@@ -46,12 +56,7 @@
         /** @lends OCA.Recover.FileList.prototype */ {
         id: 'recover',
         appName: 'Recover',
-        /**
-        * Current source of filelist
-        * now in Recover App
-        * @type String
-        */
-        //_currentSource: null,
+       
         /**
          * @private
          */
@@ -153,7 +158,7 @@
         /**
          * Reloads the file list
          *
-         * @return ajax object (still?)
+         * @return ajax object
          */
 
         reload: function() {
@@ -165,7 +170,7 @@
             // but this info won't be available at this time -> app.js
             
             */
-            // hier keine anpassung von dir, das stimmt dank changeDirectory, 
+            // no adaption of dir in here, is correct thanks to changeDirectory, 
             // only set source in AJAX data correctly!
             // just to have it defined
             var dir = this.getCurrentDirectory();
@@ -179,21 +184,15 @@
             //debugger;
             //console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
             this._selectedFiles = {};
-            // bei erneutem reload null -> if? jetzt testweise erstmal raus -> dann this.$el is null
             this._selectionSummary.clear();
             this.$el.find('.select-all').prop('checked', false);
             this.showMask();
-            // -> params ok, aber http get kackt ab,
-            // route didn't match "/trashlist?dir=...."
-
             if (this._reloadCall) {
                     this._reloadCall.abort();
             }
             // call this directly for reloading trash list? no
             this._reloadCall = $.ajax({
-                //url: 'http://localhost/core/index.php/apps/recover/trashlist', 
-                //url : OC.generateUrl('/apps/recover/trashlist'),
-                // wieder mit data und $_GET vars
+                // back to using data and $_GET vars
                 //url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/' + source + '/' + sort + '/' + sortdirection),
                 url: OC.generateUrl('/apps/recover/listbackups'),
                 // params should be put in URL for routes + pagecontroller to work!
@@ -211,15 +210,12 @@
                
             });
             console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
-            // nochmal ohne source
+            // again without source
             //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
 
-        /** from files/js/filelist
-         *  
-         **/
         reloadCallback: function(result) {
             delete this._reloadCall;
             this.hideMask();
@@ -256,8 +252,7 @@
             if (result.data.permissions) {
                 this.setDirectoryPermissions(result.data.permissions);
             }
-            // original -> sends files-array to files/js/filelist.js
-            // set files seems ok
+            // sets files-array (files/js/filelist.js)
             this.setFiles(result.data.files);
             //console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
             return true;
@@ -267,7 +262,8 @@
                 // override and do nothing
         },
 
-        /* ??? to be adapted? YES!
+        /* To do: is kind of broken and totally messy!
+         * seems to be responsible for generating links to be used with routes and history
             http://api.owncloud.org/classes/OCP.Util.html#linkTo
             linkTo(string $app, string $file, array $args) : string
             Deprecated 8.1.0 Use \OC::$server->getURLGenerator()->linkTo($app, $file, $args)
@@ -297,7 +293,7 @@
             return genUrl;
             // linkToRoute? is not a function! 
                     // seems to be PHP only!
-            // ohne linkTo passiert nichts
+            // without linkTo nothing happens
 
             // -> redirect to files app
             //var linkTo = OC.linkTo('recover')+"?dir="+ encodeURIComponent(dir).replace(/%2F/g, '/');
@@ -348,8 +344,7 @@
             this.enableActions();
         },
         /* only used, when (multiple) files have been selected 
-         * NOT when directly clicking 'recover'!
-         * When clicking on recover ==> App: fileActions.register "recover"
+         * NOT when directly clicking 'recover'! ==> App: fileActions.register "recover"
          */
         _onClickRestoreSelected: function(event) {
             event.preventDefault();
@@ -361,8 +356,8 @@
             var snapshotIds = [];
             var params = {};
             this.disableActions();
-            // loop has to get source and snapshot of file, when all files are selected
-            // --> allfiles obsolete
+            // loop has to get source and snapshot of file
+            // allfiles obsolete (trashbin) was removed
             files = _.pluck(this.getSelectedFiles(), 'name');
             
             // checking for every file 
@@ -376,8 +371,6 @@
                     // delete stuff may be obsolete
                     var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
                     deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-                    // if dir = /, push current file's source and snapshot in array
-                    // further: only if source isn't oc-trash bin
                     // otherwise source and snapshot are the same within a directory
                     // data-etag = snapshot, data-mime=source
 
@@ -390,7 +383,6 @@
                         snapshotIds.push(this.findFileEl(files[i]).attr("data-etag"));
                     }
                 }
-                
             }
             else {
                 sources.push(this.findFileEl(files[0]).attr("data-mime"));
@@ -473,30 +465,28 @@
         _onClickFile: function(event) {
             // need to get source of dir, if clicked file is dir
             //var type = this.fileActions.getCurrentType();
-            // immer alter wert! hängt nen click hinter her!
+            // always the old value, is one click behind
             //console.log('RECOVER filelist _onClick this.fileActions.getCurrentType() = ' + this.fileActions.getCurrentType());
             var $tr = $(event.target).closest('tr');
             this.fileActions.currentFile = $tr.find('td');
             //console.log('current file/dir = ' +this.fileActions.currentFile.toString());
+            // not used except for logging!
             var type = this.fileActions.getCurrentType();
             //console.log('RECOVER _onClickFile type = ' + type);
             if (type === 'dir') {
                 console.log('RECOVER filelist _onClickFile type = dir' );
             }
-            var mime = $(this).parent().parent().data('mime');
             // trying this in reload above! 
             // -> source important here and in changeDir, set parentId (snapshot) only in here
             var mimeType = this.fileActions.getCurrentMimeType();
             if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
                 console.log('RECOVER filelist _onClickFile mimeType = ' + mimeType);
                 // look at mime above, would this be possible for source too??! 
-                // this.fileActions.currentFile.parent().data('mime')
-                //var parentId = this.fileActions.getCurrentSnapshot();
-                //console.log('RECOVER filelist _onClickFile: parentId = ' + parentId);
                 var snapshot = this.fileActions.currentFile.parent().attr('data-etag');
                 this._setCurrentSnapshot(snapshot);
             }
-            
+            // redundant?!
+            var mime = $(this).parent().parent().data('mime');
             // if not clicking on dir? (keep, but never seems to be the case)
             if (mime !== 'httpd/unix-directory') {
                 // deprecated? there was something in the JS console,     
@@ -537,7 +527,7 @@
             return true;
         },
         /**
-        * @brief Changes the current directory and reload the file list.
+        * @brief Changes the current directory and reloads the file list.
         * @param targetDir target directory (non URL encoded)
         * @param changeUrl false if the URL must not be changed (defaults to true)
         * @param {boolean} force set to true to force changing directory

@@ -3,11 +3,11 @@
     <!-- Required: This field contains the internal app name, and has to be the same as the folder name of the app. This id needs to be unique in ownCloud, meaning no other app should have this id. -->
     <id>recover</id>
     <name>Recover</name>
-    <description>Recover files from different sources</description>
+    <description>Recover files from different sources using a SLIM webservice</description>
     <namespace>Recover</namespace>
     <licence>AGPL</licence>
     <author>Marcus Mundt</author>
-    <version>0.0.3</version>
+    <version>0.1.0</version>
     <requiremin>7.0</requiremin>
     <types>
         <type>filesystem</type>

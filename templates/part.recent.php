@@ -106,13 +106,6 @@ now without angular!
                 </th>
                 <th id="headerDate" class="hidden column-mtime">
                     <a id="modified" class="columntitle" data-sort="mtime"><span><?php p($l->t( 'Deleted' )); ?></span><span class="sort-indicator"></span></a>
-                    <span class="selectedActions">
-                        <a href="" class="delete-selected">
-                            <?php p($l->t('Delete'))?>
-                            <img class="svg" alt=""
-                                src="<?php print_unescaped(OCP\image_path("core", "actions/delete.svg")); ?>" />
-                        </a>
-                    </span>
                 </th>
             </tr>
         </thead>

@@ -1,15 +1,23 @@
 /**
- * ownCloud - recover - Recover - adapted from trashbin among others
+ * ownCloud - Recover 
+ * adapted from OC files_trashbin among others
  *	
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
-
-	script.js in app.js, config.js, run.js und 
-	weitere bestandteile wie controller etc. unterteilen
-*/
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
+ */
 (function() {
     'use strict';
     if (!OCA.Files) {
@@ -80,21 +88,14 @@
                     }
             );
             //console.log('in init of OCA.Recover.App before manual reload');
-            // hack to force loading of list -> myfilelist reload -> $.ajax
+            // hack to force loading of list -> filelist reload -> $.ajax
             this.fileList.reload();
             this._setupEvents();
-            /*
-            params = 	{
-                                            dir: '/',
-                                            view: 'recently_deleted'
-                                    }
             // triggers setActive, shouldn't be triggered twice!
-            this._onPopState(params);
-            */
+            //this._onPopState(params);
             this._initialized = true;
         },
 
-        // adapt according to file source and coresponding functions etc.
         _createFileActions: function() {
             console.log('APP createFileActions beginning');
             var fileActions = new OCA.Files.FileActions();
@@ -122,36 +123,10 @@
                     console.log('APP register recover, filename = ' + filename);
                 }
                 */
-                // if root-dir do similar to filelist onClickRestoreSelected
+                // similar to filelist onClickRestoreSelected
                 var params = {};
                 var sources = [];
                 var snapshotIds = [];
-                /*
-                if (dir === "/") { 
-                    sources = tr.attr("data-mime");
-                    console.log('APP register recover, source = ' + sources);
-                    snapshotIds = tr.attr("data-etag");
-                    console.log('APP register recover, snapshot = ' + snapshotIds);
-                    params = {
-                        files: JSON.stringify([filename]),
-                        dir: dir,
-                        sources: sources,
-                        snapshotIds: snapshotIds
-                    };
-                }
-                else {
-                    params = {
-                        files: JSON.stringify([filename]),
-                        dir: dir,
-                        // why doesn't "this.fileList... or this._currentX work here?
-                        //sources: OCA.Recover.App.fileList.getCurrentSource(),
-                        //sources: JSON.stringify(OCA.Recover.App._currentSource),
-                        sources: OCA.Recover.App._currentSource,
-                        //snapshotIds: OCA.Recover.App.fileList.getCurrentSnapshot()
-                        snapshotIds: OCA.Recover.App._currentSnapshot
-                    };
-                }
-                */
                 sources.push(tr.attr("data-mime"));
                 snapshotIds.push(  tr.attr("data-etag"));  
                 params = {
@@ -226,9 +201,9 @@
             var lastId = OCA.Recover.App.navigation.getActiveLink().id;
             console.log('RECOVER app _onPopState, lastId = ' + lastId + ', current id = ' + itemId);
             if (!this.navigation.itemExists(itemId)) {
-                    console.log('RECOVER app _onPopState, if item does not exist, set itemId = "recently_deleted"');
+                    console.log('RECOVER app _onPopState, if item does not exist, set itemId = "recently_backed_up"');
                     // set initial view (active Link to recover)
-                    itemId = 'recently_deleted';
+                    itemId = 'recently_backed_up';
                     //this.navigation.loadLink(itemId);
             }
             // set active
@@ -250,24 +225,22 @@
                 else {
                     name = name.substr(0, name.length - 13);
                 }
-               console.log("name in removeMtime = " + name);
+                console.log("name in removeMtime = " + name);
                 return name;
             }
+            // only returning original name if pattern not found -> oc trashbin not supported anymore
             //return name;
         }
     };
 })();
 
-
-
-
 // hack from files/js/app.js 
 $(document).ready(function() {
 	// wait for other apps/extensions to register their event handlers and file actions 
 	// in the "ready" clause
-	// also seems to be working with out defer
+	// also seems to be working without defer
 	//OCA.Recover.App.initialize();
 	_.defer(function() { 
-			OCA.Recover.App.initialize();
+            OCA.Recover.App.initialize();
 	});
 });

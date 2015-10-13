@@ -24,8 +24,7 @@ $app = new App('recover');
 $app->addNavigationEntry(array(
     // the string under which your app will be referenced in owncloud
     'id' => 'recover',
-
-    "appname" => 'recover', 
+    'appname' => 'recover', 
     // taken from files_trashbin (app) -> list.php in root creates template from /templates/index.php
     //"script" => 'list.php',
 

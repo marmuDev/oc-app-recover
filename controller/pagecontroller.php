@@ -1,15 +1,23 @@
 <?php
-
 /**
  * ownCloud - Recover
  *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 namespace OCA\Recover\Controller;
 
 // use OCP namespace for all classes that are considered public.
@@ -19,17 +27,9 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\NotFoundResponse;
-//use OCP\JSON;
 use OCP\AppFramework\Http\JSONResponse;
-
 use OCP\AppFramework\Controller;
 
-
-
-
-// for own DB entries, tables etc. - for standard trashbin stuff obsolete
-//use \OCA\Recover\Db\Item; -> gibts nicht mehr ggf aus backup holen
-// for trashbin use (standard?) mapper
 use OCA\Recover\Db\TrashBinMapper;
 use OCA\Files_Trashbin;
 
@@ -53,9 +53,9 @@ class PageController extends Controller {
             'request' => $this->request
         ]);
     }
-    /** get template data with JS and replace app-content via handlebars client-side templating
+    /** improvement: get template data with JS and replace app-content via handlebars client-side templating
      *  are routes + controllers needed at all for this?
-     *  back to trashbin-style, trying to load different contents via ajax
+     *  back to trashbin-style, load different contents via ajax
      *  __construct(string $appName, string $templateName, array $params, string $renderAs)
     */
     public function recently() {
@@ -64,8 +64,7 @@ class PageController extends Controller {
                 'appname' => $this->appName,
                 'request' => $this->request
             ],
-            // don't include in web interface, solely render the template
-            //'blank'
+            // don't include in web interface, solely render the template (blank=
             ''
         );
     }
@@ -97,13 +96,15 @@ class PageController extends Controller {
         return $this->trashBinMapper->find($this->userId);
     }
     /*
-     * call functions to get backed up files depending on sources
+     * calls functions to get backed up files depending on sources
      * if no source is specified, we want all backed up files of user from any possible source
-     * route: ['name' => 'page#list_backups', 'url' => '/listbackups{dir}/-/{source}/{sort}/{sortdirection}', 'verb' => 'GET'],
+     * route: ['name' => 'page#list_backups', 'url' => '/listbackups', 'verb' => 'GET'],
+     * 
      * @param String $dir directory to be listed
+     * @param String $source source of backup files: octrash | ext4 | gpfsss | tubfss 
+     * (oc trashbin, local ext4 files or GPFS/TUBFS Snapshots, removed trash bin compatibility, now only tubfsss)
      * @param String $sort attribut to sort files by
      * @param String $sortdirection asc | desc (ascending or descending)
-     * @param String $source source of backup files octrash | ext4 | gpfsss | tubfss (oc trashbin, local ext4 files or GPFS/TUBFS Snapshots)
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
      */
     
@@ -122,19 +123,10 @@ class PageController extends Controller {
             case 'octrash':
                 $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
                 break;
-            /* add files from other sources 
-            * Problem: filesFromJson is String, needs to be OC\Files\FileInfo
+            /* add files from other sources - only tubfsss for now
+            * filesFromJson is String, OC uses OC\Files\FileInfo
             * thats seems a bit too much work for now
-            * trying to append JSON data to $data['files'], JSON is string!!
-            * 
-            * other file info needs to be formated too in some kind of way!!!
-            * webservice will do that for each source, so in here only the correct format is available
-            * 
             */
-            // work around for testing purposes - but omits default listing of all sources!
-            //case 'undefined':
-            //    $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
-            //    break;
             case 'ext4':
                 $files = $this->listTestdir($dirGet, $sourceGet);
                 $data = $this->sortFilesArray($files, $sortAttribute, $sortDirection);
@@ -148,11 +140,12 @@ class PageController extends Controller {
                 $data['files'] = $this->sortFilesArray($files['files'], $sortAttribute, $sortDirection);
                 break;
             // list files of root directory -> collect data from all sources
+            // tubfsss only for now
             // initial no source available, set manually!
             default:
-                $data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
-                $filesFromExt4 = $this->listTestdir($dirGet, 'ext4');
-                $filesFromGpfsSs = $this->listGpfsSs($dirGet, 'gpfsss');
+                //$data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
+                //$filesFromExt4 = $this->listTestdir($dirGet, 'ext4');
+                //$filesFromGpfsSs = $this->listGpfsSs($dirGet, 'gpfsss');
                 // need to iterate through snapshots 0-5
                 $filesFromTubfsSs = array();
                 for ($snapCount = 0; $snapCount<6; $snapCount++) {
@@ -160,106 +153,69 @@ class PageController extends Controller {
                     //array_push($filesFromTubfsSs['files'][], $tmpTubfs['files']);
                     $filesFromTubfsSs = array_merge($filesFromTubfsSs, $tmpTubfs['files']);
                 }
-                // hack to merge (push), I guess this could be done better above
-                //$filesFromTubfsSsMerged = array();
-                //for ($snapCount = 0; $snapCount<6; $snapCount++) {
-                //    array_push($filesFromTubfsSsMerged, $filesFromTubfsSs[$snapcount]);
-                //}
                 // merge arrays from all sources - only if array is not empty?!
-                //if(!empty($arr))
-                $mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files'], $filesFromTubfsSs);
-                
+                //$mergedFiles = array_merge($data['files'], $filesFromExt4['files'], $filesFromGpfsSs['files'], $filesFromTubfsSs);
                 // sort Files and update ID
-                $sortedFiles = $this->sortFilesArray($mergedFiles, $sortAttribute, $sortDirection);
+                //$sortedFiles = $this->sortFilesArray($mergedFiles, $sortAttribute, $sortDirection);
+                $sortedFiles = $this->sortFilesArray($filesFromTubfsSs, $sortAttribute, $sortDirection);
                 // is already run for OC trashbin by listTrashbin: \OCA\Files_Trashbin\Helper::getTrashFiles 
-                // trying to sort with OC Files helper Class -> only works with FileInfo-Objects!!!
+                // trying to sort with OC Files helper Class -> only works with FileInfo-Objects!
                 //$sortedFiles = \OCA\Files\Helper::sortFiles($mergedFiles, $sortAttribute, $sortDirection);
                 //$data['files'] = $mergedFiles;
                 $data['files'] = $sortedFiles;
         }
         ////return new DataResponse($data); this was missing one layer 
-        // gotta be result.data.files in myfilelist.js!!!
-        // Use a AppFramework JSONResponse instead!!!
-        // http://api.owncloud.org/classes/OCP.JSON.html
-        //return new DataResponse(array('data' => $data));
+        // gotta be result.data.files in filelist.js!
+        // Use a AppFramework JSONResponse instead!
         return new JSONResponse(['data' => $data, "statusCode" => "200"]);
     }
     
     /** adapted from files_trashbin/ajax/list
      * http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
-     * raydiation: listTrashBin($dir='', $sort='name', $sortdirection=false)
-     *  -> setting default parameter values
      * 
-     * lists trashbin files for current directory!!!
-     * -> how will I get the directory structure of another source working?!
-     * ==> directory structure of avalable files muss be present at this time!
+     * lists trashbin files for current directory
+     * ==> directory structure of available files muss be present at this time!
      * 
      * @param String $dir directory to be listed
      * @param String $sort attribut to sort files by
      * @param String $sortdirection asc | desc (ascending or descending)
      * @return Array $data with inclunding permissions, directory, files and source within files
-     * 
      */
     public function listTrashBin($dir='/', $sort='name', $sortdirection=false) {
-    //public function listTrashBin($dir, $sort, $sortdirection) {
-        // Deprecated Use annotation based ACLs from the AppFramework instead
         // is checked by app framework automatically
         //\OCP\JSON::checkLoggedIn();
         // also obsolete!
         //\OC::$server->getSession()->close();
-
-        // adapt https://github.com/owncloud/core/blob/master/settings/controller/userscontroller.php#L200
-        // and /apps/files_trashbin/ajax/list.php (?)
         // Load the files
         $data = array();
-        
-        // make filelist - must be ommitted when files from external source are requested!
         try {
             // this is OC\Files\FileInfo format
             $files = \OCA\Files_Trashbin\Helper::getTrashFiles($dir, \OCP\User::getUser(), $sort, $sortdirection);
         } catch (Exception $e) {
-            // what about returning JSONResponse with "statusCode" => "500"
-            // how is result.status === error in original trashbin (filelist->reloadCallback)
             // don't use the header method but return a Response with the Http::STATUS_NOT_FOUND
-            //header("HTTP/1.0 404 Not Found");
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
         }
-                 
         $encodedDir = \OCP\Util::encodePath($dir);
         $data['permissions'] = 0;
         $data['directory'] = $dir;
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
-        
         return $data;
-        
-        // original trashbin/ajax/list.php
-        // OCP\JSON::success(array('data' => $data));
-        //return true;
-      
     }
-    /*
-     * /tubfs/.snapshots/snap_0/owncloud/data/<user>/files/ (snap_0 - snap_5)
+    /* Calls webservice via Helper using cURL
+     * path to be listed (base directory of user):
+     * /tubfs/.snapshots/snap_<snapshotId>/owncloud/data/<user>/files/ (snap_0 - snap_5)
+     * @param String $dir directory to be listed 
+     * @param String $sourceGet source filesystem from $_GET variable
+     * @return String JSON $filesFromSourceTubfsSs filelist
      */
     function listTubfsSs($dir, $sourceGet) {
         $baseDir = '/tubfs%2F.snapshots';
         try {
-            // obsolete?!?!? just list given directory in this case?
-            // if not root dir, hack to prepend slash in front of subdir, else list root dir!      
-            //if ($dir !== '/snap_0/owncloud/data/admin/files/') {
-            /*if (!preg_match("/\/snap_[0-9]\/owncloud\/data\/[a-z]+\/files\//", $dir)) {
-                $dir = '%2F'.$dir;
-                $dir = \str_replace('/', '%2F', $dir);
-                // how to get /snap_0/owncloud/data/admin/files/ appended in front?
-                // problem mit snap_x -> snap_x intern behandeln aber transparent für user!
-                $dir = $baseDir."%2Fsnap_0%2Fowncloud%2Fdata%2Fadmin%2Ffiles%2F".$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-            } else {*/
-                $dir = \str_replace('/', '%2F', $dir);
-                $dir = $baseDir.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-            //}
+            $dir = \str_replace('/', '%2F', $dir);
+            $dir = $baseDir.$dir;
+            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             // getting json here, therefore decoding to array!
             $filesFromSourceTubfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
         } catch (Exception $e) {
@@ -270,10 +226,11 @@ class PageController extends Controller {
         return $filesFromSourceTubfsSs;
     }
     
-    /* I guess all sources could have one function in the future
-     * list EXT4 files via webservice4recover
-     * To do: implement one function for all external sources?
+    /* 
+     * list EXT4 files via webservice4recover -> listDirGeneric
+     * 
      * @param String $dir directory to get contents of
+     * @param String $sourceGet source filesystem from $_GET variable
      * @return Array $filesFromExt4['files'] contents of given directory
      */
     function listTestdir($dir, $sourceGet) {
@@ -306,9 +263,11 @@ class PageController extends Controller {
         return $filesFromSourceExt4;
     }
     
-    /* I guess all sources could have one function in the future
+    /* 
      * list GPFS Snapshot files via webservice4recover
+     * 
      * @param String $dir directory to get contents of
+     * @param String $sourceGet source filesystem from $_GET variable
      * @return Array $filesFromSourceGpfsSs contents of given directory
      */
     function listGpfsSs($dir, $sourceGet) {
@@ -334,10 +293,15 @@ class PageController extends Controller {
         return $filesFromSourceGpfsSs;
     }
     
-    /*
+    /* Recovers files from different sources. tubfsss implemented others prepared
+     * Route: ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST']
      * 
-     * => http://localhost/core/index.php/apps/recover/recover
-     * 
+     * not really using parameters, but $_POST variables:
+     * @param String $_POST['files'] files to be recovered
+     * @param String $_POST['dir'] source directory of files
+     * @param String $_POST['sources'] sources (filesystem, directory, mount point) of files
+     * @param String $_POST['snapshotIds'] files may be located in different shnapshots
+     * @return JSONResponse array with statusCode and success or error message
      */
     public function recover() {
         //\OC::$server->getSession()->close(); -> obsolete, see above
@@ -366,9 +330,7 @@ class PageController extends Controller {
                 $snapshotIds = json_decode($_POST['snapshotIds']);
             }
         }
-        
         $list = json_decode($files);
-       
         $error = array();
         $success = array();
         // counter only increases on success, might be problematic!
@@ -396,12 +358,11 @@ class PageController extends Controller {
                 case 'octrash':
                     if ( !\OCA\Files_Trashbin\Trashbin::restore($path, $filename, $timestamp) ) {
                         $error[] = $filename;
-                        // at \/var\/www\/core\/apps\/recover\/controller\/pagecontroller.php#159
-                        // dev manual says to use... for debugging, 
-                        //but exceptions make app crash, since they are exceptions...
-                        //throw new \Exception( "recover can't restore \$filename = $filename" );
+                        // dev manual says to use exceptions for debugging
+                        //but exceptions make app crash, since they are exceptions
+                        //throw new \Exception( "recover can't recover \$filename = $filename" );
                         // "Class 'OCA\\Recover\\Controller\\OC_Log' not found
-                        //OC_Log::write('trashbin', 'can\'t restore ' . $filename, OC_Log::ERROR);
+                        //-> netbeans + x-debug! 
                     } else {
                         $success[$i]['filename'] = $file;
                         $success[$i]['timestamp'] = $timestamp;
@@ -415,8 +376,6 @@ class PageController extends Controller {
                     $error[] = $filename;
                     break;
                 case 'tubfsss':
-                    //$this->recoverTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
-                    //$result = $this->recoverTubfsSs($file, 'tubfsss');
                     // use shapshotIds[i] for each file, but [0] if same snapshot!
                     if ($snapshotCount > 1){
                         $nextSnapshotId = $snapshotIds[$i];
@@ -425,7 +384,8 @@ class PageController extends Controller {
                         $nextSnapshotId = $snapshotIds[0];
                     }
                     $jsonResult = $this->recoverTubfsSs($dir, $filename, 'tubfsss', $nextSnapshotId);
-                    // of course only works with valid json! not valid, then have output of service in jsonResult for later usage
+                    // of course only works with valid json! 
+                    // if not valid, then have output of service (HTML Error Page) in jsonResult for later usage
                     $result = json_decode($jsonResult, true);
                     if (($result === null) || ($result['statusCode'] !== 200)) {
                         $error[] = $filename;                    
@@ -448,7 +408,6 @@ class PageController extends Controller {
             foreach ( $error as $e ) {
                 $filelist .= $e.', ';
             }
-            //$l = OC::$server->getL10N('files_trashbin');
             // translation via transiflex, ignore for now -> TO DO
             //$l = OC::$server->getL10N('recover');
             //$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
@@ -461,7 +420,6 @@ class PageController extends Controller {
                 $message = "Couldn't recover ".substr($filelist, 0, -2).". Webservice says: ".$jsonResult;
             }
             ////$message = $l->t("Couldn't restore %s", array(rtrim($filelist, ', ')));
-            // port to App Framework
             //OCP\JSON::error(array("data" => array("message" => $message,
             //                                    "success" => $success, "error" => $error)));
             return new JSONResponse(array("data" => array
@@ -469,17 +427,24 @@ class PageController extends Controller {
                                         "success" => $success, "error" => $error), "statusCode" => "500"));
         } else {
             //OCP\JSON::success(array("data" => array("success" => $success)));
-            // Use a AppFramework JSONResponse instead!!
-            //return new DataResponse(array('data' => array("success" => $success)));
             $message = "Success! The file(s) have been moved to your home directory (/home/".\OCP\User::getUser()."/recovered).";
             return new JSONResponse(array("data" => array
                                         ("message" => $message,
                                         "success" => $success), "statusCode" => "200"));
         }
     }
-    // distinguish recovery of file and folder at some place!? - how does trashbin solve that?
-    // what if files and folders?!?!
-    // file/folder source path important, destination path depends on source path
+    /* Recovers file/folder from tubfsss via helper class using cURL  
+     * what if files and folders?!?! php rename() does not care,
+     *  but problem if directory exists and is not empty
+     * file/folder source path important, destination path depends on source path
+     * 
+     * @param String $dir directory in which the recover target is located
+     * @param String $filename file/folder below $dir to be recovered
+     * @param String $source stically set to "tubfsss" in recover()
+     * @param Int $snapshotId snapshotId of file/folder to be recovered
+     * 
+     * reminder: /tubfs/.snapshots/snap_<snapshotId>/owncloud/data/<user>/files/<dir>/<filename> (snap_0 - snap_5)
+     */
     public function recoverTubfsSs($dir, $filename, $source, $snapshotId) {
         // attention: dir = "snap_3_folder_1/" if not root -> remove last char
         // does not work for recovering folders in root! -> adapt service source_dir
@@ -488,17 +453,15 @@ class PageController extends Controller {
         }
         $dir = \str_replace('/', '%2F', $dir);
         try {
-            //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$file.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().$snapshotId;
             $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
             //$result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
             $result = \OCA\Recover\Helper::callWebservice($serviceUrl);
         } catch (Exception $ex) {
 
         }
-        //return true;
         return $result;
     }
-    // left over from oc trash bin, not implemented for other sources yet, commented out in filelist.js
+    /* left over from oc trash bin, not implemented for other sources yet, commented out in filelist.js
     public function delete() {
         \OC::$server->getSession()->close();
         $folder = isset($_POST['dir']) ? $_POST['dir'] : '/';
@@ -560,10 +523,10 @@ class PageController extends Controller {
             return new JSONResponse(array("data" => array("success" => $success), "statusCode" => "200"));
         }
     }
+    */
 
     /* Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
-     * need to reindex Array, although filelist seems to be dependent on fileIDs. 
-     * IDs important for file selection
+     * need to reindex Array, IDs important for file selection
      * @param Array $files all files ($mergedFiles)
      * @param String $sortAttribute sort by mtime or name
      * @param String $sortDirection sort desc or asc
@@ -604,5 +567,4 @@ class PageController extends Controller {
         }
         return $files;
     }
-    
 }
