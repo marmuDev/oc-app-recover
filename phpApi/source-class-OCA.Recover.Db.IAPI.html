@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex">
+
+	<title>File db/iapi.php</title>
+
+	<link rel="stylesheet" href="resources/style.css?e99947befd7bf673c6b43ff75e9e0f170c88a60e">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li>
+					<a href="namespace-extClasses.html">
+						extClasses<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-extClasses.Mailer.html">
+						Mailer					</a>
+
+						</li>
+							</ul></li>
+				<li>
+					<a href="namespace-None.html">
+						None					</a>
+
+						</li>
+				<li>
+					<a href="namespace-OCA.html">
+						OCA<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-OCA.Recover.html">
+						Recover<span></span>
+					</a>
+
+						<ul>
+				<li>
+					<a href="namespace-OCA.Recover.AppInfo.html">
+						AppInfo					</a>
+
+						</li>
+				<li>
+					<a href="namespace-OCA.Recover.Controller.html">
+						Controller					</a>
+
+						</li>
+				<li>
+					<a href="namespace-OCA.Recover.Db.html">
+						Db					</a>
+
+						</li>
+				<li>
+					<a href="namespace-OCA.Recover.Service.html">
+						Service					</a>
+
+						</li>
+							</ul></li></ul></li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-extClasses.Mailer.MailInterface.html">extClasses\Mailer\MailInterface</a></li>
+				<li><a href="class-extClasses.Mailer.SendNotifications.html">extClasses\Mailer\SendNotifications</a></li>
+				<li><a href="class-extClasses.Mailer.SmtpMailer.html">extClasses\Mailer\SmtpMailer</a></li>
+				<li><a href="class-JSONResponse.html">JSONResponse</a></li>
+				<li><a href="class-OC.html">OC</a></li>
+				<li><a href="class-OCA.Recover.AppInfo.Recover.html">OCA\Recover\AppInfo\Recover</a></li>
+				<li><a href="class-OCA.Recover.Controller.PageController.html">OCA\Recover\Controller\PageController</a></li>
+				<li><a href="class-OCA.Recover.Controller.PageControllerTest.html">OCA\Recover\Controller\PageControllerTest</a></li>
+				<li><a href="class-OCA.Recover.Db.TrashBin.html">OCA\Recover\Db\TrashBin</a></li>
+				<li><a href="class-OCA.Recover.Db.TrashBinMapper.html">OCA\Recover\Db\TrashBinMapper</a></li>
+				<li><a href="class-OCA.Recover.Helper.html">OCA\Recover\Helper</a></li>
+				<li><a href="class-OCA.Recover.Service.ConfigService.html">OCA\Recover\Service\ConfigService</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-OCA.Recover.Db.IAPI.html">OCA\Recover\Db\IAPI</a></li>
+			</ul>
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+<span>Namespace</span>			</li>
+			<li>
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<pre><code><span id="1" class="l"><a href="#1"> 1: </a><span class="xlang">&lt;?php</span>
+</span><span id="2" class="l"><a href="#2"> 2: </a><span class="php-comment">/**
+</span></span><span id="3" class="l"><a href="#3"> 3: </a><span class="php-comment">* ownCloud - Recover - adapted from News
+</span></span><span id="4" class="l"><a href="#4"> 4: </a><span class="php-comment">*
+</span></span><span id="5" class="l"><a href="#5"> 5: </a><span class="php-comment">* This file is licensed under the Affero General Public License version 3 or
+</span></span><span id="6" class="l"><a href="#6"> 6: </a><span class="php-comment">* later. See the COPYING file.
+</span></span><span id="7" class="l"><a href="#7"> 7: </a><span class="php-comment">*
+</span></span><span id="8" class="l"><a href="#8"> 8: </a><span class="php-comment">* @author Alessandro Cosentino &lt;cosenal@gmail.com&gt;
+</span></span><span id="9" class="l"><a href="#9"> 9: </a><span class="php-comment">* @author Bernhard Posselt &lt;dev@bernhard-posselt.com&gt;
+</span></span><span id="10" class="l"><a href="#10">10: </a><span class="php-comment">* @copyright Alessandro Cosentino 2012
+</span></span><span id="11" class="l"><a href="#11">11: </a><span class="php-comment">* @copyright Bernhard Posselt 2012, 2014
+</span></span><span id="12" class="l"><a href="#12">12: </a><span class="php-comment">* @copyright Marcus Mundt 2015
+</span></span><span id="13" class="l"><a href="#13">13: </a><span class="php-comment">*/</span>
+</span><span id="14" class="l"><a href="#14">14: </a><span class="php-keyword1">namespace</span> OCA\Recover\Db;
+</span><span id="15" class="l"><a href="#15">15: </a>
+</span><span id="16" class="l"><a href="#16">16: </a><span class="php-keyword1">interface</span> IAPI {
+</span><span id="17" class="l"><a href="#17">17: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> toAPI();
+</span><span id="18" class="l"><a href="#18">18: </a>}
+</span><span id="19" class="l"><a href="#19">19: </a></span></code></pre>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js?cd021bc814832c24a7cec5319ea03335bfba1caf"></script>
+<script src="elementlist.js?11d2ad40416cf40d7bd6cbef3d37458124414ee0"></script>
+</body>
+</html>
