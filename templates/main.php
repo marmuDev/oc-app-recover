@@ -76,7 +76,7 @@
     //OCP\App::setActiveNavigationEntry('recently_deleted');
 
     // init of recover app 
-    OCP\Util::addScript('recover', 'app/app');
+    OCP\Util::addScript('recover', 'app');
     OCP\Util::addScript('recover', 'filelist');
     // searchbox adapted from core search
     // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
@@ -91,12 +91,12 @@
     OCP\Util::addScript('files', 'files');
     OCP\Util::addScript('files', 'keyboardshortcuts');
     
-    // search template stuff
+    // search template stuff (angular)
     OCP\Util::addScript('recover', 'vendor/angular.min');
-    OCP\Util::addScript('recover', 'app/config');
+    OCP\Util::addScript('recover', 'config');
     // obsolete and syntax error
     //OCP\Util::addScript('recover', 'app/run');
-    OCP\Util::addScript('recover', 'app/controllers/mainctrl');
+    OCP\Util::addScript('recover', 'mainctrl');
     
 ?>
 <!-- seems like angular stuff messes with DOM, but trying again to make navigation work again 

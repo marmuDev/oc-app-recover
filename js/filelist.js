@@ -21,9 +21,6 @@
 (function() {
     'use strict';
     var DELETED_REGEXP = new RegExp(/^(.+)\.d[0-9]+$/);
-    // how to define? in script.js (angular) ok, here -> "$provide is undefined"
-    // hab ich bereits in angular module config, nix doppelt machen!!!
-    //$provide.constant('BASE_URL', OC.generateUrl('/apps/recover'));
     /**
      * Convert a file name in the format filename.d12345 to the real file name.
      * This will use basename.
@@ -43,7 +40,9 @@
     /**
      * @class OCA.Recover.FileList
      * @augments OCA.Files.FileList
-     * @classdesc List of deleted files
+     * @classdesc List of backed up files and directories
+     *  this.fileList = List of rows (table tbody) = <tbody id="fileList">
+     *  rows are added with files/js/filelist.js: add: function(fileData, options)
      *
      * @param $el container element with existing markup for the #controls
      * and a table
@@ -58,6 +57,8 @@
         appName: 'Recover',
        
         /**
+         * Initialize the filelist, bind event listener, set sort attributes,
+         * make breadcrumbs and attach plugin
          * @private
          */
         initialize: function() {
@@ -95,7 +96,7 @@
         getDirectoryPermissions: function() {
             return OC.PERMISSION_READ | OC.PERMISSION_DELETE;
         },
-
+        
         _setCurrentDir: function(targetDir) {
             OCA.Files.FileList.prototype._setCurrentDir.apply(this, arguments);
 
@@ -103,34 +104,34 @@
             if (baseDir !== '') {
                     this.setPageTitle(getDeletedFileName(baseDir));
             }
-            // never printed! since this runs Files FileList!
-            //console.log('RECOVER _setCurrentDir, baseDir = ' + baseDir);
         },
-        // putting source and snapshot in App, since they won't be available in
-        // filelist when reloading it
-        // source saved in mimetype, would be better to use "source:" 
+        /**
+         * set current source of filelist
+         * current source is available in app,
+         * since it won't be available in filelist when reloading it
+         * source saved in mimetype, would be better to use "source:" 
+         * @param {string} source current source of filelist
+        */
         _setCurrentSource: function(source) {
             console.log('RECOVER filelist setCurrentSource = ' + source);
             OCA.Recover.App._currentSource = source;
         },
         getCurrentSource: function() {
-            // this is undefined! at this point in time! same problem as before
-            // -> put in app class!
-            // should not reinit a new filelist, but clear and reload?
-            //      only creating new filelist after clicking nav, reload when clicking folder
-            //console.log('RECOVER filelist getCurrentSource = ' + OCA.Recover.App._currentSource);
             return OCA.Recover.App._currentSource;
         },
+        /**
+         * set current snapshot
+         * same limitiations as source, see _setCurrentSource
+         * snapshot saved in etag, would be better to use "snapshot:" 
+         * @param {string} snapshot current snapshot of filelist
+         */
         _setCurrentSnapshot: function(snapshot) {
             console.log('RECOVER filelist setCurrentSnapshot = ' + snapshot);
             OCA.Recover.App._currentSnapshot = snapshot;
         },
         getCurrentSnapshot: function() {
-            // this is undefined! at this point in time! same problem as before
-            // -> put in app class! see above
             return OCA.Recover.App._currentSnapshot;
         },
-        // all files still exist / ok here
         _createRow: function() {
             // FIXME: MEGAHACK until we find a better solution
             var tr = OCA.Files.FileList.prototype._createRow.apply(this, arguments);
@@ -138,7 +139,6 @@
             //console.log('in createRow  this.files[0].displayName = ' + this.files[0].displayName); 
             return tr;
         },
-        // also ok when reloading trashbin
         _renderRow: function(fileData, options) {
             options = options || {};
             var dir = this.getCurrentDirectory();
@@ -156,23 +156,15 @@
         },
 
         /**
-         * Reloads the file list
+         * Reloads the file list using ajax call
+         * reinit of filelist after click on navigation entry "Recently Backed up"
+         * is uninitialized when clickin on folder, since reloading will then take place
          *
-         * @return ajax object
+         * @return ajax call object
          */
 
         reload: function() {
             console.log('RECOVER filelist reload anfang!');
-            /* only defined if not initial load! 
-            // reinit only after click on nav
-            // is uninitialized when clickin on folder!
-            // how to check here? file info in filelist needs to be updated to have info on source
-            // but this info won't be available at this time -> app.js
-            
-            */
-            // no adaption of dir in here, is correct thanks to changeDirectory, 
-            // only set source in AJAX data correctly!
-            // just to have it defined
             var dir = this.getCurrentDirectory();
             if (dir !== '/') {
                 var source = this.getCurrentSource();
@@ -190,7 +182,7 @@
             if (this._reloadCall) {
                     this._reloadCall.abort();
             }
-            // call this directly for reloading trash list? no
+            
             this._reloadCall = $.ajax({
                 // back to using data and $_GET vars
                 //url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/' + source + '/' + sort + '/' + sortdirection),
@@ -199,8 +191,6 @@
                 // instead of being accessed via PHP $_GET vars
                 // route url: '/listbackups{dir}/-/{source}/{sort}/{sortdirection}'
                 data: {
-                    // problem when reloading trashbin, it should use root, not last folder?
-                    // kept for now, but should use params via URL
                     'dir': dir,
                     'source': source,
                     'sort': sort,
@@ -210,8 +200,6 @@
                
             });
             console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
-            // again without source
-            //console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection );
             var callBack = this.reloadCallback.bind(this);
             return this._reloadCall.then(callBack, callBack);
         },
@@ -220,23 +208,37 @@
             delete this._reloadCall;
             this.hideMask();
             // result.status undefined -> use statusCode
-            //console.log("myfilelist reloadCallback result.status = " + result.status);
-            //if (!result || result.status === 'error') {
             if (!result || result.statusCode === '500') {
                 // if the error is not related to folder we're trying to load, reload the page to handle logout etc
                 if (result.data.error === 'authentication_error' ||
                         result.data.error === 'token_expired' ||
                         result.data.error === 'application_not_enabled'
                 ) {
-                        console.log('in reloadCallback redirect to files app');
-                        OC.redirect(OC.generateUrl('apps/files'));
+                        console.log('in reloadCallback reload recover app');
+                        OC.redirect(OC.generateUrl('apps/recover'));
                 }
                 OC.Notification.show(result.data.message);
                 return false;
             }
+               
+            // Firewall Blocked request?
+            if (result.status === 403) {
+                    // Go home
+                    this.changeDirectory('/');
+                    OC.Notification.showTemporary(t('files', 'This operation is forbidden'));
+                    return false;
+            }
 
+            // Did share service die or something else fail?
+            if (result.status === 500) {
+                    // Go home
+                    this.changeDirectory('/');
+                    OC.Notification.showTemporary(t('files', 'This directory is unavailable, please check the logs or contact the administrator'));
+                    return false;
+            }   
+               
             if (result.status === 404) {
-                // go back home
+                // go back to root directory
                 console.log('in reloadCallback 404 -> go back home');
                 this.changeDirectory('/');
                 return false;
@@ -303,23 +305,22 @@
             // redirect error http://localhost/core/index.php/apps/recover/trashlist?dir=//folder1.d1429801627
         },
 
-        /**
-         * this.fileList = List of rows (table tbody) = <tbody id="fileList">
-         * rows are added with files/js/filelist.js: add: function(fileData, options)
-         * 	but appended to table in 
-         * 		@param {OCA.Files.FileInfo} fileData map of file attributes
-         * 		@param {Object} [options] map of attributes
-         *		...
-         * called by at least self.add( 
-         * 	
-         **/
         updateEmptyContent: function(){
             var exists = this.$fileList.find('tr:first').exists();
             this.$el.find('#emptycontent').toggleClass('hidden', exists);
             this.$el.find('#filestable th').toggleClass('hidden', !exists);
         },
 
-        /**  used when deleting entries from the list, delete and recover **/
+        /**  
+         * used when deleting entries from the list, when recover took place
+         * 
+         * @param {Object} result result of ajax call 
+         * @param {string} result.statusCode status code of ajax call          
+         * @param {Object} result.data data of ajax call
+         * @param {array} result.data.success list of files in case of success
+         * @param {array} result.data.error list of files in case of success
+         *      
+         */
         _removeCallback: function(result) {
             console.log("RECOVER removeCallback oben");
             //if (result.status !== 'success') {
@@ -527,7 +528,7 @@
             return true;
         },
         /**
-        * @brief Changes the current directory and reloads the file list.
+        *  Changes the current directory and reloads the file list.
         * @param targetDir target directory (non URL encoded)
         * @param changeUrl false if the URL must not be changed (defaults to true)
         * @param {boolean} force set to true to force changing directory
