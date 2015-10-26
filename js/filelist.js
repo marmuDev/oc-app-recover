@@ -162,9 +162,7 @@
          *
          * @return ajax call object
          */
-
         reload: function() {
-            console.log('RECOVER filelist reload anfang!');
             var dir = this.getCurrentDirectory();
             if (dir !== '/') {
                 var source = this.getCurrentSource();
@@ -172,9 +170,6 @@
             }
             var sort = this._sort;
             var sortdirection = this._sortDirection;
-            
-            //debugger;
-            //console.log('in reload  URL = ' + OC.generateUrl('/apps/recover/trashlist')); 
             this._selectedFiles = {};
             this._selectionSummary.clear();
             this.$el.find('.select-all').prop('checked', false);
@@ -182,7 +177,6 @@
             if (this._reloadCall) {
                     this._reloadCall.abort();
             }
-            
             this._reloadCall = $.ajax({
                 // back to using data and $_GET vars
                 //url : OC.generateUrl('/apps/recover/listbackups/'+ dir + '/' + source + '/' + sort + '/' + sortdirection),
@@ -197,7 +191,6 @@
                     'sortdirection': sortdirection,
                     'snapshot': snapshot
                 }
-               
             });
             console.log('RECOVER filelist reload, current dir = ' + this.getCurrentDirectory() + ', sort = ' + this._sort + ', sortdirection = ' + this._sortDirection + ', source = ' + source);
             var callBack = this.reloadCallback.bind(this);
@@ -289,8 +282,8 @@
             console.log('dir substr = ' + dir); // -> one slash, ok!
             */
             //dir = dir.substr(1, dir.length - 1);
-            //var genUrl = OC.generateUrl('/apps/recoverT/trashlist?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
-            var genUrl = OC.generateUrl('/apps/recover/trashlist?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+            //var genUrl = OC.generateUrl('/apps/recover/trashlist?dir=' + encodeURIComponent(dir).replace(/%2F/g, '/'));
+            var genUrl = OC.generateUrl('/apps/recover/listbackups');
             console.log('RECOVER linkTo genUrl = ' + genUrl);
             return genUrl;
             // linkToRoute? is not a function! 
@@ -318,7 +311,7 @@
          * @param {string} result.statusCode status code of ajax call          
          * @param {Object} result.data data of ajax call
          * @param {array} result.data.success list of files in case of success
-         * @param {array} result.data.error list of files in case of success
+         * @param {array} result.data.error list of files in case of error
          *      
          */
         _removeCallback: function(result) {
@@ -405,69 +398,14 @@
                 function(result) {
                     // allfiles obsolete, was only implemented for oc trash bin
                     // show message after successful recovery of file(s) 
-                    // now only in removeCallback, since allfiles was removed
+                    // now only in removeCallback, since "allfiles" case was removed
                     self._removeCallback(result);
                 }
             );
         },
-        /* delete not implemented, just deactivate
-        _onClickDeleteSelected: function(event) {
-            event.preventDefault();
-            var self = this;
-            var allFiles = this.$el.find('.select-all').is(':checked');
-            var files = [];
-            var params = {};
-            if (allFiles) {
-                    params = {
-                            allfiles: true,
-                            dir: this.getCurrentDirectory()
-                    };
-            }
-            else {
-                    files = _.pluck(this.getSelectedFiles(), 'name');
-                    params = {
-                            files: JSON.stringify(files),
-                            dir: this.getCurrentDirectory()
-                    };
-            }
-
-            this.disableActions();
-            if (allFiles) {
-                    this.showMask();
-            }
-            else {
-                for (var i = 0; i < files.length; i++) {
-                    var deleteAction = this.findFileEl(files[i]).children("td.date").children(".action.delete");
-                    deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
-                }
-            }
-
-            //$.post(OC.filePath('recover', 'ajax', 'delete.php'),
-            $.post(OC.generateUrl('/apps/recover/delete'),
-                params,
-                function(result) {
-                    if (allFiles) {
-                        //if (result.status !== 'success') {
-                        if (result.statusCode !== '200') {
-                            OC.dialogs.alert(result.data.message, t('recover', 'Error'));
-                        }
-                        self.hideMask();
-                        // simply remove all files
-                        self.setFiles([]);
-                        self.enableActions();
-                    }
-                    else {
-                        self._removeCallback(result);
-                    }
-                }
-            );
-        },
-        */
+        
         _onClickFile: function(event) {
             // need to get source of dir, if clicked file is dir
-            //var type = this.fileActions.getCurrentType();
-            // always the old value, is one click behind
-            //console.log('RECOVER filelist _onClick this.fileActions.getCurrentType() = ' + this.fileActions.getCurrentType());
             var $tr = $(event.target).closest('tr');
             this.fileActions.currentFile = $tr.find('td');
             //console.log('current file/dir = ' +this.fileActions.currentFile.toString());
@@ -480,19 +418,21 @@
             // trying this in reload above! 
             // -> source important here and in changeDir, set parentId (snapshot) only in here
             var mimeType = this.fileActions.getCurrentMimeType();
+            this._setCurrentSource(mimeType);
             if (mimeType === 'ext4' || 'gpfsss' || 'tubfsss') {
                 console.log('RECOVER filelist _onClickFile mimeType = ' + mimeType);
-                // look at mime above, would this be possible for source too??! 
                 var snapshot = this.fileActions.currentFile.parent().attr('data-etag');
                 this._setCurrentSnapshot(snapshot);
             }
             // redundant?!
-            var mime = $(this).parent().parent().data('mime');
-            // if not clicking on dir? (keep, but never seems to be the case)
-            if (mime !== 'httpd/unix-directory') {
+            //var mime = $(this).parent().parent().data('mime');
+            // if not clicking on dir (keep, but never seems to be the case)
+            //if (mime !== 'httpd/unix-directory') {
+            if (mimeType !== 'httpd/unix-directory') {
                 // deprecated? there was something in the JS console,     
-                // getPreventDefault() sollte nicht mehr verwendet werden. Verwenden Sie stattdessen defaultPrevented. jquery.min.js:5:0
-                event.preventDefault();
+                // getPreventDefault() shouldn't be used anymore. use defaultPrevented instead! 
+                event.preventDefault(); //- still in jquery.min.js:5:0
+                //event.defaultPrevented();
             }
             return OCA.Files.FileList.prototype._onClickFile.apply(this, arguments);
         },
@@ -545,8 +485,9 @@
                 }
                 // get source -> undefined won't work
                 //var source = this.getSource();
-                // using MimeType in data.files to note (external) source
+                // using MimeType in data.files to note source
                 var source = this.fileActions.getCurrentMimeType();
+                /**
                 // future proof (long-term reliability)???
                 if (source === "application/octet-stream") {
                     this._setCurrentSource('octrash');
@@ -554,6 +495,7 @@
                     this._setCurrentSource(source);
                 }
                 source = this.getCurrentSource();  
+                */
                 // edit targetDir: if ".d1437995265" and files from external source requested, remove last 12 chars .d1437995265 (mtime)
                 console.log('RECOVER filelist changeDirectory, targetDir before source check = ' + targetDir + ', source = ' + source);
                 // if in root, directories got .dmtime at the end of dir name

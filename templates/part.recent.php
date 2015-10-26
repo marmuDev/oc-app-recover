@@ -1,66 +1,24 @@
-<!--
 <?php 
 /**
- * ownCloud - recover
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * ownCloud - Recover
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-//    To use routes in OC_Template, use:
-//    print_unescaped(\OCP\Util::linkToRoute(
-        //'recover.page.get_recently_deleted', array('key' => 1)
-  //          'recover.page.get_recently_deleted'
-    //));
-//    p("user: ".$_['user']." - ");
-//    Request could not be converted to string
-//    p("request: ".$_['request']." - ");
-//    p("appname: ".$_['appname']." - ");
-
-// OC trashbin list.php (in template + ajax) 
-//   gut für setzen eines templates und erzeugen von liste 
-// fileList CSS-stuff eigentlich aus core, nur minimale anpassungen in trash.css
-// filestable -> 
-
 ?>
-
-<div ng-controller="RecentController as recentCtrl">    
-Quick Filter: <input type="text" ng-model="search"> {{search}} <br>
-</div>
-
--->
-<!--    array of objects -> use ng-repeat twice 
-    was ist data-ng-repeat
-
-    <tr ng-repeat="item in recentCtrl.items | filter:search">
-            <td>{{item.filename}}</td>
-            <td>{{item.timestamp}}</td>
-            <td>{{item.location}}</td>
-    </tr>
--->
-<!-- for now just to load recent Controller in script.js 
-to get filelist data 
-now without angular!
-<div ng-controller="RecentController as recentCtrl">    
--->
-
-<!-- /apps/files_trashbin/templates/index.php -->
-<!-- hidden viewcontainer raus! nur bei files app notwendig,
-    weil je nach navi-auswahl entsprechende inhalte gezeigt werden
-    -> standard files, trashbin, sharing etc.
-<div id="app-content-trashbin" class="hidden viewcontainer"> 
-
-<?php 
-    /** @var $l OC_L10N */ 
-    /* is printed, but trashlist not loading
-    p("in part.recent");
-    request is empty
-    p('request = '.$_['request']);
-    */
-?>
---> 
 <div id="app-content-trashbin">
     <div id="controls">
         <div id="file_action_panel"></div>

@@ -28,7 +28,7 @@ class Helper {
      * \OCA\Recover\Helper::getJsonFiles('http://localhost/fileData.json');
      * 
      * @param string $jsonFile with path to JSON file
-     * @return php array files 
+     * @return array $files 
      */
     public static function getJsonFiles($jsonPath){
         $filesJson = file_get_contents($jsonPath);
@@ -43,43 +43,10 @@ class Helper {
         $filesLocal = scandir($localPath);
         return $files;
     }
-    /*
-     * MAKE GENERIC FUNCTION for calling service and return result?! ->callWebservice below
-     * Get JSON data from webservice
-     * @param $serviceUrl: URL of webservice, defines directory to be listed, source and sorting parameters
-     * @return $files: Files and Folders of path in JSON
-     */
-    public static function getWebserviceFiles($serviceUrl) {
-/*
-* allow_url_fopen can be used to retrieve data from remote servers or websites. 
-* However, if incorrectly used, this function can compromise the security of your site.
-*  now with curl?
-*/            
-        // perhaps returning wrong type in webservice - noch echo instead of return
-        //$files = file_get_contents($serviceUrl);
-        //  Initiate curl
-        $ch = curl_init();
-        // Disable SSL verification
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        // Will return the response, if false it print the response
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // Set the url
-        curl_setopt($ch, CURLOPT_URL,$serviceUrl);
-        // Execute
-        $files=curl_exec($ch);
-        // Closing
-        curl_close($ch);
-        
-        // call to undefined function
-        // further I got JSON now, would need an array to format dates!
-        // --> format in webservice!
-        //$filesTest=formatFilesDates($files);
 
-        return $files;
-    }
      /* Get JSON data from webservice
-     * @param $serviceUrl URL of webservice, defines directory to be listed, source and sorting parameters
-     * @return $files Files and Folders of path in JSON
+     * @param string $serviceUrl URL of webservice, defines directory to be listed, source and sorting parameters
+     * @return string $files Files and Folders of path in JSON
      */
     public static function callWebservice($serviceUrl) {
         $ch = curl_init();

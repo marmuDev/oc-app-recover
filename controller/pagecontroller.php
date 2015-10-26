@@ -30,17 +30,19 @@ use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Controller;
 
-use OCA\Recover\Db\TrashBinMapper;
-use OCA\Files_Trashbin;
+// obsolete, trash bin won't be supported any more
+//use OCA\Recover\Db\TrashBinMapper;
+//use OCA\Files_Trashbin;
 
 class PageController extends Controller {
     private $userId;
-    public function __construct($AppName, IRequest $request, $UserId,
-                                TrashBinMapper $trashBinMapper) {
+    //public function __construct($AppName, IRequest $request, $UserId,
+    //                            TrashBinMapper $trashBinMapper) {
+    public function __construct($AppName, IRequest $request, $UserId) {
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
         $this->request = $request;
-        $this->trashBinMapper = $trashBinMapper;
+        //$this->trashBinMapper = $trashBinMapper;
     }
     /**
      * @NoAdminRequired
@@ -86,14 +88,6 @@ class PageController extends Controller {
             ],
             ''
         );
-    }
-
-    /**
-     * @NoAdminRequired
-     *   get trashbin from mySQL DB - obsolete
-     */
-    public function getRecentlyDeleted() {
-        return $this->trashBinMapper->find($this->userId);
     }
     /*
      * calls functions to get backed up files depending on sources
@@ -217,7 +211,7 @@ class PageController extends Controller {
             $dir = $baseDir.$dir;
             $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             // getting json here, therefore decoding to array!
-            $filesFromSourceTubfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
+            $filesFromSourceTubfsSs = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
         } catch (Exception $e) {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
@@ -254,7 +248,7 @@ class PageController extends Controller {
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
-            $filesFromSourceExt4 = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
+            $filesFromSourceExt4 = json_decode(\OCA\Recover\Helper::callWebservic($serviceUrl), true);
         } catch (Exception $e) {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
@@ -284,7 +278,7 @@ class PageController extends Controller {
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
-            $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::getWebserviceFiles($serviceUrl), true);
+            $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
         } catch (Exception $e) {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
@@ -461,69 +455,6 @@ class PageController extends Controller {
         }
         return $result;
     }
-    /* left over from oc trash bin, not implemented for other sources yet, commented out in filelist.js
-    public function delete() {
-        \OC::$server->getSession()->close();
-        $folder = isset($_POST['dir']) ? $_POST['dir'] : '/';
-        // "empty trash" command
-        if (isset($_POST['allfiles']) and $_POST['allfiles'] === 'true'){
-            $deleteAll = true;
-            if ($folder === '/' || $folder === '') {
-                OCA\Files_Trashbin\Trashbin::deleteAll();
-                $list = array();
-            } else {
-                $list[] = $folder;
-                $folder = dirname($folder);
-            }
-        }
-        else {
-            $deleteAll = false;
-            $files = $_POST['files'];
-            $list = json_decode($files);
-        }
-        $folder = rtrim($folder, '/') . '/';
-        $error = array();
-        $success = array();
-        $i = 0;
-        foreach ($list as $file) {
-            if ($folder === '/') {
-                $file = ltrim($file, '/');
-                $delimiter = strrpos($file, '.d');
-                $filename = substr($file, 0, $delimiter);
-                $timestamp =  substr($file, $delimiter+2);
-            } else {
-                $filename = $folder . '/' . $file;
-                $timestamp = null;
-            }
-            \OCA\Files_Trashbin\Trashbin::delete($filename, \OCP\User::getUser(), $timestamp);
-            if (\OCA\Files_Trashbin\Trashbin::file_exists($filename, $timestamp)) {
-                $error[] = $filename;
-                OC_Log::write('trashbin','can\'t delete ' . $filename . ' permanently.', OC_Log::ERROR);
-            }
-            // only list deleted files if not deleting everything
-            else if (!$deleteAll) {
-                $success[$i]['filename'] = $file;
-                $success[$i]['timestamp'] = $timestamp;
-                $i++;
-            }
-        }
-        if ( $error ) {
-            $filelist = '';
-            foreach ( $error as $e ) {
-                $filelist .= $e.', ';
-            }
-            $l = \OC::$server->getL10N('files_trashbin');
-            $message = $l->t("Couldn't delete %s permanently", array(rtrim($filelist, ', ')));
-            //OCP\JSON::error(array("data" => array("message" => $message,
-            //                                       "success" => $success, "error" => $error)));
-            return new JSONResponse(array("data" => array("message" => $message,
-                                  "success" => $success, "error" => $error), "statusCode" => "500"));
-        } else {
-            //OCP\JSON::success(array("data" => array("success" => $success)));
-            return new JSONResponse(array("data" => array("success" => $success), "statusCode" => "200"));
-        }
-    }
-    */
 
     /* Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
      * need to reindex Array, IDs important for file selection

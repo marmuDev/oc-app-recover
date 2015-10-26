@@ -23,7 +23,7 @@
      * @class OCA.Recover.Navigation
      * @classdesc Navigation control for the recover app sidebar.
      *
-     * @param baseUrl... I guess this is obsolete
+     * @param 
      */
     var Navigation = function($el) {
         this.initialize($el);

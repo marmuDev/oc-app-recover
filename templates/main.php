@@ -1,18 +1,28 @@
 <?php
 /**
- * ownCloud - recover - main template
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * ownCloud - Recover - main template
+ * TO DO: 
+ *  only load CSS an JS needed for specific template -> when it is need
+ *  how to load, init angular search stuff, after clicking on "Search" 
+ *  in App-Navigation?
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
+ * @license AGPL-3.0
  *
- * TO DO: split into several template files, 
- * only load CSS an JS needed for specific template
- * now loading most JS scripts in part.recent
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
  *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
+
     // this is for using ownCloud Templates
     //\OCP\Util::addScript('recover', 'script');
     //\OCP\Util::addStyle('recover', 'style');
@@ -70,7 +80,7 @@
     //OCP\Util::addScript('files', 'tagsplugin');
     //OCP\Util::addScript('files', 'favoritesplugin');
 
-    // now trying handlebars for navigation
+    // now using handlebars for navigation
     \OC_Util::addVendorScript('core', 'handlebars/handlebars');
     // won't work here, now set in init in app.js 
     //OCP\App::setActiveNavigationEntry('recently_deleted');
@@ -82,7 +92,7 @@
     // now fdf_add_doc_javascript(fdf_document, script_name, script_code)ed search.setFilter('', function (query) in recoversearch
     // search adapted from core files search
     //OCP\Util::addScript('recover', 'recoversearch');
-    OCP\Util::addScript('recover', 'search');
+    //OCP\Util::addScript('recover', 'search');
     // redundant but files/app depends on it and my nav is using it too!
     OCP\Util::addScript('files', 'navigation');
     OCP\Util::addScript('recover', 'navigation');
@@ -99,17 +109,6 @@
     OCP\Util::addScript('recover', 'mainctrl');
     
 ?>
-<!-- seems like angular stuff messes with DOM, but trying again to make navigation work again 
-ng-app must be there, id="app" is redundant
-ng-app only works when surrounding navigation not more!
-<div id="app"> 
-now trying to add navi the files app way:
-\OCA\Files\App::getNavigationManager()->add
-
-<div id="app-navigation"> 
-	<div ng-app="recover"> 	
- -->       
-
 <div id="app">
 	<div id="app-navigation">
 		<?php print_unescaped($this->inc('part.navigation')); ?>

@@ -20,15 +20,6 @@
  */
 (function() {
     'use strict';
-    /* obsolete ?
-    if (!OCA.Files) {
-        /**
-         * Namespace for the files app
-         * @namespace OCA.Files
-      
-        OCA.Files = {};
-    }
-    */
     if (!OCA.Recover) {
         /**
          * Namespace for the recover app
@@ -104,7 +95,7 @@
             this._initialized = true;
         },
         /**
-         * creating file actions: open for directories and recover for all items
+         * creating file actions: 'Open' for directories, 'Recover' for all items
          */
         _createFileActions: function() {
             console.log('APP createFileActions beginning');
@@ -127,12 +118,7 @@
                 var deleteAction = tr.children("td.date").children(".action.delete");
                 deleteAction.removeClass('icon-delete').addClass('icon-loading-small');
                 fileList.disableActions();
-                /* not required, filename is ok
-                if (fileList.getCurrentSource() !== 'octrash') {
-                    filename = OCA.Recover.App.removeMtime(filename);
-                    console.log('APP register recover, filename = ' + filename);
-                }
-                */
+                
                 // similar to filelist onClickRestoreSelected
                 var params = {};
                 var sources = [];
@@ -145,8 +131,6 @@
                     sources: JSON.stringify(sources),
                     snapshotIds: JSON.stringify(snapshotIds)
                 };
-                // AJAX path for PHP!!! => now trigger route + controller
-                //$.post(OC.filePath('recover', 'ajax', 'recover.php'), {    
                 $.post(OC.generateUrl('/apps/recover/recover'), 
                     params,
                     _.bind(fileList._removeCallback, fileList)
@@ -159,6 +143,7 @@
 
         /**
          * Setup events based on URL changes
+         * only binding onPopState event to Handler (required for browser history)
          */
         _setupEvents: function() {
             console.log('RECOVER app _setupEvents, onPopState only');
@@ -168,8 +153,9 @@
             //$('#app-navigation').on('itemChanged', _.bind(this._onNavigationChanged, this));
         },
         /**
-         * Event handler for when the URL changed (e.g. moving back and forth in history)
+         * Event handler for when the URL changed (e.g. moving back and forth in browser history)
          * conflicting with files onPopState!
+         * @param {String} itemId navigation item to be loaded
          */
         _onPopState: function(itemId) {
             //console.log('RECOVER _onPopState anfangs itemId = ' + itemId);
@@ -191,7 +177,8 @@
         },
         /**
          * removes the mtime which is appended by OC to every file and folder.
-         * needed to get the real directory name when clicking on a folder.
+         * need to get the real directory name when clicking on a folder.
+         * @param {string} name filename or directory name with appended mtime
          */
         removeMtime: function(name) {
            var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
@@ -208,8 +195,10 @@
                 console.log("name in removeMtime = " + name);
                 return name;
             }
-            // only returning original name if pattern not found -> oc trashbin not supported anymore
-            //return name;
+            // returning original name if pattern not found 
+            // -> oc trashbin not supported anymore, may be needed for tubfsss
+            
+            return name;
         }
     };
 })();
