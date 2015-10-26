@@ -181,7 +181,7 @@
          * @param {string} name filename or directory name with appended mtime
          */
         removeMtime: function(name) {
-           var pattern = /.d\d\d\d\d\d\d\d\d\d\d/;
+           var pattern = /.d\d{10}/;
            if (pattern.test(name)) {
                 console.log("name in removeMtime = " + name);
                 console.log('RECOVER filelist changeDir also regex found -> edit targetDir');
@@ -206,6 +206,7 @@
 /** hack from files/js/app.js 
  * wait for other apps/extensions to register their event handlers and file actions
  * in the "ready" clause, also seems to be working without defer.
+ * chrome/ium problem 403 forbidden when init calls fileList.reload()
  */
 $(document).ready(function() {
 	_.defer(function() { 

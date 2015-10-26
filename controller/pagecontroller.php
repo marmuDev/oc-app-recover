@@ -59,6 +59,9 @@ class PageController extends Controller {
      *  are routes + controllers needed at all for this?
      *  back to trashbin-style, load different contents via ajax
      *  __construct(string $appName, string $templateName, array $params, string $renderAs)
+     * 
+     * @NoAdminRequired
+     * @NoCSRFRequired
     */
     public function recently() {
         return new TemplateResponse($this->appName, 'part.recent', [
@@ -70,7 +73,11 @@ class PageController extends Controller {
             ''
         );
     }
-    
+    /**
+     * @return TemplateResponse
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
     public function search() {
         return new TemplateResponse($this->appName, 'part.search', [
                 'user' => $this->userId,
@@ -80,6 +87,12 @@ class PageController extends Controller {
             ''
         );
     }
+    /**
+     * 
+     * @return TemplateResponse* 
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
     public function help() {
         return new TemplateResponse($this->appName, 'part.help', [
                 'user' => $this->userId,
@@ -94,12 +107,18 @@ class PageController extends Controller {
      * if no source is specified, we want all backed up files of user from any possible source
      * route: ['name' => 'page#list_backups', 'url' => '/listbackups', 'verb' => 'GET'],
      * 
+     * To DO: more secure usage of $_GET variables!
+     * 
+     * 
      * @param String $dir directory to be listed
      * @param String $source source of backup files: octrash | ext4 | gpfsss | tubfss 
      * (oc trashbin, local ext4 files or GPFS/TUBFS Snapshots, removed trash bin compatibility, now only tubfsss)
      * @param String $sort attribut to sort files by
      * @param String $sortdirection asc | desc (ascending or descending)
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
+     * 
+     * @NoAdminRequired
+     * @NoCSRFRequired
      */
     
     public function listBackups($dir = '/', $source = '', $sort = 'mtime', $sortdirection = 'desc') {
@@ -289,6 +308,10 @@ class PageController extends Controller {
     
     /* Recovers files from different sources. tubfsss implemented others prepared
      * Route: ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST']
+     * 
+     * To DO: more secure usage of $_GET variables!
+     * @NoAdminRequired
+     * @NoCSRFRequired
      * 
      * not really using parameters, but $_POST variables:
      * @param String $_POST['files'] files to be recovered

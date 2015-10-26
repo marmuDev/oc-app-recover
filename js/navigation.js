@@ -80,7 +80,7 @@
                     link.active = false;
                 }
             });
-            console.log('RECOVER load link, active link now = ' + this._activeLink.toSource());
+            //console.log('RECOVER load link, active link now = ' + this._activeLink.toSource());
         },
         
         getActiveLink: function () {
