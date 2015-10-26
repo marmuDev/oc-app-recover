@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Recover
 Place this app in **owncloud/apps/**
 
@@ -7,11 +6,13 @@ Place this app in **owncloud/apps/**
 After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 
     phpunit tests/
+
+
 =======
-oc-app-bck
+oc-app-bck - App Name "Recover"
 ==========
 
-Modular ownCloud App for Accessing Different Data Sources for Recovery
-
-Maybe adapting the ownCloud trash bin would be a good approach.
->>>>>>> 13d60e7a0ea84bc769e158f11a5087a947b251dc
+Modular ownCloud App for Accessing Different Data Sources for Recovery.
+Based on files and trashbin app it is using filelist to display backed up files 
+fetched via a webservice. Recovery of the files also via Webservice4Recover:
+https://github.com/marmuDev/webservice4recover/blob/master/index.php
