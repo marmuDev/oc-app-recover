@@ -38,6 +38,10 @@ class PageController extends Controller {
     private $userId;
     //public function __construct($AppName, IRequest $request, $UserId,
     //                            TrashBinMapper $trashBinMapper) {
+     /**
+     * @NoAdminRequired
+     * 
+     */
     public function __construct($AppName, IRequest $request, $UserId) {
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
@@ -61,7 +65,7 @@ class PageController extends Controller {
      *  __construct(string $appName, string $templateName, array $params, string $renderAs)
      * 
      * @NoAdminRequired
-     * @NoCSRFRequired
+     * 
     */
     public function recently() {
         return new TemplateResponse($this->appName, 'part.recent', [
@@ -76,7 +80,7 @@ class PageController extends Controller {
     /**
      * @return TemplateResponse
      * @NoAdminRequired
-     * @NoCSRFRequired
+     * 
      */
     public function search() {
         return new TemplateResponse($this->appName, 'part.search', [
@@ -89,9 +93,9 @@ class PageController extends Controller {
     }
     /**
      * 
-     * @return TemplateResponse* 
+     * @return TemplateResponse
      * @NoAdminRequired
-     * @NoCSRFRequired
+     * 
      */
     public function help() {
         return new TemplateResponse($this->appName, 'part.help', [
@@ -109,7 +113,6 @@ class PageController extends Controller {
      * 
      * To DO: more secure usage of $_GET variables!
      * 
-     * 
      * @param String $dir directory to be listed
      * @param String $source source of backup files: octrash | ext4 | gpfsss | tubfss 
      * (oc trashbin, local ext4 files or GPFS/TUBFS Snapshots, removed trash bin compatibility, now only tubfsss)
@@ -118,9 +121,8 @@ class PageController extends Controller {
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
      * 
      * @NoAdminRequired
-     * @NoCSRFRequired
+     * 
      */
-    
     public function listBackups($dir = '/', $source = '', $sort = 'mtime', $sortdirection = 'desc') {
         //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
         // OC app framework way would be to pass those via the URL as params(?)
@@ -154,7 +156,6 @@ class PageController extends Controller {
                 break;
             // list files of root directory -> collect data from all sources
             // tubfsss only for now
-            // initial no source available, set manually!
             default:
                 //$data = $this->listTrashBin($dirGet, $sortAttribute, $sortDirection);
                 //$filesFromExt4 = $this->listTestdir($dirGet, 'ext4');
@@ -162,6 +163,7 @@ class PageController extends Controller {
                 // need to iterate through snapshots 0-5
                 $filesFromTubfsSs = array();
                 for ($snapCount = 0; $snapCount<6; $snapCount++) {
+                    // initially no source available, set manually!
                     $tmpTubfs = $this->listTubfsSs("/snap_".$snapCount."/owncloud/data/".\OCP\User::getUser()."/files".$dirGet, 'tubfsss');
                     //array_push($filesFromTubfsSs['files'][], $tmpTubfs['files']);
                     $filesFromTubfsSs = array_merge($filesFromTubfsSs, $tmpTubfs['files']);
@@ -222,6 +224,9 @@ class PageController extends Controller {
      * @param String $dir directory to be listed 
      * @param String $sourceGet source filesystem from $_GET variable
      * @return String JSON $filesFromSourceTubfsSs filelist
+     * 
+     * @NoAdminRequired
+     * 
      */
     function listTubfsSs($dir, $sourceGet) {
         $baseDir = '/tubfs%2F.snapshots';
@@ -310,8 +315,6 @@ class PageController extends Controller {
      * Route: ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST']
      * 
      * To DO: more secure usage of $_GET variables!
-     * @NoAdminRequired
-     * @NoCSRFRequired
      * 
      * not really using parameters, but $_POST variables:
      * @param String $_POST['files'] files to be recovered
@@ -319,6 +322,10 @@ class PageController extends Controller {
      * @param String $_POST['sources'] sources (filesystem, directory, mount point) of files
      * @param String $_POST['snapshotIds'] files may be located in different shnapshots
      * @return JSONResponse array with statusCode and success or error message
+     * 
+     * @NoAdminRequired
+     * 
+     * 
      */
     public function recover() {
         //\OC::$server->getSession()->close(); -> obsolete, see above
@@ -461,6 +468,10 @@ class PageController extends Controller {
      * @param Int $snapshotId snapshotId of file/folder to be recovered
      * 
      * reminder: /tubfs/.snapshots/snap_<snapshotId>/owncloud/data/<user>/files/<dir>/<filename> (snap_0 - snap_5)
+     * 
+     * @NoAdminRequired
+     * 
+     * 
      */
     public function recoverTubfsSs($dir, $filename, $source, $snapshotId) {
         // attention: dir = "snap_3_folder_1/" if not root -> remove last char
@@ -485,6 +496,10 @@ class PageController extends Controller {
      * @param String $sortAttribute sort by mtime or name
      * @param String $sortDirection sort desc or asc
      * @return Array sorted $files
+     * 
+     * @NoAdminRequired
+     * 
+     * 
      */
     public function sortFilesArray($files, $sortAttribute, $sortDirection) {
         if ($sortAttribute === 'name'){

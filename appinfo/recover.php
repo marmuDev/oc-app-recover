@@ -19,9 +19,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 namespace OCA\Recover\AppInfo;
-use \OCP\AppFramework\App;
-use \OCA\Recover\Controller\PageController;
-use \OCA\Recover\Db\TrashBinMapper;
+use OCP\AppFramework\App;
+use OCA\Recover\Controller\PageController;
+//use OCA\Recover\Db\TrashBinMapper;
 
 class Recover extends App {
 
@@ -32,6 +32,7 @@ class Recover extends App {
 
         /**
          * Controllers
+         * 
          */
         $container->registerService('PageController', function($c) {
             return new PageController(
