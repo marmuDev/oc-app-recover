@@ -38,10 +38,6 @@ class PageController extends Controller {
     private $userId;
     //public function __construct($AppName, IRequest $request, $UserId,
     //                            TrashBinMapper $trashBinMapper) {
-     /**
-     * @NoAdminRequired
-     * 
-     */
     public function __construct($AppName, IRequest $request, $UserId) {
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
@@ -63,6 +59,7 @@ class PageController extends Controller {
      *  are routes + controllers needed at all for this?
      *  back to trashbin-style, load different contents via ajax
      *  __construct(string $appName, string $templateName, array $params, string $renderAs)
+     * @return TemplateResponse blank template response to be loaded in app-content
      * 
      * @NoAdminRequired
      * 
@@ -73,14 +70,14 @@ class PageController extends Controller {
                 'appname' => $this->appName,
                 'request' => $this->request
             ],
-            // don't include in web interface, solely render the template (blank=
+            // don't include in web interface, solely render the template (blank)
             ''
         );
     }
     /**
-     * @return TemplateResponse
-     * @NoAdminRequired
+     * @return TemplateResponse blank template response to be loaded in app-content
      * 
+     * @NoAdminRequired
      */
     public function search() {
         return new TemplateResponse($this->appName, 'part.search', [
@@ -93,9 +90,9 @@ class PageController extends Controller {
     }
     /**
      * 
-     * @return TemplateResponse
-     * @NoAdminRequired
+     * @return TemplateResponse blank template response to be loaded in app-content
      * 
+     * @NoAdminRequired
      */
     public function help() {
         return new TemplateResponse($this->appName, 'part.help', [
@@ -106,7 +103,7 @@ class PageController extends Controller {
             ''
         );
     }
-    /*
+    /**
      * calls functions to get backed up files depending on sources
      * if no source is specified, we want all backed up files of user from any possible source
      * route: ['name' => 'page#list_backups', 'url' => '/listbackups', 'verb' => 'GET'],
@@ -218,14 +215,13 @@ class PageController extends Controller {
         $data['files'] = \OCA\Files_Trashbin\Helper::formatFileInfos($files);
         return $data;
     }
-    /* Calls webservice via Helper using cURL
+    /** Calls webservice via Helper using cURL
      * path to be listed (base directory of user):
      * /tubfs/.snapshots/snap_<snapshotId>/owncloud/data/<user>/files/ (snap_0 - snap_5)
      * @param String $dir directory to be listed 
      * @param String $sourceGet source filesystem from $_GET variable
      * @return String JSON $filesFromSourceTubfsSs filelist
      * 
-     * @NoAdminRequired
      * 
      */
     function listTubfsSs($dir, $sourceGet) {
@@ -244,7 +240,7 @@ class PageController extends Controller {
         return $filesFromSourceTubfsSs;
     }
     
-    /* 
+    /**
      * list EXT4 files via webservice4recover -> listDirGeneric
      * 
      * @param String $dir directory to get contents of
@@ -281,7 +277,7 @@ class PageController extends Controller {
         return $filesFromSourceExt4;
     }
     
-    /* 
+    /** 
      * list GPFS Snapshot files via webservice4recover
      * 
      * @param String $dir directory to get contents of
@@ -311,7 +307,8 @@ class PageController extends Controller {
         return $filesFromSourceGpfsSs;
     }
     
-    /* Recovers files from different sources. tubfsss implemented others prepared
+    /**
+     * Recovers files from different sources. tubfsss implemented others prepared
      * Route: ['name' => 'page#recover', 'url' => '/recover', 'verb' => 'POST']
      * 
      * To DO: more secure usage of $_GET variables!
@@ -457,21 +454,18 @@ class PageController extends Controller {
                                         "success" => $success), "statusCode" => "200"));
         }
     }
-    /* Recovers file/folder from tubfsss via helper class using cURL  
+    /** 
+     * Recovers file/folder from tubfsss via helper class using cURL  
      * what if files and folders?!?! php rename() does not care,
      *  but problem if directory exists and is not empty
      * file/folder source path important, destination path depends on source path
+     *
+     * reminder: /tubfs/.snapshots/snap_<snapshotId>/owncloud/data/<user>/files/<dir>/<filename> (snap_0 - snap_5)
      * 
      * @param String $dir directory in which the recover target is located
      * @param String $filename file/folder below $dir to be recovered
      * @param String $source stically set to "tubfsss" in recover()
      * @param Int $snapshotId snapshotId of file/folder to be recovered
-     * 
-     * reminder: /tubfs/.snapshots/snap_<snapshotId>/owncloud/data/<user>/files/<dir>/<filename> (snap_0 - snap_5)
-     * 
-     * @NoAdminRequired
-     * 
-     * 
      */
     public function recoverTubfsSs($dir, $filename, $source, $snapshotId) {
         // attention: dir = "snap_3_folder_1/" if not root -> remove last char
@@ -490,15 +484,14 @@ class PageController extends Controller {
         return $result;
     }
 
-    /* Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
+    /**
+     * Sort whole Files-Array to belisted in OC Filelist before encoding to JSON
      * need to reindex Array, IDs important for file selection
+     * 
      * @param Array $files all files ($mergedFiles)
      * @param String $sortAttribute sort by mtime or name
      * @param String $sortDirection sort desc or asc
      * @return Array sorted $files
-     * 
-     * @NoAdminRequired
-     * 
      * 
      */
     public function sortFilesArray($files, $sortAttribute, $sortDirection) {
