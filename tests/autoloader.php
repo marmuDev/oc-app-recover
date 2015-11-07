@@ -9,7 +9,11 @@
  * @copyright Marcus Mundt 2014
  */
 
-require_once __DIR__ . '/../../../3rdparty/Pimple/Pimple.php';
+//require_once __DIR__ . '/../../../3rdparty/Pimple/Pimple.php';
+//require_once __DIR__ . '/../../3rdparty/Pimple/Pimple.php';
+// 3rdparty/pimple/pimple/src/Pimple/Container.php
+//                                  ServiceProviderInterface.php
+
 
 
 class OC {
