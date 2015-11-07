@@ -43,6 +43,12 @@ class PageControllerTest extends \Test\TestCase {
             return $controller;
         });
     }
+    /*
+     * listBackups($dir = '/', $source = '', $sort = 'mtime', $sortdirection = 'desc')
+     */
+    public function testListBackups() {
+        $this->controller->listBackups('/', 'tubfsss', 'mtime', 'desc');
+    }
 /*
 	public function testIndex () {
 		$result = $this->container->query('PageController')->index();

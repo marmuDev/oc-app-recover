@@ -27,7 +27,6 @@
          */
         OCA.Recover = {};
     }
-
     /**
      * @namespace OCA.Recover.App
      * @class OCA.Recover.App
@@ -69,8 +68,10 @@
          * Initialize the app: sets up navgation, view and filelist
          * 
          */
+        // trashbin style
         //initialize: function($el) {
-        initialize: function() {
+        // files app style
+        initialize: function() { 
             //console.log('in init from OCA.Recover.App - will init this.fileList = new OCA.Recover.FileList');
             if (this._initialized) {
                     console.log('in init from OCA.Recover.App, initialized already true');
@@ -207,9 +208,9 @@
  * wait for other apps/extensions to register their event handlers and file actions
  * in the "ready" clause, also seems to be working without defer.
  * chrome/ium problem 403 forbidden when init calls fileList.reload()
- */
+*/
 $(document).ready(function() {
-	_.defer(function() { 
-            OCA.Recover.App.initialize();
-	});
+    _.defer(function() { 
+        OCA.Recover.App.initialize();
+    });
 });
