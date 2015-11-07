@@ -9,10 +9,10 @@ After [Installing PHPUnit](http://phpunit.de/getting-started.html) run:
 
 
 =======
-oc-app-bck - App Name "Recover"
+oc-app-recover - App Name "Recover"
 ==========
 
 Modular ownCloud App for Accessing Different Data Sources for Recovery.
 Based on files and trashbin app it is using filelist to display backed up files 
-fetched via a webservice. Recovery of the files also via Webservice4Recover:
+fetched via a webservice. Recovery of files also via Webservice4Recover:
 https://github.com/marmuDev/webservice4recover/blob/master/index.php

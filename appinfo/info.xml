@@ -12,5 +12,5 @@
     <types>
         <type>filesystem</type>
     </types>
-    <repository type="git">https://github.com/marmuDev/oc-app-bck.git</repository>
+    <repository type="git">https://github.com/marmuDev/oc-app-recover.git</repository>
 </info>
