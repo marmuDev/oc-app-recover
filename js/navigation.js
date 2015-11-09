@@ -16,7 +16,7 @@
 
     // not implemented yet, just showing title in navigation
     var translations = {
-        recentlyBackedUp: $('#recently-backed-up-string').text()
+        recentlyBackedUp: $('#recently-backed-up-string').html()
     };
 
     /**
@@ -144,12 +144,13 @@
                         
                     })
                         .success(function( html ) {
+                            //debugger;
                             $("#app-content").html( html ); 
                             // has to work without init, further $el not defined!!
                             // if you still want to delete the table completely, 
                             // then you need to recreate a new FileList() and point it at the new table element
                             OCA.Recover.App.fileList = new OCA.Recover.FileList(
-                                $('#app-content-trashbin'), {
+                                $('#app-content-recover'), {
                                     scrollContainer: $('#app-content'),
                                     fileActions: OCA.Recover.App._createFileActions()
                                 }

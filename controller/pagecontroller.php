@@ -113,7 +113,7 @@ class PageController extends Controller {
      * @param String $dir directory to be listed
      * @param String $source source of backup files: octrash | ext4 | gpfsss | tubfss 
      * (oc trashbin, local ext4 files or GPFS/TUBFS Snapshots, removed trash bin compatibility, now only tubfsss)
-     * @param String $sort attribut to sort files by
+     * @param String s$sort attribut to sort files by
      * @param String $sortdirection asc | desc (ascending or descending)
      * @return JSONResponse $data inclunding permissions, directory, files and source within files
      * 
@@ -227,7 +227,7 @@ class PageController extends Controller {
     function listTubfsSs($dir, $sourceGet) {
         $baseDir = '/tubfs%2F.snapshots';
         try {
-            $dir = \str_replace('/', '%2F', $dir);
+            $dir = str_replace('/', '%2F', $dir);
             $dir = $baseDir.$dir;
             $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             // getting json here, therefore decoding to array!
@@ -260,7 +260,7 @@ class PageController extends Controller {
             // hack to prepend slash in front of subdir, or list root dir!            
             if ($dir !== '/') {
                 $dir = '%2F'.$dir;
-                $dir = \str_replace('/', '%2F', $dir); // -> hier %2F nicht unten in serviceUrl!
+                $dir = str_replace('/', '%2F', $dir); // -> hier %2F nicht unten in serviceUrl!
                 //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir'.$dir;
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet;
             } else {
@@ -290,7 +290,7 @@ class PageController extends Controller {
             // hack to prepend slash in front of subdir, or list root dir!            
             if ($dir !== '/') {
                 $dir = '%2F'.$dir;
-                $dir = \str_replace('/', '%2F', $dir);
+                $dir = str_replace('/', '%2F', $dir);
                 $dir = $baseDir.$dir;
                 $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             } else {
@@ -473,7 +473,8 @@ class PageController extends Controller {
         if ($dir != '/') {
             $dir = substr($dir, 0, -1);
         }
-        $dir = \str_replace('/', '%2F', $dir);
+        $dir = str_replace('/', '%2F', $dir);
+        $filename = str_replace(' ', '%20',$filename);
         try {
             $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
             //$result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);

@@ -30,12 +30,12 @@ describe('OCA.Recover.App tests', function() {
             '<div id="app-content">' +
             '<div id="app-content-files" class="hidden">' +
             '</div>' +
-            '<div id="app-content-trashbin" class="hidden">' +
+            '<div id="app-content-recover" class="hidden">' +
             '</div>' +
             '</div>' +
             '</div>'
     );
-        App.initialize($('#app-content-trashbin'));
+        App.initialize($('#app-content-recover'));
     });
     afterEach(function() {
         App._initialized = false;
@@ -47,7 +47,7 @@ describe('OCA.Recover.App tests', function() {
             App.initialize();
             expect(App.fileList).toBeDefined();
             expect(App.navigation).toBeDefined();
-            expect(App.fileList.$el.is('#app-content-trashbin')).toEqual(true);
+            expect(App.fileList.$el.is('#app-content-recover')).toEqual(true);
         });
 
         it('registers custom file actions', function() {

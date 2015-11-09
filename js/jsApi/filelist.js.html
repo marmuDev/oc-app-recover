@@ -96,7 +96,7 @@
             }
             var result = OCA.Files.FileList.prototype.initialize.apply(this, arguments);
             // recover text/icon after selecting file(s)
-            this.$el.find('.undelete').click('click', _.bind(this._onClickRestoreSelected, this));
+            this.$el.find('.recover').click('click', _.bind(this._onClickRestoreSelected, this));
             this.setSort('mtime', 'desc');
             // adaption to set path
             this.breadcrumb.setDirectory('/');

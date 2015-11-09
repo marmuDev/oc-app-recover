@@ -24,7 +24,8 @@ module.exports = function(config) {
     exclude: [
         'js/config.js',
         'js/mainctrl.js',
-        'js/run.js'
+        'js/run.js',
+        'js/filelistSpec.js'
     ],
 
 

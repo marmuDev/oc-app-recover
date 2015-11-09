@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 ?>
-<div id="app-content-trashbin">
+<div id="app-content-recover">
     <div id="controls">
         <div id="file_action_panel"></div>
     </div>
