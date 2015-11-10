@@ -1,11 +1,21 @@
 /**
- * ownCloud - recover - adapted from OC Core Files search.js
- * -> obsolete, not loaded anymore!
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
+ * ownCloud - Recover - adapted from OC Core Files search.js
  *
  * @author Marcus Mundt <marmu@mailbox.tu-berlin.de>
  * @copyright Marcus Mundt 2015
+ * @license AGPL-3.0
+ *
+ * This code is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License, version 3,
+ * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 (function() {
 	/**
@@ -24,19 +34,19 @@
 
 		/**
 		 * Initialize the file search
-		 * what is redundant due to files/js/search.js?
+		 *
 		 */
 		initialize: function() {
 
 			var self = this;
 			//console.log('RECOVER search init');
-			this.fileAppLoaded = function() {
-				return !!OCA.Files && !!OCA.Files.App;
+			this.recoverAppLoaded = function() {
+				return !!OCA.Recover && !!OCA.Recover.App;
 			};
 			function inFileList($row, result) {
 				//console.log('RECOVER search inFileList function');
-				if (! self.fileAppLoaded()) {
-					console.log('RECOVER search file app not loaded');
+				if (! self.recoverAppLoaded()) {
+					console.log('RECOVER search Recover App not loaded');
 					return false;
 				}
 				var dir = self.fileList.getCurrentDirectory().replace(/\/+$/,'');
@@ -89,7 +99,7 @@
 
 				$row.find('td.result a').attr('href', result.link);
 
-				if (self.fileAppLoaded()) {
+				if (self.recoverAppLoaded()) {
 					self.fileList.lazyLoadPreview({
 						path: result.path,
 						mime: result.mime,
@@ -112,32 +122,10 @@
 				return $row;
 			};
 
-			this.renderAudioResult = function($row, result) {
-				/*render preview icon, show path beneath filename,
-				 show size and last modified date on the right
-				 show Artist and Album */
-				$row = this.renderFileResult($row, result);
-				if ($row) {
-					$row.find('td.icon').css('background-image', 'url(' + OC.imagePath('core', 'filetypes/audio') + ')');
-				}
-				return $row;
-			};
-
-			this.renderImageResult = function($row, result) {
-				/*render preview icon, show path beneath filename,
-				 show size and last modified date on the right
-				 show width and height */
-				$row = this.renderFileResult($row, result);
-				if ($row && !self.fileAppLoaded()) {
-					$row.find('td.icon').css('background-image', 'url(' + OC.imagePath('core', 'filetypes/image') + ')');
-				}
-				return $row;
-			};
-
-
+			
 			this.handleFolderClick = function($row, result, event) {
 				// open folder
-				if (self.fileAppLoaded()) {
+				if (self.recoverAppLoaded()) {
 					self.fileList.changeDirectory(result.path);
 					return false;
 				} else {
@@ -146,7 +134,7 @@
 			};
 
 			this.handleFileClick = function($row, result, event) {
-				if (self.fileAppLoaded()) {
+				if (self.recoverAppLoaded()) {
 					self.fileList.changeDirectory(OC.dirname(result.path));
 					self.fileList.scrollTo(result.name);
 					return false;
@@ -164,10 +152,11 @@
 			this.setFileList = function (fileList) {
 				//console.log('RECOVER search setFileList function');
 				this.fileList = fileList;
+                                
+                                
 			};
 
 			OC.Plugins.register('OCA.Search', this);
-			//OC.Plugins.register('OCA.Recover.Search', this);
 		},
 		
 		/** eigentliche Filterung der Suchergebnisse 
@@ -183,7 +172,7 @@
 			// and filter must be set, otherwise instant filtering via searchbox won't work!
 			search.setFilter('recover', function (query) {
 			//console.log('RECOVER search attach in setFilter query = ' + query);	
-				if (self.fileAppLoaded()) {
+				if (self.recoverAppLoaded()) {
 					self.fileList.setFilter(query);
 					if (query.length > 2) {
 						//console.log('RECOVER search attach query.length > 2');
