@@ -122,10 +122,12 @@ class PageController extends Controller {
      */
     public function listBackups($dir = '/', $source = '', $sort = 'mtime', $sortdirection = 'desc') {
         //      dir = / | "/folder1.d1437920477", sortAttribute = mtime, sortDirection = 1 -> desc
-        // OC app framework way would be to pass those via the URL as params(?)
-        $dirGet = isset( $_GET['dir'] ) ? $_GET['dir'] : '';
-        $sortAttribute = isset( $_GET['sort'] ) ? $_GET['sort'] : 'mtime';
-        //$sortDirection = isset( $_GET['sortdirection'] ) ? ($_GET['sortdirection'] === 'desc') : false;
+        // with other routes and requests we could pass those via the URL as params(?)
+        $dirGet = isset($_GET['dir']) ? (string)$_GET['dir'] : '';
+        // sanitize dir 
+        $dirGet = str_replace(array('/', '\\'), '', $dirGet);
+        
+        $sortAttribute = isset($_GET['sort']) ? (string)$_GET['sort'] : 'mtime';
         $sortDirection = isset( $_GET['sortdirection'] ) ? $_GET['sortdirection'] : 'desc';
         $sourceGet = isset( $_GET['source'] ) ? $_GET['source'] : '';
         $snapshotGet = isset( $_GET['snapshot'] ) ? $_GET['snapshot'] : '';
@@ -330,6 +332,8 @@ class PageController extends Controller {
         $dir = '/';
         if (isset($_POST['dir'])) {
             $dir = rtrim($_POST['dir'], '/'). '/';
+            // to do sanitize dir, but messes with recovery process
+            //$dir = str_replace(array('/', '\\'), '', $dir);
         }
         // work around needed, otherwise sources is empty! need array below
         // when dir != "/" there is only one source and snapshot

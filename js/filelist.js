@@ -249,6 +249,8 @@
             }
             // sets files-array (files/js/filelist.js)
             this.setFiles(result.data.files);
+            // hack to put status-div in the right place, beneath the "local" searchresults
+            $('#status.emptycontent').css('position', 'relative');
             //console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
             return true;
         },
@@ -341,6 +343,7 @@
          * NOT when directly clicking 'recover'! ==> App: fileActions.register "recover"
          */
         _onClickRestoreSelected: function(event) {
+            debugger;
             event.preventDefault();
             var self = this;
             var allFiles = this.$el.find('.select-all').is(':checked');

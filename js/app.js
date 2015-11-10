@@ -109,7 +109,6 @@
                     }
                     context.fileList.changeDirectory(dir + filename);
             });
-
             fileActions.setDefault('dir', 'Open');
             fileActions.register('all', 'Recover', OC.PERMISSION_READ, OC.imagePath('core', 'actions/history'), function(filename, context) {
                 var fileList = context.fileList;
@@ -125,19 +124,20 @@
                 var sources = [];
                 var snapshotIds = [];
                 sources.push(tr.attr("data-mime"));
-                snapshotIds.push(  tr.attr("data-etag"));  
+                snapshotIds.push(tr.attr("data-etag"));  
                 params = {
                     files: JSON.stringify([filename]),
                     dir: dir,
                     sources: JSON.stringify(sources),
                     snapshotIds: JSON.stringify(snapshotIds)
                 };
+                debugger;
                 $.post(OC.generateUrl('/apps/recover/recover'), 
                     params,
                     _.bind(fileList._removeCallback, fileList)
                 );
-                console.log('RECOVER filelist RestoreSelected Sources = ' + params.sources);
-                console.log('RECOVER filelist RestoreSelected Snapshots = ' + params.snapshotIds);
+                console.log('RECOVER App RestoreSelected Sources = ' + params.sources);
+                console.log('RECOVER App RestoreSelected Snapshots = ' + params.snapshotIds);
             }, t('recover', 'Recover'));
             return fileActions;
         },

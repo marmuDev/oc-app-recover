@@ -50,7 +50,7 @@
                         </label>
                         <a class="name sort columntitle" data-sort="name"><span><?php p($l->t( 'Name' )); ?></span><span class="sort-indicator"></span></a>
                         <span id="selectedActionsList" class='selectedActions'>
-                            <a href="" class="undelete">
+                            <a href="" class="recover">
                                 <img class="svg" alt=""
                                      src="<?php print_unescaped(OCP\image_path("core", "actions/history.svg")); ?>" />
                                 <?php 
