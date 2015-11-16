@@ -13,44 +13,50 @@
  */
 (function (OC, window, $, undefined) {
     'use strict';
-
     // not implemented yet, just showing title in navigation
     var translations = {
         recentlyBackedUp: $('#recently-backed-up-string').html()
     };
-
     /**
      * @class OCA.Recover.Navigation
      * @classdesc Navigation control for the recover app sidebar.
      *
-     * @param 
+     * @param $el container element
+     * 
      */
     var Navigation = function($el) {
         this.initialize($el);
     };
-
-    
     /**
      * @memberof OCA.Recover
      */
     Navigation.prototype = {
         /**
          * Currently selected item in the list
+         * @type {Object} _activeLink active item of navigation
+         * @type {string} _activeLink.id id of active item 
+         * @type {string} _activeLink.title userfriendly title to be displayed
+         * @type {boolean} _activeLink.active active is true or false
          */
         _activeLink: null,
-
-        // this links object holds all our links
+        /**
+         * this links object holds all our navigation items
+         * an item is described above
+         * @type {Object.<string, string, boolean>} active item of navigation
+         */
         _items: [
             {id:"recently_backed_up", title:"Recently Backed Up", active:false},
             {id:"search", title:"Search", active:false},
             {id:"help", title:"Help", active:false}
         ],
-        
+        /*
+         * Initialize the navigation
+         * @param {type} $el el container element
+         */
         initialize: function($el) {
             this.$el = $el;
             this._activeItem = null;
             this.$currentContent = null;
-            
             // initially set recently_backed_up as active Link
             this._activeLink = this._items[0];
             this._activeLink.active = true; // still not grey 
@@ -58,8 +64,11 @@
             OC.Util.History.pushState(this._activeLink.id);
             //console.log("RECOVER nav init Active Link = " + this._activeLink.toSource());
         },
-
-        // go through links, set matched link active
+        /*
+         * go through links, set matched link active
+         * @param {string} id id of active link
+         * @returns {undefined}
+         */
         loadLink: function (id) {
             var self = this;
             this._items.forEach(function (link) {
@@ -82,7 +91,6 @@
             });
             //console.log('RECOVER load link, active link now = ' + this._activeLink.toSource());
         },
-        
         getActiveLink: function () {
             //console.log('in Links getActiveLink this._activeLink = ' + this._activeLink.toSource());
             return this._activeLink;
@@ -90,89 +98,72 @@
         getAll: function () {
             return this._items;
         },
+        /*
+         * check if item exists
+         * @param {string} itemId id of link
+         * @returns {navigation_L14.Navigation.$el.find.length} length of the found element
+         */
         itemExists: function(itemId) {
             console.log('RECOVER nav itemExists, $el.find... length = ' + this.$el.find('li[id=' + itemId + ']').length)
             return this.$el.find('li[id=' + itemId + ']').length;
         }
-
     };
-        
     OCA.Recover.Navigation = Navigation;    
-
-
     /**
      * @class OCA.Recover.View
      * @classdesc The view that is used to update the html
      *
-     * @param navigation
-     */
-    // 
+     * @param {OCA.Recover.Navigation} navigation
+     */ 
     var View = function (navigation) {
         this.nav = navigation;
     };
-
+    /* TO DO:
+     * is it possible not to have 3 times $.ajax despite having to change url and data?
+     * why is OCA.Recover.App.fileList.getCurrentDirectory() not available?
+     * how to get objects and functions available here?!?!
+     * http://xhr.spec.whatwg.org/ - http://api.jquery.com/jQuery.ajax/
+     */
     View.prototype = {
-        /** not using client-side templating for now
-         *  now loading content into app-content via ajax?
-         *  first check trashbin way again... too complicated, maybe later
-         *  is it possible not to have 3 times $.ajax despite having to change url and data?
-         why is OCA.Recover.App.fileList.getCurrentDirectory() not available?
-         how to get objects and functions available here?!?!
-          http://xhr.spec.whatwg.org/ - http://api.jquery.com/jQuery.ajax/
-          -> statt .done .success
+        /*
+         * triggers rendering the content of the given navigation id
+         * @param {string} id id of navigation item
+         * @returns {undefined}
          */
         renderContent: function (id) {
-            console.log('RECOVER nav render content');
-            //var url = 'init';
-            //var data = 'init';
             switch(id) {
-                //case "0":
+                /* only used in filelist!!!
+                 * JUST GETTING BLANK TEMPLATE HERE!:
+                 */
                 case "recently_backed_up":
                     $.ajax({
                         url: OC.generateUrl('/apps/recover/recently_backed_up')
-                        /* only used in myfilelist!!!
-                            JUST GETTING BLANK TEMPLATE HERE!
-                        data : {
-                            // when click on nav load root dir not current/last dir!!!
-                            // dir : OCA.Recover.App.fileList.getCurrentDirectory(),
-
-                            dir: '/',
-                            sort: OCA.Recover.App.fileList._sort,
-                            sortdirection: OCA.Recover.App.fileList._sortDirection
-                        }
-                        */
-                        
                     })
                         .success(function( html ) {
-                            //debugger;
                             $("#app-content").html( html ); 
-                            // has to work without init, further $el not defined!!
-                            // if you still want to delete the table completely, 
-                            // then you need to recreate a new FileList() and point it at the new table element
+                            /* has to work without init, further $el not defined!!
+                             * delete the table completely, 
+                             * then recreate a new FileList() and
+                             * point it at the new table element
+                             */
                             OCA.Recover.App.fileList = new OCA.Recover.FileList(
                                 $('#app-content-recover'), {
                                     scrollContainer: $('#app-content'),
                                     fileActions: OCA.Recover.App._createFileActions()
                                 }
                             );
-                            // initialized in constructor!
-                            //OCA.Recover.App.fileList.initialize();
                             OCA.Recover.App.fileList.reload();
                             OCA.Recover.App.fileList.$el.appendTo('#app-content');
-                            //console.log('html = ' + html);
                         });
                     break;
-                //case "1":
                 case "search":
                     $.ajax({
                         url: OC.generateUrl('/apps/recover/search')
                     })
                         .success(function( html ) {
-                            $( "#app-content" ).html( html );
-                            
+                            $( "#app-content" ).html( html );  
                         });
                     break;
-                //case "2":
                 case "help":
                     $.ajax({
                         url: OC.generateUrl('/apps/recover/help')
@@ -189,18 +180,17 @@
                             sort: OCA.Recover.App.fileList._sort,
                             sortdirection: OCA.Recover.App.fileList._sortDirection
                         }
-                        
                     })
                         .success(function( html ) {
                             $("#app-content").html( html ); 
                             OCA.Recover.App.fileList.reload();
                             OCA.Recover.App.fileList.$el.appendTo('#app-content');
-                            //console.log('html = ' + html);
                         });
-                    console.log('case default -> like case 0');
             }   
         },
-
+        /*
+         * render navigation and content after link has been clicked
+         */
         renderNavigation: function () {
             var self = this;
             var source = $('#navigation-tpl').html();
@@ -219,7 +209,5 @@
             });
         }
     };
-
     OCA.Recover.View = View;    
-    
 })(OC, window, jQuery);

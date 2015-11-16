@@ -452,7 +452,7 @@ class PageController extends Controller {
                                         "success" => $success, "error" => $error), "statusCode" => "500"));
         } else {
             //OCP\JSON::success(array("data" => array("success" => $success)));
-            $message = "Success! The file(s) have been moved to your home directory (/home/".\OCP\User::getUser()."/recovered).";
+            $message = "Success! The file(s) have been moved to your home directory (/home/".\OCP\User::getUser()."/recovered/<snapshot-ID>).";
             return new JSONResponse(array("data" => array
                                         ("message" => $message,
                                         "success" => $success), "statusCode" => "200"));

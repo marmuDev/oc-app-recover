@@ -26,7 +26,7 @@
      * This will use basename.
      * The name will not be changed if it has no ".d12345" suffix.
      * @param {String} name file name
-     * @return {String} converted file name
+     * @return {String} name converted file name
      */
     function getDeletedFileName(name) {
         name = OC.basename(name);
@@ -249,9 +249,6 @@
             }
             // sets files-array (files/js/filelist.js)
             this.setFiles(result.data.files);
-            // hack to put status-div in the right place, beneath the "local" searchresults
-            $('#status.emptycontent').css('position', 'relative');
-            //console.log('end of reloadCallback in recover file list (setFiles), files = ' + result.data.files.toSource());
             return true;
         },
 
@@ -341,6 +338,7 @@
         },
         /* only used, when (multiple) files have been selected 
          * NOT when directly clicking 'recover'! ==> App: fileActions.register "recover"
+         * @param Click Event
          */
         _onClickRestoreSelected: function(event) {
             debugger;

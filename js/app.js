@@ -97,6 +97,7 @@
         },
         /**
          * creating file actions: 'Open' for directories, 'Recover' for all items
+         * @return {FileActions} fileActions instance 
          */
         _createFileActions: function() {
             console.log('APP createFileActions beginning');
@@ -180,6 +181,7 @@
          * removes the mtime which is appended by OC to every file and folder.
          * need to get the real directory name when clicking on a folder.
          * @param {string} name filename or directory name with appended mtime
+         * @return {string} name filename without mtime
          */
         removeMtime: function(name) {
            var pattern = /.d\d{10}/;

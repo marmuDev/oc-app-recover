@@ -155,10 +155,9 @@
             OC.Plugins.register('OCA.Search', this);
         },
 
-        /** eigentliche Filterung der Suchergebnisse 
-         *	durch aufruf von (this.)search in 
+        /** Applies filter to filelist through calling (this.)search in  
          *  core/core/search/js/search.js - search = search-Object!
-         * ich will jetzt meine search JS nutzen
+         *  @param {searhObject} search 
         **/
         attach: function(search) {
             var self = this;
@@ -183,7 +182,7 @@
             search.setRenderer('file',   this.renderFileResult.bind(this));
 
             search.setHandler('folder',  this.handleFolderClick.bind(this));
-            console.log('SEARCH vor altering css');
+            // force message and icon below filelist "no results in other places
             $('#status').css('position', 'relative');
         }
     };
