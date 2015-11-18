@@ -57,10 +57,15 @@ class Helper {
         // Set the url
         curl_setopt($ch, CURLOPT_URL, $serviceUrl);
         // Execute
-        $result=curl_exec($ch);
+        try {
+            $result=curl_exec($ch);
+        } catch (Exception $e) {
+            $notFound = new NotFoundResponse();
+            $notFound.setStatus(404);
+            return $notFound;
+        }
         // Closing
         curl_close($ch);
-        
         return $result;
     }
     

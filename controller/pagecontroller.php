@@ -181,9 +181,13 @@ class PageController extends Controller {
         ////return new DataResponse($data); this was missing one layer 
         // gotta be result.data.files in filelist.js!
         // Use a AppFramework JSONResponse instead!
-        return new JSONResponse(['data' => $data, "statusCode" => "200"]);
+        if ($data['files'] == null) {
+            // still gotta evaluate this somewhere
+            return new JSONResponse(['data' => $data, "statusCode" => "404"]);
+        } else {
+            return new JSONResponse(['data' => $data, "statusCode" => "200"]);
+        }
     }
-    
     /** adapted from files_trashbin/ajax/list
      * http get: "/trashlist?dir=%2F&sort=mtime&sortdirection=desc"
      * 
@@ -228,17 +232,23 @@ class PageController extends Controller {
      */
     function listTubfsSs($dir, $sourceGet) {
         $baseDir = '/tubfs%2F.snapshots';
-        try {
+        //try {
             $dir = str_replace('/', '%2F', $dir);
             $dir = $baseDir.$dir;
             $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-            // getting json here, therefore decoding to array!
-            $filesFromSourceTubfsSs = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
+            $resultFromWebserviceCurl = \OCA\Recover\Helper::callWebservice($serviceUrl);
+            // check for 404 in result of webservice - data will be 'null' will check on that in listBackups
+            // if (preg_match('/\s*404\s*/', $resultFromWebserviceCurl)) {
+            //    $resultFromWebserviceCurl = '404';
+            //}
+            // converting to json here, therefore decoding to array!
+            $filesFromSourceTubfsSs = json_decode($resultFromWebservice, true);
+        /*
         } catch (Exception $e) {
             $notFound = new NotFoundResponse();
             $notFound.setStatus(404);
             return $notFound;
-        }
+        }*/
         return $filesFromSourceTubfsSs;
     }
     
