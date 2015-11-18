@@ -46,11 +46,14 @@ class PageControllerTest extends \Test\TestCase {
     /*
      * listBackups($dir = '/', $source = '', $sort = 'mtime', $sortdirection = 'desc')
      */
-    //public function testListBackups() {
-    public function testWebserviceNotFound() {
+    public function testListBackups() {
         //$this->controller->listBackups('/', 'tubfsss', 'mtime', 'desc');
         $this->container['PageController']->listBackups('/', 'tubfsss', 'mtime', 'desc');
     }
+    /* test helper class callWebservice function?
+     * public function testWebserviceNotFound() {
+     * 
+     */
 /*
 	public function testIndex () {
 		$result = $this->container->query('PageController')->index();

@@ -200,8 +200,8 @@
         reloadCallback: function(result) {
             delete this._reloadCall;
             this.hideMask();
-            // result.status undefined -> use statusCode
-            if (!result || result.statusCode === '500') {
+            if (result.statusCode === '500') {
+                console.log('reloadCallback !result || result.statusCode === 500');
                 // if the error is not related to folder we're trying to load, reload the page to handle logout etc
                 if (result.data.error === 'authentication_error' ||
                         result.data.error === 'token_expired' ||
@@ -213,31 +213,26 @@
                 OC.Notification.show(result.data.message);
                 return false;
             }
-               
             // Firewall Blocked request?
-            if (result.status === 403) {
-                    // Go home
-                    this.changeDirectory('/');
-                    OC.Notification.showTemporary(t('files', 'This operation is forbidden'));
-                    return false;
-            }
-
-            // Did share service die or something else fail?
-            if (result.status === 500) {
-                    // Go home
-                    this.changeDirectory('/');
-                    OC.Notification.showTemporary(t('files', 'This directory is unavailable, please check the logs or contact the administrator'));
-                    return false;
-            }   
-               
-            if (result.status === 404) {
-                // go back to root directory
-                console.log('in reloadCallback 404 -> go back home');
+            if (result.statusCode === 403) {
+                // Go home
                 this.changeDirectory('/');
+                OC.Notification.showTemporary(t('recover', 'This operation is forbidden'));
                 return false;
             }
+            // Did something else fail?
+            if (result.statusCode === 500) {
+                // go back to root directory
+                this.changeDirectory('/');
+                OC.Notification.showTemporary(t('recover', 'This directory is unavailable, please check the logs or contact the administrator'));
+                return false;
+            }   
+            if (result.statusCode === '404') {
+                OC.dialogs.alert('Controller listBackups() returned ' + result.statusCode + ' - Webservice unavailable?', t('recover', 'Error'));
+                return false;
+            }   
             // aborted ?
-            if (result.status === 0){
+            if (result.statusCode === 0){
                 return true;
             }
 

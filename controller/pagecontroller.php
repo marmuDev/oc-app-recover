@@ -132,6 +132,7 @@ class PageController extends Controller {
         $sourceGet = isset( $_GET['source'] ) ? $_GET['source'] : '';
         $snapshotGet = isset( $_GET['snapshot'] ) ? $_GET['snapshot'] : '';
          
+        $tmpTubss='init';
         // a clicked dir can only have one source -> list contents of dir from source
         switch ($sourceGet) {
             case 'octrash':
@@ -164,6 +165,10 @@ class PageController extends Controller {
                 for ($snapCount = 0; $snapCount<6; $snapCount++) {
                     // initially no source available, set manually!
                     $tmpTubfs = $this->listTubfsSs("/snap_".$snapCount."/owncloud/data/".\OCP\User::getUser()."/files".$dirGet, 'tubfsss');
+                    // abort when tmpTubfs = 404
+                    if ($tmpTubfs === '404') {
+                        break;
+                    }
                     //array_push($filesFromTubfsSs['files'][], $tmpTubfs['files']);
                     $filesFromTubfsSs = array_merge($filesFromTubfsSs, $tmpTubfs['files']);
                 }
@@ -178,11 +183,8 @@ class PageController extends Controller {
                 //$data['files'] = $mergedFiles;
                 $data['files'] = $sortedFiles;
         }
-        ////return new DataResponse($data); this was missing one layer 
-        // gotta be result.data.files in filelist.js!
-        // Use a AppFramework JSONResponse instead!
-        if ($data['files'] == null) {
-            // still gotta evaluate this somewhere
+        if ($data['files'] == null && $tmpTubfs === '404') {
+            // still gotta evaluate this in filelist JS, more complex solution in recover
             return new JSONResponse(['data' => $data, "statusCode" => "404"]);
         } else {
             return new JSONResponse(['data' => $data, "statusCode" => "200"]);
@@ -228,27 +230,19 @@ class PageController extends Controller {
      * @param String $sourceGet source filesystem from $_GET variable
      * @return String JSON $filesFromSourceTubfsSs filelist
      * 
-     * 
      */
     function listTubfsSs($dir, $sourceGet) {
         $baseDir = '/tubfs%2F.snapshots';
-        //try {
-            $dir = str_replace('/', '%2F', $dir);
-            $dir = $baseDir.$dir;
-            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-            $resultFromWebserviceCurl = \OCA\Recover\Helper::callWebservice($serviceUrl);
-            // check for 404 in result of webservice - data will be 'null' will check on that in listBackups
-            // if (preg_match('/\s*404\s*/', $resultFromWebserviceCurl)) {
-            //    $resultFromWebserviceCurl = '404';
-            //}
+        $dir = str_replace('/', '%2F', $dir);
+        $dir = $baseDir.$dir;
+        $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
+        $resultFromWebserviceCurl = \OCA\Recover\Helper::callWebservice($serviceUrl);
+        if (preg_match('/[\s,\w,<,>]+(404).*/', $resultFromWebserviceCurl)) {
+            $filesFromSourceTubfsSs = '404';
+        } else {
             // converting to json here, therefore decoding to array!
-            $filesFromSourceTubfsSs = json_decode($resultFromWebservice, true);
-        /*
-        } catch (Exception $e) {
-            $notFound = new NotFoundResponse();
-            $notFound.setStatus(404);
-            return $notFound;
-        }*/
+            $filesFromSourceTubfsSs = json_decode($resultFromWebserviceCurl, true);
+        }
         return $filesFromSourceTubfsSs;
     }
     
