@@ -16,7 +16,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
+ * along with this program. If not, see <https://www.gnu.org/licenses/>
  */
 namespace OCA\Recover\Controller;
 
@@ -235,7 +235,7 @@ class PageController extends Controller {
         $baseDir = '/tubfs%2F.snapshots';
         $dir = str_replace('/', '%2F', $dir);
         $dir = $baseDir.$dir;
-        $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
+        $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
         $resultFromWebserviceCurl = \OCA\Recover\Helper::callWebservice($serviceUrl);
         if (preg_match('/[\s,\w,<,>]+(404).*/', $resultFromWebserviceCurl)) {
             $filesFromSourceTubfsSs = '404';
@@ -257,21 +257,21 @@ class PageController extends Controller {
         // add other file source | get files from webservice -> could become foreach loop with sources-array
         // better: implement function which is called with source and dir as param
         try {
-            //$filesFromJsonFile = \OCA\Recover\Helper::getJsonFiles('http://localhost/fileData.json');
+            //$filesFromJsonFile = \OCA\Recover\Helper::getJsonFiles('https://localhost/fileData.json');
             // maybe getFilesFromSources + Source(s) as parameter, 
             // instead of calling a helper function for every source
             // TO DO: build Url based on selected dir
-            //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir';
+            //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/listTestdir/testdir';
             // testdir has to be replaced with root-folder of snapshots etc.
             // hack to prepend slash in front of subdir, or list root dir!            
             if ($dir !== '/') {
                 $dir = '%2F'.$dir;
                 $dir = str_replace('/', '%2F', $dir); // -> hier %2F nicht unten in serviceUrl!
-                //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir'.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet;
+                //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/listTestdir/testdir'.$dir;
+                $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet;
             } else {
-                //$serviceUrl = 'http://localhost/webservice4recover/index.php/files/listTestdir/testdir';
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.$sourceGet;
+                //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/listTestdir/testdir';
+                $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
             $filesFromSourceExt4 = json_decode(\OCA\Recover\Helper::callWebservic($serviceUrl), true);
@@ -298,10 +298,10 @@ class PageController extends Controller {
                 $dir = '%2F'.$dir;
                 $dir = str_replace('/', '%2F', $dir);
                 $dir = $baseDir.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
+                $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
             } else {
                 $dir = $baseDir.$dir;
-                $serviceUrl = 'http://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.$sourceGet;
+                $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
             $filesFromSourceGpfsSs = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
@@ -484,7 +484,7 @@ class PageController extends Controller {
         $dir = str_replace('/', '%2F', $dir);
         $filename = str_replace(' ', '%20',$filename);
         try {
-            $serviceUrl = 'http://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
+            $serviceUrl = 'https://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
             //$result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
             $result = \OCA\Recover\Helper::callWebservice($serviceUrl);
         } catch (Exception $ex) {

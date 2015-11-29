@@ -50,8 +50,18 @@ class Helper {
      */
     public static function callWebservice($serviceUrl) {
         $ch = curl_init();
-        // Disable SSL verification
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        /* Disable SSL verification
+         * setting CURLOPT_SSL_VERIFYPEER to false says to accept any peer
+         * (server) certificate. From a security stand point, this is not
+         * optimal if you're passing sensitive information
+         */
+        //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        /* When CURLOPT_SSL_VERIFYHOST is 2, that certificate must indicate that
+         * the server is the server to which you meant to connect,
+         * or the connection fails
+         */
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         // Will return the response. If false, it prints the response
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         // Set the url
