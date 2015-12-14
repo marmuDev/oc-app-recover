@@ -152,6 +152,9 @@ class PageController extends Controller {
                 break;
             case 'tubfsss':
                 $files = $this->listTubfsSs("/snap_".$snapshotGet."/owncloud/data/".\OCP\User::getUser()."/files/".$dirGet, 'tubfsss');
+                if ($files === '404') {
+                    break;
+                }
                 $data['files'] = $this->sortFilesArray($files['files'], $sortAttribute, $sortDirection);
                 break;
             // list files of root directory -> collect data from all sources
