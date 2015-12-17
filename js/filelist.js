@@ -198,6 +198,7 @@
         },
 
         reloadCallback: function(result) {
+            console.log('RECOVER filelist reloadCallBack: result.statusCode = ' + result.statusCode);
             delete this._reloadCall;
             this.hideMask();
             if (result.statusCode === '500') {
@@ -243,6 +244,7 @@
                 this.setDirectoryPermissions(result.data.permissions);
             }
             // sets files-array (files/js/filelist.js)
+            console.log('RECOVER filelist ReloadCallback: result = ' + result.data.files.toSource());
             this.setFiles(result.data.files);
             return true;
         },
