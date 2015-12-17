@@ -244,7 +244,8 @@
                 this.setDirectoryPermissions(result.data.permissions);
             }
             // sets files-array (files/js/filelist.js)
-            console.log('RECOVER filelist ReloadCallback: result = ' + result.data.files.toSource());
+            console.log('RECOVER filelist ReloadCallback: result.data = ' + result.data.toSource());
+            console.log('RECOVER filelist ReloadCallback: result.data.files = ' + result.data.files.toSource());
             this.setFiles(result.data.files);
             return true;
         },
