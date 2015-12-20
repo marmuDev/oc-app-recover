@@ -238,8 +238,7 @@ class PageController extends Controller {
         $baseDir = '/tubfs%2F.snapshots';
         $dir = str_replace('/', '%2F', $dir);
         $dir = $baseDir.$dir;
-        //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
-        $serviceUrl = 'https://owncloud-test.tubit.tu-berlin.de/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
+        $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric'.$dir.'/'.$sourceGet;
         $resultFromWebserviceCurl = \OCA\Recover\Helper::callWebservice($serviceUrl);
         if (preg_match('/[\s,\w,<,>]+(404).*/', $resultFromWebserviceCurl)) {
             $filesFromSourceTubfsSs = '404';
@@ -271,10 +270,8 @@ class PageController extends Controller {
             if ($dir !== '/') {
                 $dir = '%2F'.$dir;
                 $dir = str_replace('/', '%2F', $dir); // -> hier %2F nicht unten in serviceUrl!
-                //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/listTestdir/testdir'.$dir;
                 $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.'/'.$sourceGet;
             } else {
-                //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/listTestdir/testdir';
                 $serviceUrl = 'https://localhost/webservice4recover/index.php/files/listDirGeneric/var%2Fwww%2Fwebservice4recover%2Ftestdir'.$dir.$sourceGet;
             }
             // getting json here, therefore decoding to array!
@@ -488,9 +485,7 @@ class PageController extends Controller {
         $dir = str_replace('/', '%2F', $dir);
         $filename = str_replace(' ', '%20',$filename);
         try {
-            //$serviceUrl = 'https://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
-            $serviceUrl = 'https://owncloud-test.tubit.tu-berlin.de/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
-            //$result = json_decode(\OCA\Recover\Helper::callWebservice($serviceUrl), true);
+            $serviceUrl = 'https://localhost/webservice4recover/index.php/files/recover/'.$filename.'/'.$source.'/'.$dir.'/'.\OCP\User::getUser().'/'.$snapshotId;
             $result = \OCA\Recover\Helper::callWebservice($serviceUrl);
         } catch (Exception $ex) {
 
